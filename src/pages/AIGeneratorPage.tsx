@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
@@ -5,15 +6,10 @@ import { useApiKeyStore } from '@/store/apiKeyStore';
 import { usePromptStore } from '@/store/promptStore';
 import { geminiService } from '@/services/geminiService';
 import { selectHeuristics } from '@/utils/heuristicSelector';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ApiKeyRequired } from '@/components/ApiKeyRequired';
-import { Wand2, Save, Copy, RefreshCw, Sparkles, Brain } from 'lucide-react';
-import { HEURISTICS } from '@/constants';
+import { AIGeneratorInputPanel } from '@/components/generator/AIGeneratorInputPanel';
+import { AIGeneratorOutputPanel } from '@/components/generator/AIGeneratorOutputPanel';
+import { Wand2 } from 'lucide-react';
 import { HeuristicType, GenerationRequest } from '@/types';
 import { toast } from '@/hooks/use-toast';
 
@@ -93,7 +89,7 @@ export default function AIGeneratorPage() {
       
       toast({ 
         title: 'Prompt generated!', 
-        description: `Applied: ${heuristicsToUse.map(h => HEURISTICS[h].name).join(', ')}` 
+        description: `Applied ${heuristicsToUse.length} cognitive heuristics` 
       });
     } catch (error) {
       console.error('Generation error:', error);
@@ -147,14 +143,6 @@ export default function AIGeneratorPage() {
     });
   };
 
-  const toggleHeuristic = (heuristic: HeuristicType) => {
-    setSelectedHeuristics(prev => 
-      prev.includes(heuristic)
-        ? prev.filter(h => h !== heuristic)
-        : [...prev, heuristic]
-    );
-  };
-
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <div className="mb-8">
@@ -169,193 +157,25 @@ export default function AIGeneratorPage() {
 
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Input Panel */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Intent & Context</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">What do you want to achieve?</label>
-                <Textarea
-                  placeholder="Describe your goal or what you want the prompt to help with..."
-                  value={intent}
-                  onChange={(e) => handleIntentChange(e.target.value)}
-                  rows={3}
-                />
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-2 block">Additional Context (Optional)</label>
-                <Textarea
-                  placeholder="Any specific requirements, constraints, or background information..."
-                  value={context}
-                  onChange={(e) => handleContextChange(e.target.value)}
-                  rows={2}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">Complexity</label>
-                <Select value={complexity} onValueChange={(value) => setComplexity(value as any)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="simple">Simple</SelectItem>
-                    <SelectItem value="intermediate">Intermediate</SelectItem>
-                    <SelectItem value="advanced">Advanced</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {selectedHeuristics.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Brain className="w-5 h-5 mr-2" />
-                  Auto-Selected Heuristics
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {selectedHeuristics.map((heuristic) => (
-                    <div key={heuristic} className="flex items-start space-x-3 p-3 bg-muted/50 rounded-lg">
-                      <div className="w-2 h-2 bg-brand-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div className="flex-1">
-                        <div className="text-sm font-medium">
-                          {HEURISTICS[heuristic].name}
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          {HEURISTICS[heuristic].description}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs text-muted-foreground mt-3">
-                  These heuristics were automatically selected based on your intent and context.
-                </p>
-              </CardContent>
-            </Card>
-          )}
-
-          <Button 
-            onClick={handleGenerate} 
-            disabled={isGenerating || !intent.trim()}
-            className="w-full bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700"
-            size="lg"
-          >
-            {isGenerating ? (
-              <>
-                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-4 h-4 mr-2" />
-                Generate Prompt
-              </>
-            )}
-          </Button>
-        </div>
+        <AIGeneratorInputPanel
+          intent={intent}
+          context={context}
+          complexity={complexity}
+          selectedHeuristics={selectedHeuristics}
+          isGenerating={isGenerating}
+          onIntentChange={handleIntentChange}
+          onContextChange={handleContextChange}
+          onComplexityChange={setComplexity}
+          onGenerate={handleGenerate}
+        />
 
         {/* Output Panel */}
-        <div className="space-y-6">
-          {lastResult ? (
-            <>
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle>{lastResult.preview_title}</CardTitle>
-                    <div className="flex space-x-2">
-                      <Button variant="outline" size="sm" onClick={handleCopyPrompt}>
-                        <Copy className="w-4 h-4 mr-1" />
-                        Copy
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={handleSavePrompt}>
-                        <Save className="w-4 h-4 mr-1" />
-                        Save
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="prompt-editor bg-muted/50 p-4 rounded-lg">
-                    <pre className="whitespace-pre-wrap text-sm">{lastResult.optimized_prompt}</pre>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {lastResult.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Metadata & Suggestions</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Complexity:</span>
-                      <span className="ml-2 font-medium">{lastResult.metadata.complexity_score}/10</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Creativity:</span>
-                      <span className="ml-2 font-medium">{lastResult.metadata.creativity_score}/10</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Coherence:</span>
-                      <span className="ml-2 font-medium">{lastResult.metadata.coherence_score}/10</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Est. Tokens:</span>
-                      <span className="ml-2 font-medium">{lastResult.metadata.estimated_tokens}</span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-medium mb-2">Remix Suggestions:</h4>
-                    <div className="space-y-2">
-                      {lastResult.remix_suggestions.map((suggestion, index) => (
-                        <Button
-                          key={index}
-                          variant="outline"
-                          size="sm"
-                          className="w-full justify-start text-left h-auto py-2"
-                          onClick={() => handleRemixSuggestion(suggestion)}
-                        >
-                          {suggestion}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </>
-          ) : (
-            <Card className="h-96 flex items-center justify-center">
-              <div className="text-center text-muted-foreground">
-                <Wand2 className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>Your generated prompt will appear here</p>
-              </div>
-            </Card>
-          )}
-        </div>
+        <AIGeneratorOutputPanel
+          lastResult={lastResult}
+          onCopyPrompt={handleCopyPrompt}
+          onSavePrompt={handleSavePrompt}
+          onRemixSuggestion={handleRemixSuggestion}
+        />
       </div>
     </div>
   );
