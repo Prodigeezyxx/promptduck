@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
@@ -129,6 +128,23 @@ export default function AIGeneratorPage() {
     
     navigator.clipboard.writeText(lastResult.optimized_prompt);
     toast({ title: 'Copied!', description: 'Prompt copied to clipboard.' });
+  };
+
+  const handleRemixSuggestion = (suggestion: string) => {
+    // Apply the remix suggestion to the current context/intent
+    const newContext = context ? `${context}. ${suggestion}` : suggestion;
+    setContext(newContext);
+    
+    // Update heuristics based on the new context
+    if (intent.trim()) {
+      const autoHeuristics = selectHeuristics(intent, newContext);
+      setSelectedHeuristics(autoHeuristics);
+    }
+    
+    toast({ 
+      title: 'Remix applied!', 
+      description: 'Suggestion added to context. Click generate to create a new version.' 
+    });
   };
 
   const toggleHeuristic = (heuristic: HeuristicType) => {
@@ -321,6 +337,7 @@ export default function AIGeneratorPage() {
                           variant="outline"
                           size="sm"
                           className="w-full justify-start text-left h-auto py-2"
+                          onClick={() => handleRemixSuggestion(suggestion)}
                         >
                           {suggestion}
                         </Button>
