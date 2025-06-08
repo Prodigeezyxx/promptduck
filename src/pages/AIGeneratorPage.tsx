@@ -5,15 +5,15 @@ import { useCreditStore } from '@/store/creditStore';
 import { useApiKeyStore } from '@/store/apiKeyStore';
 import { usePromptStore } from '@/store/promptStore';
 import { geminiService } from '@/services/geminiService';
+import { selectHeuristics } from '@/utils/heuristicSelector';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 import { ApiKeyRequired } from '@/components/ApiKeyRequired';
-import { Wand2, Save, Copy, RefreshCw, Sparkles } from 'lucide-react';
+import { Wand2, Save, Copy, RefreshCw, Sparkles, Brain } from 'lucide-react';
 import { HEURISTICS } from '@/constants';
 import { HeuristicType, GenerationRequest } from '@/types';
 import { toast } from '@/hooks/use-toast';
@@ -26,12 +26,29 @@ export default function AIGeneratorPage() {
 
   const [intent, setIntent] = useState('');
   const [context, setContext] = useState('');
-  const [selectedHeuristics, setSelectedHeuristics] = useState<HeuristicType[]>(['multi_role_collision']);
   const [complexity, setComplexity] = useState<'simple' | 'intermediate' | 'advanced'>('intermediate');
+  const [selectedHeuristics, setSelectedHeuristics] = useState<HeuristicType[]>([]);
 
   if (!apiKey) {
     return <ApiKeyRequired />;
   }
+
+  // Update heuristics when intent or context changes
+  const handleIntentChange = (value: string) => {
+    setIntent(value);
+    if (value.trim()) {
+      const autoHeuristics = selectHeuristics(value, context);
+      setSelectedHeuristics(autoHeuristics);
+    }
+  };
+
+  const handleContextChange = (value: string) => {
+    setContext(value);
+    if (intent.trim()) {
+      const autoHeuristics = selectHeuristics(intent, value);
+      setSelectedHeuristics(autoHeuristics);
+    }
+  };
 
   const handleGenerate = async () => {
     if (!intent.trim()) {
@@ -55,6 +72,11 @@ export default function AIGeneratorPage() {
     setGenerating(true);
     
     try {
+      // Get intelligent heuristics if not already set
+      const heuristicsToUse = selectedHeuristics.length > 0 
+        ? selectedHeuristics 
+        : selectHeuristics(intent, context);
+
       // Initialize Gemini service with the internal API key
       if (apiKey) {
         geminiService.initialize(apiKey.gemini);
@@ -62,7 +84,7 @@ export default function AIGeneratorPage() {
 
       const request: GenerationRequest = {
         intent,
-        heuristics: selectedHeuristics,
+        heuristics: heuristicsToUse,
         context: context.trim() || undefined,
         complexity
       };
@@ -72,7 +94,7 @@ export default function AIGeneratorPage() {
       
       toast({ 
         title: 'Prompt generated!', 
-        description: 'Your optimized prompt is ready.' 
+        description: `Applied: ${heuristicsToUse.map(h => HEURISTICS[h].name).join(', ')}` 
       });
     } catch (error) {
       console.error('Generation error:', error);
@@ -125,7 +147,7 @@ export default function AIGeneratorPage() {
           AI Prompt Generator
         </h1>
         <p className="text-muted-foreground">
-          Transform your ideas using cognitive heuristics
+          Transform your ideas using intelligently selected cognitive heuristics
         </p>
       </div>
 
@@ -142,7 +164,7 @@ export default function AIGeneratorPage() {
                 <Textarea
                   placeholder="Describe your goal or what you want the prompt to help with..."
                   value={intent}
-                  onChange={(e) => setIntent(e.target.value)}
+                  onChange={(e) => handleIntentChange(e.target.value)}
                   rows={3}
                 />
               </div>
@@ -152,7 +174,7 @@ export default function AIGeneratorPage() {
                 <Textarea
                   placeholder="Any specific requirements, constraints, or background information..."
                   value={context}
-                  onChange={(e) => setContext(e.target.value)}
+                  onChange={(e) => handleContextChange(e.target.value)}
                   rows={2}
                 />
               </div>
@@ -180,32 +202,36 @@ export default function AIGeneratorPage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Cognitive Heuristics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {Object.entries(HEURISTICS).map(([key, heuristic]) => (
-                  <div key={key} className="flex items-start space-x-3">
-                    <Checkbox
-                      id={key}
-                      checked={selectedHeuristics.includes(key as HeuristicType)}
-                      onCheckedChange={() => toggleHeuristic(key as HeuristicType)}
-                    />
-                    <div className="flex-1">
-                      <label htmlFor={key} className="text-sm font-medium cursor-pointer">
-                        {heuristic.name}
-                      </label>
-                      <p className="text-xs text-muted-foreground">
-                        {heuristic.description}
-                      </p>
+          {selectedHeuristics.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Brain className="w-5 h-5 mr-2" />
+                  Auto-Selected Heuristics
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {selectedHeuristics.map((heuristic) => (
+                    <div key={heuristic} className="flex items-start space-x-3 p-3 bg-muted/50 rounded-lg">
+                      <div className="w-2 h-2 bg-brand-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <div className="flex-1">
+                        <div className="text-sm font-medium">
+                          {HEURISTICS[heuristic].name}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {HEURISTICS[heuristic].description}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mt-3">
+                  These heuristics were automatically selected based on your intent and context.
+                </p>
+              </CardContent>
+            </Card>
+          )}
 
           <Button 
             onClick={handleGenerate} 
