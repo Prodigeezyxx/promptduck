@@ -13,18 +13,18 @@ import {
 } from 'lucide-react';
 
 const navigation = [
-  { name: 'Library', href: '/library', icon: BookOpen },
-  { name: 'Generator', href: '/generator', icon: Wand2 },
-  { name: 'Playground', href: '/playground', icon: PlayCircle },
-  { name: 'System Editor', href: '/system-editor', icon: Code },
-  { name: 'Settings', href: '/settings', icon: SettingsIcon },
+  { name: 'Library', href: '/app/library', icon: BookOpen },
+  { name: 'Generator', href: '/app/generator', icon: Wand2 },
+  { name: 'Playground', href: '/app/playground', icon: PlayCircle },
+  { name: 'System Editor', href: '/app/system-editor', icon: Code },
+  { name: 'Settings', href: '/app/settings', icon: SettingsIcon },
 ];
 
 export function Navigation() {
   const location = useLocation();
 
   return (
-    <nav className="w-64 min-h-screen bg-card border-r border-border flex flex-col">
+    <nav className="hidden lg:flex w-64 min-h-screen bg-card border-r border-border flex-col">
       {/* Logo */}
       <div className="p-6 border-b border-border">
         <Link to="/" className="flex items-center space-x-3">
