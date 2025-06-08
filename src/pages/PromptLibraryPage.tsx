@@ -28,25 +28,38 @@ export default function PromptLibraryPage() {
     : prompts.filter(p => p.category === selectedCategory);
 
   const handleCardClick = (prompt: any) => {
-    // Set the current prompt and navigate to generator
-    setCurrentPrompt(prompt);
+    // Set the current prompt with all its content and navigate to generator
+    setCurrentPrompt({
+      ...prompt,
+      // Ensure we have the full prompt content
+      intent: prompt.description || prompt.title,
+      content: prompt.content
+    });
     navigate('/app/generator');
   };
 
   const handleNewPrompt = () => {
+    // Clear any existing prompt state before creating new
+    setCurrentPrompt(null);
+    navigate('/app/generator');
+  };
+
+  const handleEdit = (prompt: any) => {
+    setCurrentPrompt(prompt);
     navigate('/app/generator');
   };
 
   return (
-    <div className="p-4 lg:p-6 max-w-6xl mx-auto">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 lg:mb-8 gap-4">
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold">Prompt Library</h1>
-          <p className="text-sm lg:text-base text-muted-foreground">Manage and organize your prompt collection</p>
+    <div className="p-3 lg:p-6 max-w-6xl mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 lg:mb-6 gap-3 lg:gap-4">
+        <div className="space-y-1">
+          <h1 className="text-xl lg:text-3xl font-bold">Prompt Library</h1>
+          <p className="text-sm text-muted-foreground">Manage and organize your prompt collection</p>
         </div>
         <Button 
           onClick={handleNewPrompt}
           className="bg-gradient-to-r from-brand-500 to-blue-600 hover:from-brand-600 hover:to-blue-700 w-full sm:w-auto"
+          size="sm"
         >
           <Plus className="w-4 h-4 mr-2" />
           New Prompt
@@ -54,7 +67,7 @@ export default function PromptLibraryPage() {
       </div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col gap-4 mb-6">
+      <div className="flex flex-col gap-3 lg:gap-4 mb-4 lg:mb-6">
         <div className="relative">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
@@ -88,21 +101,21 @@ export default function PromptLibraryPage() {
       </div>
 
       {/* Prompts Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
         {filteredPrompts.map((prompt) => (
           <Card 
             key={prompt.id} 
-            className="prompt-card cursor-pointer group hover:shadow-lg transition-all duration-200"
+            className="prompt-card cursor-pointer group hover:shadow-lg transition-all duration-200 border border-border/50"
             onClick={() => handleCardClick(prompt)}
           >
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-base lg:text-lg font-semibold line-clamp-2 mb-2">
+            <CardHeader className="pb-2 lg:pb-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <CardTitle className="text-sm lg:text-base font-semibold line-clamp-2 mb-1 lg:mb-2">
                     {prompt.title}
                   </CardTitle>
-                  <p className="text-xs lg:text-sm text-muted-foreground line-clamp-2">
-                    {prompt.description || prompt.content.slice(0, 100) + '...'}
+                  <p className="text-xs text-muted-foreground line-clamp-3">
+                    {prompt.description || prompt.content.slice(0, 120) + '...'}
                   </p>
                 </div>
                 <DropdownMenu>
@@ -110,7 +123,7 @@ export default function PromptLibraryPage() {
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="opacity-0 group-hover:opacity-100 touch-target"
+                      className="opacity-0 group-hover:opacity-100 w-8 h-8 p-0 shrink-0"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <MoreHorizontal className="w-4 h-4" />
@@ -119,7 +132,7 @@ export default function PromptLibraryPage() {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={(e) => {
                       e.stopPropagation();
-                      setCurrentPrompt(prompt);
+                      handleEdit(prompt);
                     }}>
                       <Edit className="w-4 h-4 mr-2" />
                       Edit
@@ -145,8 +158,8 @@ export default function PromptLibraryPage() {
                 </DropdownMenu>
               </div>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center space-x-2">
+            <CardContent className="space-y-2 lg:space-y-3 pt-0">
+              <div className="flex items-center flex-wrap gap-1">
                 <Badge className="persona-badge text-xs">
                   {PERSONAS[prompt.persona].icon} {PERSONAS[prompt.persona].name}
                 </Badge>
@@ -154,18 +167,18 @@ export default function PromptLibraryPage() {
               
               <div className="flex flex-wrap gap-1">
                 {prompt.tags.slice(0, 3).map((tag) => (
-                  <span key={tag} className="heuristic-tag text-xs">
+                  <span key={tag} className="heuristic-tag text-xs px-2 py-1 bg-accent rounded-md">
                     {tag}
                   </span>
                 ))}
                 {prompt.tags.length > 3 && (
-                  <span className="heuristic-tag text-xs">
+                  <span className="heuristic-tag text-xs px-2 py-1 bg-accent rounded-md">
                     +{prompt.tags.length - 3}
                   </span>
                 )}
               </div>
               
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
                 <span>Used {prompt.usage_count} times</span>
                 <span>v{prompt.version}</span>
               </div>
@@ -175,7 +188,7 @@ export default function PromptLibraryPage() {
       </div>
 
       {filteredPrompts.length === 0 && (
-        <div className="text-center py-12">
+        <div className="text-center py-8 lg:py-12">
           <p className="text-muted-foreground mb-4">No prompts found matching your criteria.</p>
           <Button onClick={handleNewPrompt}>Create your first prompt</Button>
         </div>

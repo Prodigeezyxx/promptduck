@@ -9,7 +9,7 @@ import { AnimatedPromptDisplay } from './AnimatedPromptDisplay';
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
       {/* Matrix background effect */}
       <div className="absolute inset-0">
         <LetterGlitch
@@ -63,14 +63,14 @@ export function HeroSection() {
           
           <VariableProximity 
             text="prompt like a PRO"
-            className="text-4xl md:text-6xl lg:text-8xl font-bold bg-gradient-to-r from-gray-900 via-brand-600 to-blue-600 dark:from-white dark:via-brand-200 dark:to-blue-200 bg-clip-text text-transparent mb-4 lg:mb-6"
+            className="text-4xl md:text-6xl lg:text-8xl font-bold bg-gradient-to-r from-gray-900 via-brand-600 to-blue-600 dark:from-white dark:via-brand-200 dark:to-blue-200 bg-clip-text text-transparent mb-4 lg:mb-6 leading-tight"
           />
           
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-lg md:text-xl lg:text-2xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed px-2"
+            className="text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed px-2"
           >
             Transform your ideas into powerful AI prompts using cognitive heuristics, 
             archetypal personas, and recursive refinement.
@@ -82,7 +82,7 @@ export function HeroSection() {
             transition={{ delay: 0.6, duration: 0.8 }}
             className="flex flex-col sm:flex-row gap-3 lg:gap-4 justify-center items-center pt-6 lg:pt-8"
           >
-            <Link to="/app">
+            <Link to="/app/library">
               <Button 
                 size="lg" 
                 className="bg-gradient-to-r from-brand-500 to-blue-600 hover:from-brand-600 hover:to-blue-700 text-white px-6 lg:px-8 py-3 text-base lg:text-lg group border-0 shadow-lg shadow-brand-500/25 w-full sm:w-auto"
@@ -105,7 +105,7 @@ export function HeroSection() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9, duration: 0.8 }}
-            className="pt-8 lg:pt-12 text-xs lg:text-sm text-gray-500 dark:text-gray-400"
+            className="pt-6 lg:pt-8 text-xs lg:text-sm text-gray-500 dark:text-gray-400"
           >
             <p>20 free generations daily • No credit card required</p>
           </motion.div>
@@ -116,6 +116,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2, duration: 0.8 }}
+          className="mt-8 lg:mt-12"
         >
           <AnimatedPromptDisplay />
         </motion.div>

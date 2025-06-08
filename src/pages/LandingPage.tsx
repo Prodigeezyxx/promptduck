@@ -9,9 +9,11 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen">
       <LandingHeader />
-      <HeroSection />
-      <FeaturesSection />
-      <PricingSection />
+      <main>
+        <HeroSection />
+        <FeaturesSection />
+        <PricingSection />
+      </main>
       <LandingFooter />
     </div>
   );
