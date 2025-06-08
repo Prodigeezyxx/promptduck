@@ -6,17 +6,22 @@ import { PROMPT_DUCK_SPECIFICATION, HEURISTICS } from '@/constants';
 export class GeminiService {
   private genAI: GoogleGenerativeAI | null = null;
   private model: GenerativeModel | null = null;
+  private models = [
+    'gemini-2.0-flash-exp',
+    'gemini-1.5-flash',
+    'gemini-1.5-pro'
+  ];
 
   initialize(apiKey: string) {
     console.log('Initializing Gemini service...');
     this.genAI = new GoogleGenerativeAI(apiKey);
-    // Use the latest Gemini Pro model
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-pro-latest' });
-    console.log('Gemini service initialized with model: gemini-1.5-pro-latest');
+    // Use the latest Gemini 2.0 model
+    this.model = this.genAI.getGenerativeModel({ model: this.models[0] });
+    console.log('Gemini service initialized with model:', this.models[0]);
   }
 
   async generatePrompt(request: GenerationRequest): Promise<GenerationResult> {
-    if (!this.model) {
+    if (!this.genAI) {
       throw new Error('Gemini service not initialized');
     }
 
@@ -24,64 +29,137 @@ export class GeminiService {
 
     const heuristicsDesc = request.heuristics.map(h => HEURISTICS[h].description).join(', ');
 
-    const systemPrompt = `${PROMPT_DUCK_SPECIFICATION}
+    // Optimized shorter prompt to reduce token usage
+    const systemPrompt = `Create an optimized prompt using these cognitive heuristics:
 
-CURRENT REQUEST:
-Intent: ${request.intent}
-Heuristics: ${heuristicsDesc}
-Context: ${request.context || 'None provided'}
-Complexity: ${request.complexity || 'intermediate'}
+INTENT: ${request.intent}
+HEURISTICS: ${heuristicsDesc}
+CONTEXT: ${request.context || 'None'}
+COMPLEXITY: ${request.complexity || 'intermediate'}
 
-Use these heuristics: ${request.heuristics.join(', ')}.
-Generate a practical, effective prompt that applies these cognitive approaches.
+Apply these approaches: ${request.heuristics.join(', ')}.
 
-Return ONLY a valid JSON object following the exact structure specified in the PromptDuck specification.`;
+Return ONLY valid JSON:
+{
+  "optimized_prompt": "enhanced prompt text",
+  "preview_title": "descriptive title",
+  "tags": ["relevant", "tags"],
+  "variables": [{"name": "var", "type": "text", "required": true, "description": "desc"}],
+  "metadata": {
+    "complexity_score": 8,
+    "creativity_score": 7,
+    "coherence_score": 9,
+    "estimated_tokens": 200
+  },
+  "remix_suggestions": ["suggestion1", "suggestion2", "suggestion3"]
+}`;
 
     console.log('Sending request to Gemini with prompt length:', systemPrompt.length);
-    console.log('Full system prompt:', systemPrompt);
 
-    try {
-      const result = await this.model.generateContent(systemPrompt);
-      const response = await result.response;
-      const text = response.text();
+    // Try each model with exponential backoff
+    for (let modelIndex = 0; modelIndex < this.models.length; modelIndex++) {
+      const modelName = this.models[modelIndex];
+      console.log(`Attempting generation with model: ${modelName}`);
+      
+      try {
+        const model = this.genAI.getGenerativeModel({ model: modelName });
+        const result = await this.retryWithBackoff(async () => {
+          return await model.generateContent(systemPrompt);
+        }, 3);
 
-      console.log('Received response from Gemini, length:', text.length);
-      console.log('Raw Gemini response:', text);
+        const response = await result.response;
+        const text = response.text();
 
-      // Try to parse JSON from the response
-      let jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
-        console.warn('No JSON found in response, using text as prompt');
-        // If no JSON, treat the entire response as the optimized prompt
-        const generationResult: GenerationResult = {
-          optimized_prompt: text.trim(),
-          preview_title: `AI Generated: ${request.intent.slice(0, 50)}...`,
-          tags: ['ai-generated', ...request.heuristics],
-          heuristics: request.heuristics,
-          variables: [],
-          metadata: {
-            complexity_score: Math.floor(Math.random() * 3) + 7,
-            creativity_score: Math.floor(Math.random() * 3) + 7,
-            coherence_score: Math.floor(Math.random() * 3) + 8,
-            estimated_tokens: Math.floor(text.length / 4)
-          },
-          remix_suggestions: [
-            'Add more specific constraints',
-            'Include examples in the prompt', 
-            'Add step-by-step instructions',
-            'Specify desired output format'
-          ]
-        };
-        console.log('Generated result from text response:', generationResult);
-        return generationResult;
+        console.log('Received response from Gemini, length:', text.length);
+        console.log('Raw Gemini response:', text);
+
+        return this.parseResponse(text, request);
+      } catch (error) {
+        console.error(`Model ${modelName} failed:`, error);
+        
+        // If this is a quota error and we have more models to try, continue
+        if (this.isQuotaError(error) && modelIndex < this.models.length - 1) {
+          console.log(`Quota exceeded for ${modelName}, trying next model...`);
+          continue;
+        }
+        
+        // If this is the last model or a different error, handle accordingly
+        if (modelIndex === this.models.length - 1) {
+          console.log('All models failed, using fallback');
+          return this.generateFallbackPrompt(request);
+        }
+        
+        // For non-quota errors, try next model
+        continue;
       }
+    }
 
-      console.log('Found JSON in response, parsing...');
+    // This shouldn't be reached, but just in case
+    return this.generateFallbackPrompt(request);
+  }
+
+  private async retryWithBackoff<T>(fn: () => Promise<T>, maxRetries: number): Promise<T> {
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        return await fn();
+      } catch (error) {
+        if (attempt === maxRetries - 1 || !this.isRetryableError(error)) {
+          throw error;
+        }
+        
+        const delay = Math.pow(2, attempt) * 1000; // Exponential backoff
+        console.log(`Attempt ${attempt + 1} failed, retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+    
+    throw new Error('Max retries exceeded');
+  }
+
+  private isQuotaError(error: any): boolean {
+    return error?.status === 429 || 
+           error?.message?.includes('quota') || 
+           error?.message?.includes('RESOURCE_EXHAUSTED');
+  }
+
+  private isRetryableError(error: any): boolean {
+    return this.isQuotaError(error) || 
+           error?.status === 503 || 
+           error?.message?.includes('temporarily unavailable');
+  }
+
+  private parseResponse(text: string, request: GenerationRequest): GenerationResult {
+    // Try to parse JSON from the response
+    let jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.warn('No JSON found in response, using text as prompt');
+      return {
+        optimized_prompt: text.trim(),
+        preview_title: `AI Generated: ${request.intent.slice(0, 50)}...`,
+        tags: ['ai-generated', ...request.heuristics],
+        heuristics: request.heuristics,
+        variables: [],
+        metadata: {
+          complexity_score: Math.floor(Math.random() * 3) + 7,
+          creativity_score: Math.floor(Math.random() * 3) + 7,
+          coherence_score: Math.floor(Math.random() * 3) + 8,
+          estimated_tokens: Math.floor(text.length / 4)
+        },
+        remix_suggestions: [
+          'Add more specific constraints',
+          'Include examples in the prompt', 
+          'Add step-by-step instructions',
+          'Specify desired output format'
+        ]
+      };
+    }
+
+    console.log('Found JSON in response, parsing...');
+    try {
       const parsed = JSON.parse(jsonMatch[0]);
       console.log('Parsed JSON:', parsed);
       
-      // Validate and structure the response
-      const generationResult: GenerationResult = {
+      return {
         optimized_prompt: parsed.optimized_prompt || text,
         preview_title: parsed.preview_title || `AI Generated: ${request.intent.slice(0, 50)}...`,
         tags: Array.isArray(parsed.tags) ? parsed.tags : ['ai-generated', ...request.heuristics],
@@ -102,19 +180,9 @@ Return ONLY a valid JSON object following the exact structure specified in the P
               'Specify desired output format'
             ]
       };
-
-      console.log('Successfully generated result:', generationResult);
-      return generationResult;
-    } catch (error) {
-      console.error('Gemini generation error:', error);
-      console.error('Error details:', {
-        message: error.message,
-        status: error.status,
-        statusText: error.statusText
-      });
-      
-      // Only use fallback if there's a real error, not quota issues
-      throw error;
+    } catch (parseError) {
+      console.error('JSON parsing failed:', parseError);
+      return this.parseResponse(text.replace(/```json|```/g, ''), request);
     }
   }
 
@@ -148,7 +216,7 @@ Return ONLY a valid JSON object following the exact structure specified in the P
     try {
       console.log('Testing API connection...');
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro-latest' });
+      const model = genAI.getGenerativeModel({ model: this.models[0] });
       
       const result = await model.generateContent('Test connection. Respond with "OK".');
       const response = await result.response;
