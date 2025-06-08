@@ -9,8 +9,10 @@ import { selectHeuristics } from '@/utils/heuristicSelector';
 import { ApiKeyRequired } from '@/components/ApiKeyRequired';
 import { AIGeneratorInputPanel } from '@/components/generator/AIGeneratorInputPanel';
 import { AIGeneratorOutputPanel } from '@/components/generator/AIGeneratorOutputPanel';
+import { GeneratorHistory } from '@/components/generator/GeneratorHistory';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Wand2 } from 'lucide-react';
-import { HeuristicType, GenerationRequest } from '@/types';
+import { HeuristicType, GenerationRequest, GenerationResult } from '@/types';
 import { toast } from '@/hooks/use-toast';
 
 export default function AIGeneratorPage() {
@@ -18,6 +20,7 @@ export default function AIGeneratorPage() {
   const { useCredit, canUseCredit, getRemainingCredits } = useCreditStore();
   const { apiKey } = useApiKeyStore();
   const { addPrompt } = usePromptStore();
+  const isMobile = useIsMobile();
 
   const [intent, setIntent] = useState('');
   const [context, setContext] = useState('');
@@ -143,40 +146,82 @@ export default function AIGeneratorPage() {
     });
   };
 
+  const handleSelectHistoryResult = (result: GenerationResult) => {
+    setLastResult(result);
+    toast({ title: 'Loaded!', description: 'Historical result loaded.' });
+  };
+
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold flex items-center">
-          <Wand2 className="w-8 h-8 mr-3 text-brand-500" />
+    <div className="p-4 lg:p-6 max-w-7xl mx-auto">
+      <div className="mb-6 lg:mb-8">
+        <h1 className="text-2xl lg:text-3xl font-bold flex items-center">
+          <Wand2 className="w-6 h-6 lg:w-8 lg:h-8 mr-2 lg:mr-3 text-brand-500" />
           AI Prompt Generator
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-sm lg:text-base text-muted-foreground">
           Transform your ideas using intelligently selected cognitive heuristics
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* Input Panel */}
-        <AIGeneratorInputPanel
-          intent={intent}
-          context={context}
-          complexity={complexity}
-          selectedHeuristics={selectedHeuristics}
-          isGenerating={isGenerating}
-          onIntentChange={handleIntentChange}
-          onContextChange={handleContextChange}
-          onComplexityChange={setComplexity}
-          onGenerate={handleGenerate}
-        />
+      {isMobile ? (
+        <div className="space-y-6">
+          {/* Mobile: Input Panel */}
+          <AIGeneratorInputPanel
+            intent={intent}
+            context={context}
+            complexity={complexity}
+            selectedHeuristics={selectedHeuristics}
+            isGenerating={isGenerating}
+            onIntentChange={handleIntentChange}
+            onContextChange={handleContextChange}
+            onComplexityChange={setComplexity}
+            onGenerate={handleGenerate}
+          />
 
-        {/* Output Panel */}
-        <AIGeneratorOutputPanel
-          lastResult={lastResult}
-          onCopyPrompt={handleCopyPrompt}
-          onSavePrompt={handleSavePrompt}
-          onRemixSuggestion={handleRemixSuggestion}
-        />
-      </div>
+          {/* Mobile: Output Panel */}
+          <AIGeneratorOutputPanel
+            lastResult={lastResult}
+            onCopyPrompt={handleCopyPrompt}
+            onSavePrompt={handleSavePrompt}
+            onRemixSuggestion={handleRemixSuggestion}
+          />
+
+          {/* Mobile: History Panel */}
+          <GeneratorHistory onSelectResult={handleSelectHistoryResult} />
+        </div>
+      ) : (
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
+          {/* Desktop: Input Panel */}
+          <div className="lg:col-span-1">
+            <AIGeneratorInputPanel
+              intent={intent}
+              context={context}
+              complexity={complexity}
+              selectedHeuristics={selectedHeuristics}
+              isGenerating={isGenerating}
+              onIntentChange={handleIntentChange}
+              onContextChange={handleContextChange}
+              onComplexityChange={setComplexity}
+              onGenerate={handleGenerate}
+            />
+          </div>
+
+          {/* Desktop: Output Panel */}
+          <div className="lg:col-span-1">
+            <AIGeneratorOutputPanel
+              lastResult={lastResult}
+              onCopyPrompt={handleCopyPrompt}
+              onSavePrompt={handleSavePrompt}
+              onRemixSuggestion={handleRemixSuggestion}
+            />
+          </div>
+
+          {/* Desktop: History Panel */}
+          <div className="lg:col-span-1">
+            <GeneratorHistory onSelectResult={handleSelectHistoryResult} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
