@@ -3,13 +3,16 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { PlayCircle, RotateCcw, Copy, Save } from 'lucide-react';
+import { PlayCircle, RotateCcw, Copy, Save, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { useApiKeyStore } from '@/store/apiKeyStore';
+import { geminiService } from '@/services/geminiService';
 
 export default function PlaygroundPage() {
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { apiKey, isValidKey } = useApiKeyStore();
 
   const handleTest = async () => {
     if (!prompt.trim()) {
@@ -17,12 +20,37 @@ export default function PlaygroundPage() {
       return;
     }
 
+    if (!isValidKey()) {
+      toast.error('Please configure a valid API key in Settings');
+      return;
+    }
+
     setIsLoading(true);
-    // Simulate API call using Gemini Pro
-    setTimeout(() => {
-      setResponse(`[AI Response from Gemini Pro]\n\nThis is where the AI's response would appear when testing your prompt. The actual implementation would integrate with Google's Gemini Pro API to generate real responses.\n\nYour prompt was:\n"${prompt}"`);
+    
+    try {
+      // Initialize gemini service with API key
+      geminiService.initialize(apiKey!.gemini);
+      
+      // Make direct API call to Gemini
+      const model = geminiService['genAI']?.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+      if (!model) {
+        throw new Error('Failed to initialize Gemini model');
+      }
+      
+      const result = await model.generateContent(prompt);
+      const aiResponse = await result.response;
+      const text = aiResponse.text();
+      
+      setResponse(text);
+      toast.success('Response generated successfully');
+    } catch (error) {
+      console.error('Gemini API error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to generate response';
+      toast.error(`Error: ${errorMessage}`);
+      setResponse('');
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   const handleClear = () => {
@@ -53,9 +81,20 @@ export default function PlaygroundPage() {
           Prompt Playground
         </h1>
         <p className="text-muted-foreground">
-          Test and experiment with prompts in a simple AI chat interface
+          Test and experiment with prompts using Gemini Pro
         </p>
       </div>
+
+      {!isValidKey() && (
+        <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+          <div className="flex items-center">
+            <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mr-2" />
+            <p className="text-yellow-800 dark:text-yellow-200">
+              API key required. Please configure your Gemini API key in Settings to test prompts.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Input Panel */}
@@ -75,7 +114,7 @@ export default function PlaygroundPage() {
               <div className="flex items-center space-x-2">
                 <Button 
                   onClick={handleTest}
-                  disabled={isLoading || !prompt.trim()}
+                  disabled={isLoading || !prompt.trim() || !isValidKey()}
                   className="flex-1"
                 >
                   <PlayCircle className="w-4 h-4 mr-2" />
