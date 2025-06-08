@@ -38,6 +38,7 @@ Generate a practical, effective prompt that applies these cognitive approaches.
 Return ONLY a valid JSON object following the exact structure specified in the PromptDuck specification.`;
 
     console.log('Sending request to Gemini with prompt length:', systemPrompt.length);
+    console.log('Full system prompt:', systemPrompt);
 
     try {
       const result = await this.model.generateContent(systemPrompt);

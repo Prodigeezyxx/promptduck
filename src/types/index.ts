@@ -1,4 +1,3 @@
-
 export interface Prompt {
   id: string;
   title: string;
@@ -58,7 +57,6 @@ export interface GenerationResult {
   optimized_prompt: string;
   preview_title: string;
   tags: string[];
-  persona: PersonaType;
   heuristics: HeuristicType[];
   variables: PromptVariable[];
   metadata: {
