@@ -13,7 +13,8 @@ import {
   Wand2, 
   PlayCircle, 
   Settings as SettingsIcon, 
-  Code
+  Code,
+  Home
 } from 'lucide-react';
 
 const navigation = [
@@ -73,7 +74,8 @@ export function MobileNavigation({ open, onOpenChange }: MobileNavigationProps) 
               className="flex items-center justify-center py-3"
             >
               <Button variant="outline" size="sm" className="w-full">
-                Back to Landing
+                <Home className="w-4 h-4 mr-2" />
+                Home
               </Button>
             </Link>
           </div>

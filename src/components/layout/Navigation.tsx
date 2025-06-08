@@ -9,7 +9,8 @@ import {
   Wand2, 
   PlayCircle, 
   Settings as SettingsIcon, 
-  Code
+  Code,
+  Home
 } from 'lucide-react';
 
 const navigation = [
@@ -68,8 +69,8 @@ export function Navigation() {
         <div className="flex items-center justify-between">
           <ThemeToggle />
           <Link to="/">
-            <Button variant="ghost" size="sm">
-              Landing
+            <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
+              <Home className="w-4 h-4" />
             </Button>
           </Link>
         </div>

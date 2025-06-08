@@ -27,6 +27,9 @@ export default function PromptLibraryPage() {
     ? searchPrompts(searchQuery)
     : prompts;
 
+  // User prompts exclude the first template
+  const userPrompts = filteredPrompts.slice(1);
+
   const handleTemplateClick = () => {
     if (singleTemplate) {
       // Set the current prompt and navigate to generator
@@ -90,12 +93,6 @@ export default function PromptLibraryPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-2 lg:space-y-3 pt-0">
-              <div className="flex items-center flex-wrap gap-1">
-                <Badge className="persona-badge text-xs">
-                  {PERSONAS[singleTemplate.persona].icon} {PERSONAS[singleTemplate.persona].name}
-                </Badge>
-              </div>
-              
               <div className="flex flex-wrap gap-1">
                 {singleTemplate.tags.slice(0, 3).map((tag) => (
                   <span key={tag} className="heuristic-tag text-xs px-2 py-1 bg-accent rounded-md">
@@ -134,9 +131,9 @@ export default function PromptLibraryPage() {
       {/* Your Prompts */}
       <div className="mb-4">
         <h2 className="text-lg font-semibold mb-3">Your Prompts</h2>
-        {filteredPrompts.length > 1 ? (
+        {userPrompts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
-            {filteredPrompts.slice(1).map((prompt) => (
+            {userPrompts.map((prompt) => (
               <Card 
                 key={prompt.id} 
                 className="prompt-card cursor-pointer group hover:shadow-lg transition-all duration-200 border border-border/50"
@@ -193,12 +190,6 @@ export default function PromptLibraryPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-2 lg:space-y-3 pt-0">
-                  <div className="flex items-center flex-wrap gap-1">
-                    <Badge className="persona-badge text-xs">
-                      {PERSONAS[prompt.persona].icon} {PERSONAS[prompt.persona].name}
-                    </Badge>
-                  </div>
-                  
                   <div className="flex flex-wrap gap-1">
                     {prompt.tags.slice(0, 3).map((tag) => (
                       <span key={tag} className="heuristic-tag text-xs px-2 py-1 bg-accent rounded-md">
@@ -222,7 +213,7 @@ export default function PromptLibraryPage() {
           </div>
         ) : (
           <div className="text-center py-8 lg:py-12 border-2 border-dashed border-border rounded-lg">
-            <p className="text-muted-foreground mb-4">No custom prompts yet.</p>
+            <p className="text-muted-foreground mb-4">Your saved prompts appear here</p>
             <Button onClick={handleNewPrompt}>Create your first prompt</Button>
           </div>
         )}

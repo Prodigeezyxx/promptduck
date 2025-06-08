@@ -27,7 +27,8 @@ export function MobileHeader({ onMenuToggle }: MobileHeaderProps) {
           <div className="w-6 h-6 bg-gradient-to-br from-brand-500 to-purple-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-xs">🦆</span>
           </div>
-          <h1 className="text-lg font-bold gradient-text">PromptDuck</h1>
+          {/* Hide text on small screens, show on medium and up */}
+          <h1 className="hidden sm:block text-lg font-bold gradient-text">PromptDuck</h1>
         </Link>
       </div>
 

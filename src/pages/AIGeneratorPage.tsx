@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
 import { useApiKeyStore } from '@/store/apiKeyStore';
@@ -19,13 +19,24 @@ export default function AIGeneratorPage() {
   const { isGenerating, lastResult, setGenerating, setLastResult } = useGeneratorStore();
   const { useCredit, canUseCredit, getRemainingCredits } = useCreditStore();
   const { apiKey } = useApiKeyStore();
-  const { addPrompt } = usePromptStore();
+  const { addPrompt, currentPrompt, setCurrentPrompt } = usePromptStore();
   const isMobile = useIsMobile();
 
   const [intent, setIntent] = useState('');
   const [context, setContext] = useState('');
   const [complexity, setComplexity] = useState<'simple' | 'intermediate' | 'advanced'>('intermediate');
   const [selectedHeuristics, setSelectedHeuristics] = useState<HeuristicType[]>([]);
+
+  // Pre-fill form when currentPrompt is set (from template click)
+  useEffect(() => {
+    if (currentPrompt) {
+      setIntent(currentPrompt.description || currentPrompt.title);
+      setContext(currentPrompt.content);
+      setSelectedHeuristics(currentPrompt.heuristics);
+      // Clear the current prompt after pre-filling
+      setCurrentPrompt(null);
+    }
+  }, [currentPrompt, setCurrentPrompt]);
 
   if (!apiKey) {
     return <ApiKeyRequired />;
