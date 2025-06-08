@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -120,7 +121,7 @@
     @apply inline-flex items-center px-2 py-1 rounded text-xs bg-muted text-muted-foreground;
   }
 
-  /* Claude-inspired styles with reduced purple */
+  /* Claude-inspired styles with reduced blue focus */
   .claude-sidebar {
     @apply bg-gray-950 border-r border-gray-800;
   }
@@ -158,9 +159,61 @@
     @apply max-w-full lg:max-w-7xl mx-auto;
   }
 
-  /* Touch-friendly interactive elements */
+  /* Enhanced touch-friendly interactive elements */
   .touch-target {
     @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+  }
+
+  /* Better mobile scrolling */
+  .mobile-scroll {
+    @apply overflow-x-auto scrollbar-hide;
+  }
+
+  /* Responsive text sizing */
+  .responsive-text-xs {
+    @apply text-xs sm:text-sm;
+  }
+
+  .responsive-text-sm {
+    @apply text-sm sm:text-base;
+  }
+
+  .responsive-text-base {
+    @apply text-base sm:text-lg;
+  }
+
+  .responsive-text-lg {
+    @apply text-lg sm:text-xl;
+  }
+
+  .responsive-text-xl {
+    @apply text-xl sm:text-2xl;
+  }
+
+  /* Mobile-optimized spacing */
+  .mobile-space-y-2 {
+    @apply space-y-2 sm:space-y-3;
+  }
+
+  .mobile-space-y-4 {
+    @apply space-y-4 sm:space-y-6;
+  }
+
+  .mobile-gap-2 {
+    @apply gap-2 sm:gap-3;
+  }
+
+  .mobile-gap-4 {
+    @apply gap-4 sm:gap-6;
+  }
+
+  /* Improved prose styling for prompts */
+  .prose {
+    @apply text-foreground;
+  }
+
+  .prose p {
+    @apply text-foreground leading-relaxed;
   }
 }
 
@@ -220,4 +273,33 @@
 .loading-dots > div {
   @apply w-2 h-2 bg-current rounded-full animate-pulse;
   animation-delay: calc(var(--i) * 0.15s);
+}
+
+/* Enhanced mobile-specific styles */
+@media (max-width: 768px) {
+  .mobile-full-width {
+    @apply w-full;
+  }
+  
+  .mobile-text-center {
+    @apply text-center;
+  }
+  
+  .mobile-flex-col {
+    @apply flex-col;
+  }
+  
+  .mobile-gap-3 {
+    @apply gap-3;
+  }
+
+  /* Better mobile card padding */
+  .prompt-card {
+    @apply p-4;
+  }
+
+  /* Improved mobile button spacing */
+  .mobile-button-spacing {
+    @apply space-y-3;
+  }
 }

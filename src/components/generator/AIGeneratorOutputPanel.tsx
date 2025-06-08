@@ -30,6 +30,19 @@ export function AIGeneratorOutputPanel({
     );
   }
 
+  // Clean formatting function to remove asterisks and format nicely
+  const formatPromptContent = (content: string) => {
+    return content
+      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold asterisks
+      .replace(/\*(.*?)\*/g, '$1') // Remove italic asterisks
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0)
+      .join('\n\n');
+  };
+
+  const formattedPrompt = formatPromptContent(lastResult.optimized_prompt);
+
   return (
     <div className="space-y-6">
       <Card>
@@ -49,8 +62,14 @@ export function AIGeneratorOutputPanel({
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="prompt-editor bg-muted/50 p-4 rounded-lg">
-            <pre className="whitespace-pre-wrap text-sm">{lastResult.optimized_prompt}</pre>
+          <div className="bg-muted/30 p-4 lg:p-6 rounded-lg border">
+            <div className="prose prose-sm max-w-none text-foreground">
+              {formattedPrompt.split('\n\n').map((paragraph, index) => (
+                <p key={index} className="mb-4 last:mb-0 leading-relaxed">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
           </div>
           
           <div className="flex flex-wrap gap-2">

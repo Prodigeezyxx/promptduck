@@ -1,4 +1,3 @@
-
 import { PersonaType, HeuristicType, PromptCategory } from '@/types';
 
 export const PERSONAS: Record<PersonaType, {
@@ -124,7 +123,7 @@ export const CATEGORIES: Record<PromptCategory, {
   }
 };
 
-export const DAILY_CREDIT_LIMIT = 40;
+export const DAILY_CREDIT_LIMIT = 20;
 
 export const MASTER_SYSTEM_PROMPT = `You are PromptDuck, a sentient prompt engine architect.
 Build an internal prompt system that combines multi-role logic, recursive self-correction, contradiction layering, and symbolic anchoring.

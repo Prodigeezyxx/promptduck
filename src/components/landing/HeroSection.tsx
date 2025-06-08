@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { VariableProximity } from '@/components/VariableProximity';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import LetterGlitch from '@/components/effects/LetterGlitch';
+import { AnimatedPromptDisplay } from './AnimatedPromptDisplay';
 
 export function HeroSection() {
   return (
@@ -21,15 +22,15 @@ export function HeroSection() {
       </div>
 
       {/* Animated background - improved for light mode */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-950 dark:via-gray-900 dark:to-black light:from-gray-100 light:via-gray-50 light:to-gray-200" />
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-100 to-gray-300 dark:from-gray-950 dark:via-gray-900 dark:to-black" />
       
       {/* Light mode overlay */}
-      <div className="absolute inset-0 bg-white/90 dark:bg-transparent" />
+      <div className="absolute inset-0 bg-white/80 dark:bg-transparent" />
       
-      {/* Floating orbs - reduced purple, improved for light mode */}
+      {/* Floating orbs - reduced for light mode */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          className="absolute top-1/4 left-1/4 w-64 h-64 bg-brand-500/20 dark:bg-brand-500/10 rounded-full blur-3xl"
+          className="absolute top-1/4 left-1/4 w-64 h-64 bg-brand-500/15 dark:bg-brand-500/10 rounded-full blur-3xl"
           animate={{ 
             x: [0, 100, 0],
             y: [0, -50, 0],
@@ -38,7 +39,7 @@ export function HeroSection() {
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute top-3/4 right-1/4 w-96 h-96 bg-blue-500/20 dark:bg-blue-500/10 rounded-full blur-3xl"
+          className="absolute top-3/4 right-1/4 w-96 h-96 bg-blue-500/15 dark:bg-blue-500/10 rounded-full blur-3xl"
           animate={{ 
             x: [0, -80, 0],
             y: [0, 60, 0],
@@ -106,8 +107,17 @@ export function HeroSection() {
             transition={{ delay: 0.9, duration: 0.8 }}
             className="pt-8 lg:pt-12 text-xs lg:text-sm text-gray-500 dark:text-gray-400"
           >
-            <p>40 free generations daily • No credit card required</p>
+            <p>20 free generations daily • No credit card required</p>
           </motion.div>
+        </motion.div>
+
+        {/* Animated Prompt Display */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.8 }}
+        >
+          <AnimatedPromptDisplay />
         </motion.div>
       </div>
     </section>
