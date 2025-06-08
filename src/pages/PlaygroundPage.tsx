@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PlayCircle, RotateCcw, Copy, Save } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -11,7 +10,6 @@ export default function PlaygroundPage() {
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [model, setModel] = useState('gpt-3.5-turbo');
 
   const handleTest = async () => {
     if (!prompt.trim()) {
@@ -20,9 +18,9 @@ export default function PlaygroundPage() {
     }
 
     setIsLoading(true);
-    // Simulate API call
+    // Simulate API call using Gemini Pro
     setTimeout(() => {
-      setResponse(`[Simulated AI Response for model: ${model}]\n\nThis is where the AI's response would appear when testing your prompt. The actual implementation would integrate with your preferred AI service (OpenAI, Anthropic, Google, etc.) to generate real responses.\n\nYour prompt was:\n"${prompt}"`);
+      setResponse(`[AI Response from Gemini Pro]\n\nThis is where the AI's response would appear when testing your prompt. The actual implementation would integrate with Google's Gemini Pro API to generate real responses.\n\nYour prompt was:\n"${prompt}"`);
       setIsLoading(false);
     }, 2000);
   };
@@ -64,22 +62,7 @@ export default function PlaygroundPage() {
         <div className="space-y-4">
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Prompt Input</CardTitle>
-                <div className="flex items-center space-x-2">
-                  <Select value={model} onValueChange={setModel}>
-                    <SelectTrigger className="w-40">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="gpt-4">GPT-4</SelectItem>
-                      <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo</SelectItem>
-                      <SelectItem value="claude-3">Claude 3</SelectItem>
-                      <SelectItem value="gemini-pro">Gemini Pro</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+              <CardTitle>Prompt Input</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <Textarea
