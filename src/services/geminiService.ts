@@ -1,4 +1,3 @@
-
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 import { GenerationRequest, GenerationResult, PersonaType, HeuristicType } from '@/types';
 import { PROMPT_DUCK_SPECIFICATION, PERSONAS, HEURISTICS } from '@/constants';
@@ -18,21 +17,20 @@ export class GeminiService {
       throw new Error('Gemini service not initialized');
     }
 
-    const persona = PERSONAS[request.persona];
+    const defaultPersona = 'strategist';
+    const persona = PERSONAS[request.persona || defaultPersona];
     const heuristicsDesc = request.heuristics.map(h => HEURISTICS[h].description).join(', ');
 
     const systemPrompt = `${PROMPT_DUCK_SPECIFICATION}
 
 CURRENT REQUEST:
 Intent: ${request.intent}
-Persona: ${persona.name} - ${persona.description}
 Heuristics: ${heuristicsDesc}
 Context: ${request.context || 'None provided'}
-Style: ${request.style || 'balanced'}
 Complexity: ${request.complexity || 'intermediate'}
 
-Apply the ${persona.name} persona and use these heuristics: ${request.heuristics.join(', ')}.
-Generate a prompt that embodies the persona's traits: ${persona.traits.join(', ')}.
+Use these heuristics: ${request.heuristics.join(', ')}.
+Generate a practical, effective prompt that applies these cognitive approaches.
 
 Return ONLY a valid JSON object following the exact structure specified in the PromptDuck specification.`;
 
@@ -52,9 +50,9 @@ Return ONLY a valid JSON object following the exact structure specified in the P
       // Validate and structure the response
       const generationResult: GenerationResult = {
         optimized_prompt: parsed.optimized_prompt || text,
-        preview_title: parsed.preview_title || `${persona.name} Generated Prompt`,
-        tags: Array.isArray(parsed.tags) ? parsed.tags : [request.persona, ...request.heuristics],
-        persona: request.persona,
+        preview_title: parsed.preview_title || 'Generated Prompt',
+        tags: Array.isArray(parsed.tags) ? parsed.tags : ['generated', ...request.heuristics],
+        persona: request.persona || defaultPersona,
         heuristics: request.heuristics,
         variables: Array.isArray(parsed.variables) ? parsed.variables : [],
         metadata: {
@@ -65,7 +63,7 @@ Return ONLY a valid JSON object following the exact structure specified in the P
         },
         remix_suggestions: Array.isArray(parsed.remix_suggestions) 
           ? parsed.remix_suggestions 
-          : ['Contradict the main premise', 'Add temporal distortion', 'Switch to opposing persona', 'Merge with another chain']
+          : ['Contradict the main premise', 'Add temporal distortion', 'Apply different complexity', 'Merge with another chain']
       };
 
       return generationResult;
@@ -78,13 +76,11 @@ Return ONLY a valid JSON object following the exact structure specified in the P
   }
 
   private generateFallbackPrompt(request: GenerationRequest): GenerationResult {
-    const persona = PERSONAS[request.persona];
-    
     return {
-      optimized_prompt: `As a ${persona.name.toLowerCase()}, approach "${request.intent}" with ${persona.traits.slice(0, 2).join(' and ')} thinking. Consider multiple perspectives and create a comprehensive response that balances depth with clarity. Structure your approach around {key_focus} and ensure your output serves {target_outcome}.`,
-      preview_title: `${persona.name}: ${request.intent}`,
-      tags: [request.persona, 'generated', 'fallback'],
-      persona: request.persona,
+      optimized_prompt: `Approach "${request.intent}" with structured thinking. Consider multiple perspectives and create a comprehensive response that balances depth with clarity. Structure your approach around {key_focus} and ensure your output serves {target_outcome}.`,
+      preview_title: `Generated: ${request.intent}`,
+      tags: ['generated', 'fallback'],
+      persona: request.persona || 'strategist',
       heuristics: request.heuristics,
       variables: [
         { name: 'key_focus', type: 'text', required: true, description: 'Primary focus area' },
@@ -99,7 +95,7 @@ Return ONLY a valid JSON object following the exact structure specified in the P
       remix_suggestions: [
         'Add contradiction stacking',
         'Apply time distortion lens',
-        'Switch to builder persona',
+        'Increase complexity level',
         'Merge with recursive refinement'
       ]
     };

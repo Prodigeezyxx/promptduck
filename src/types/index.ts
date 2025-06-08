@@ -47,7 +47,7 @@ export type PromptCategory =
 
 export interface GenerationRequest {
   intent: string;
-  persona: PersonaType;
+  persona?: PersonaType;
   heuristics: HeuristicType[];
   context?: string;
   style?: 'concise' | 'detailed' | 'creative';

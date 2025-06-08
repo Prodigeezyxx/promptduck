@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
@@ -13,8 +14,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { ApiKeyRequired } from '@/components/ApiKeyRequired';
 import { Wand2, Save, Copy, RefreshCw, Sparkles } from 'lucide-react';
-import { PERSONAS, HEURISTICS } from '@/constants';
-import { PersonaType, HeuristicType, GenerationRequest } from '@/types';
+import { HEURISTICS } from '@/constants';
+import { HeuristicType, GenerationRequest } from '@/types';
 import { toast } from '@/hooks/use-toast';
 
 export default function AIGeneratorPage() {
@@ -25,9 +26,7 @@ export default function AIGeneratorPage() {
 
   const [intent, setIntent] = useState('');
   const [context, setContext] = useState('');
-  const [persona, setPersona] = useState<PersonaType>('strategist');
   const [selectedHeuristics, setSelectedHeuristics] = useState<HeuristicType[]>(['multi_role_collision']);
-  const [style, setStyle] = useState<'concise' | 'detailed' | 'creative'>('balanced' as any);
   const [complexity, setComplexity] = useState<'simple' | 'intermediate' | 'advanced'>('intermediate');
 
   if (!apiKey) {
@@ -63,10 +62,8 @@ export default function AIGeneratorPage() {
 
       const request: GenerationRequest = {
         intent,
-        persona,
         heuristics: selectedHeuristics,
         context: context.trim() || undefined,
-        style,
         complexity
       };
 
@@ -94,9 +91,9 @@ export default function AIGeneratorPage() {
     addPrompt({
       title: lastResult.preview_title,
       content: lastResult.optimized_prompt,
-      description: `Generated with ${PERSONAS[lastResult.persona].name}`,
+      description: 'AI Generated Prompt',
       tags: lastResult.tags,
-      persona: lastResult.persona,
+      persona: 'strategist',
       heuristics: lastResult.heuristics,
       variables: lastResult.variables,
       category: 'general'
@@ -128,7 +125,7 @@ export default function AIGeneratorPage() {
           AI Prompt Generator
         </h1>
         <p className="text-muted-foreground">
-          Transform your ideas using cognitive heuristics and archetypal personas
+          Transform your ideas using cognitive heuristics
         </p>
       </div>
 
@@ -164,59 +161,21 @@ export default function AIGeneratorPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Persona & Style</CardTitle>
+              <CardTitle>Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-2 block">Choose Persona</label>
-                <Select value={persona} onValueChange={(value) => setPersona(value as PersonaType)}>
+                <label className="text-sm font-medium mb-2 block">Complexity</label>
+                <Select value={complexity} onValueChange={(value) => setComplexity(value as any)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(PERSONAS).map(([key, personaData]) => (
-                      <SelectItem key={key} value={key}>
-                        <div className="flex items-center space-x-2">
-                          <span>{personaData.icon}</span>
-                          <span>{personaData.name}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
+                    <SelectItem value="simple">Simple</SelectItem>
+                    <SelectItem value="intermediate">Intermediate</SelectItem>
+                    <SelectItem value="advanced">Advanced</SelectItem>
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {PERSONAS[persona].description}
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Style</label>
-                  <Select value={style} onValueChange={(value) => setStyle(value as any)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="concise">Concise</SelectItem>
-                      <SelectItem value="detailed">Detailed</SelectItem>
-                      <SelectItem value="creative">Creative</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Complexity</label>
-                  <Select value={complexity} onValueChange={(value) => setComplexity(value as any)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="simple">Simple</SelectItem>
-                      <SelectItem value="intermediate">Intermediate</SelectItem>
-                      <SelectItem value="advanced">Advanced</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
               </div>
             </CardContent>
           </Card>
