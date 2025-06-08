@@ -182,11 +182,11 @@ export const SAMPLE_PROMPTS = [
     persona: 'strategist' as PersonaType,
     heuristics: ['multi_role_collision', 'contradiction_stacking'] as HeuristicType[],
     variables: [
-      { name: 'role1', type: 'text', default: 'data analyst', required: true, description: 'First role perspective' },
-      { name: 'role2', type: 'text', default: 'creative director', required: true, description: 'Second role perspective' },
-      { name: 'topic', type: 'text', required: true, description: 'Content topic or theme' },
-      { name: 'constraint1', type: 'text', default: 'authenticity', required: true, description: 'First constraint' },
-      { name: 'constraint2', type: 'text', default: 'scalability', required: true, description: 'Second constraint' }
+      { name: 'role1', type: 'text' as const, default: 'data analyst', required: true, description: 'First role perspective' },
+      { name: 'role2', type: 'text' as const, default: 'creative director', required: true, description: 'Second role perspective' },
+      { name: 'topic', type: 'text' as const, required: true, description: 'Content topic or theme' },
+      { name: 'constraint1', type: 'text' as const, default: 'authenticity', required: true, description: 'First constraint' },
+      { name: 'constraint2', type: 'text' as const, default: 'scalability', required: true, description: 'Second constraint' }
     ],
     created_at: '2024-06-08T10:00:00Z',
     updated_at: '2024-06-08T10:00:00Z',
@@ -203,12 +203,12 @@ export const SAMPLE_PROMPTS = [
     persona: 'dreamer' as PersonaType,
     heuristics: ['time_distortion', 'context_anchoring', 'contradiction_stacking'] as HeuristicType[],
     variables: [
-      { name: 'past_era', type: 'text', default: 'Renaissance', required: true, description: 'Historical period' },
-      { name: 'future_vision', type: 'text', default: '2050', required: true, description: 'Future timeframe' },
-      { name: 'metaphor', type: 'text', default: 'flowing river', required: true, description: 'Guiding metaphor' },
-      { name: 'emotion1', type: 'text', default: 'wonder', required: true, description: 'First emotion' },
-      { name: 'emotion2', type: 'text', default: 'determination', required: true, description: 'Second emotion' },
-      { name: 'concept', type: 'text', required: true, description: 'Core concept to explore' }
+      { name: 'past_era', type: 'text' as const, default: 'Renaissance', required: true, description: 'Historical period' },
+      { name: 'future_vision', type: 'text' as const, default: '2050', required: true, description: 'Future timeframe' },
+      { name: 'metaphor', type: 'text' as const, default: 'flowing river', required: true, description: 'Guiding metaphor' },
+      { name: 'emotion1', type: 'text' as const, default: 'wonder', required: true, description: 'First emotion' },
+      { name: 'emotion2', type: 'text' as const, default: 'determination', required: true, description: 'Second emotion' },
+      { name: 'concept', type: 'text' as const, required: true, description: 'Core concept to explore' }
     ],
     created_at: '2024-06-08T10:30:00Z',
     updated_at: '2024-06-08T10:30:00Z',
@@ -225,9 +225,9 @@ export const SAMPLE_PROMPTS = [
     persona: 'builder' as PersonaType,
     heuristics: ['recursive_refinement'] as HeuristicType[],
     variables: [
-      { name: 'goal', type: 'text', required: true, description: 'Main objective to achieve' },
-      { name: 'value_type', type: 'select', options: ['immediate value', 'long-term value', 'learning value'], default: 'immediate value', required: true, description: 'Type of value to prioritize' },
-      { name: 'quality_standard', type: 'text', default: 'high quality', required: true, description: 'Quality benchmark' }
+      { name: 'goal', type: 'text' as const, required: true, description: 'Main objective to achieve' },
+      { name: 'value_type', type: 'select' as const, options: ['immediate value', 'long-term value', 'learning value'], default: 'immediate value', required: true, description: 'Type of value to prioritize' },
+      { name: 'quality_standard', type: 'text' as const, default: 'high quality', required: true, description: 'Quality benchmark' }
     ],
     created_at: '2024-06-08T11:00:00Z',
     updated_at: '2024-06-08T11:00:00Z',
