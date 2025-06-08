@@ -29,25 +29,15 @@ export default function PromptLibraryPage() {
 
   const handleTemplateClick = () => {
     if (singleTemplate) {
-      // Set the current prompt with all its content and navigate to generator
-      setCurrentPrompt({
-        ...singleTemplate,
-        // Pre-fill the intent with the template's description
-        intent: singleTemplate.description || singleTemplate.title,
-        content: singleTemplate.content
-      });
+      // Set the current prompt and navigate to generator
+      setCurrentPrompt(singleTemplate);
       navigate('/app/generator');
     }
   };
 
   const handleCardClick = (prompt: any) => {
-    // Set the current prompt with all its content and navigate to generator
-    setCurrentPrompt({
-      ...prompt,
-      // Ensure we have the full prompt content
-      intent: prompt.description || prompt.title,
-      content: prompt.content
-    });
+    // Set the current prompt and navigate to generator
+    setCurrentPrompt(prompt);
     navigate('/app/generator');
   };
 
