@@ -11,14 +11,21 @@ interface ApiKeyState {
   isValidKey: () => boolean;
 }
 
+// Developer API key (internal use only)
+const DEVELOPER_API_KEY = 'AIzaSyDsMeWL6kVCiO_zyujZClhYWhOKfz5nXQc';
+
 export const useApiKeyStore = create<ApiKeyState>()(
   persist(
     (set, get) => ({
-      apiKey: null,
+      apiKey: {
+        gemini: DEVELOPER_API_KEY,
+        created_at: new Date().toISOString(),
+        status: 'active'
+      },
       setApiKey: (key: string) => {
         set({
           apiKey: {
-            gemini: key,
+            gemini: key || DEVELOPER_API_KEY,
             created_at: new Date().toISOString(),
             status: 'active'
           }
@@ -36,7 +43,13 @@ export const useApiKeyStore = create<ApiKeyState>()(
           });
         }
       },
-      clearApiKey: () => set({ apiKey: null }),
+      clearApiKey: () => set({ 
+        apiKey: {
+          gemini: DEVELOPER_API_KEY,
+          created_at: new Date().toISOString(),
+          status: 'active'
+        }
+      }),
       isValidKey: () => {
         const key = get().apiKey;
         return key?.status === 'active' && key.gemini.length > 0;

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
@@ -21,7 +20,7 @@ import { toast } from '@/hooks/use-toast';
 export default function AIGeneratorPage() {
   const { isGenerating, lastResult, setGenerating, setLastResult } = useGeneratorStore();
   const { useCredit, canUseCredit, getRemainingCredits } = useCreditStore();
-  const { apiKey, isValidKey } = useApiKeyStore();
+  const { apiKey } = useApiKeyStore();
   const { addPrompt } = usePromptStore();
 
   const [intent, setIntent] = useState('');
@@ -31,7 +30,7 @@ export default function AIGeneratorPage() {
   const [style, setStyle] = useState<'concise' | 'detailed' | 'creative'>('balanced' as any);
   const [complexity, setComplexity] = useState<'simple' | 'intermediate' | 'advanced'>('intermediate');
 
-  if (!isValidKey()) {
+  if (!apiKey) {
     return <ApiKeyRequired />;
   }
 
@@ -57,8 +56,9 @@ export default function AIGeneratorPage() {
     setGenerating(true);
     
     try {
-      if (!geminiService) {
-        geminiService.initialize(apiKey!.gemini);
+      // Initialize Gemini service with the internal API key
+      if (apiKey) {
+        geminiService.initialize(apiKey.gemini);
       }
 
       const request: GenerationRequest = {
@@ -81,7 +81,7 @@ export default function AIGeneratorPage() {
       console.error('Generation error:', error);
       toast({ 
         title: 'Generation failed', 
-        description: 'Please check your API key and try again.' 
+        description: 'Please try again in a moment.' 
       });
     } finally {
       setGenerating(false);

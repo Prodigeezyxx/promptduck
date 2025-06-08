@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { ApiKeySettings } from '@/components/settings/ApiKeySettings';
 import { 
   Settings as SettingsIcon, 
   Palette, 
@@ -57,9 +56,6 @@ export default function SettingsPage() {
       </div>
 
       <div className="space-y-6">
-        {/* API Key Settings */}
-        <ApiKeySettings />
-
         {/* Theme Settings */}
         <Card>
           <CardHeader>

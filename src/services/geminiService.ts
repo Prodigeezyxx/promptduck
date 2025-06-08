@@ -9,7 +9,8 @@ export class GeminiService {
 
   initialize(apiKey: string) {
     this.genAI = new GoogleGenerativeAI(apiKey);
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-pro' });
+    // Use the latest Gemini Pro model
+    this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-pro-latest' });
   }
 
   async generatePrompt(request: GenerationRequest): Promise<GenerationResult> {
@@ -107,7 +108,7 @@ Return ONLY a valid JSON object following the exact structure specified in the P
   async testConnection(apiKey: string): Promise<boolean> {
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro-latest' });
       
       const result = await model.generateContent('Test connection. Respond with "OK".');
       const response = await result.response;
