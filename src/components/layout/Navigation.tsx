@@ -4,12 +4,12 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from './ThemeToggle';
 import { CreditDisplay } from '@/components/CreditDisplay';
+import { UserButton, useUser } from '@clerk/clerk-react';
 import { 
   BookOpen, 
   Wand2, 
   PlayCircle, 
   Settings as SettingsIcon, 
-  Code,
   Home
 } from 'lucide-react';
 
@@ -17,12 +17,12 @@ const navigation = [
   { name: 'Library', href: '/app/library', icon: BookOpen },
   { name: 'Generator', href: '/app/generator', icon: Wand2 },
   { name: 'Playground', href: '/app/playground', icon: PlayCircle },
-  { name: 'System Editor', href: '/app/system-editor', icon: Code },
   { name: 'Settings', href: '/app/settings', icon: SettingsIcon },
 ];
 
 export function Navigation() {
   const location = useLocation();
+  const { user } = useUser();
 
   return (
     <nav className="hidden lg:flex w-64 min-h-screen bg-card border-r border-border flex-col">
@@ -38,6 +38,23 @@ export function Navigation() {
           </div>
         </Link>
       </div>
+
+      {/* User Profile */}
+      {user && (
+        <div className="p-4 border-b border-border">
+          <div className="flex items-center space-x-3">
+            <UserButton afterSignOutUrl="/" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">
+                {user.firstName || user.emailAddresses[0]?.emailAddress}
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                {user.emailAddresses[0]?.emailAddress}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Navigation Links */}
       <div className="flex-1 p-4 space-y-2">

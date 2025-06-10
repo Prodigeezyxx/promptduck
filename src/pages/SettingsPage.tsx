@@ -1,22 +1,27 @@
 
 import { useCreditStore } from '@/store/creditStore';
 import { useThemeStore } from '@/store/themeStore';
+import { useUser } from '@clerk/clerk-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
+import { ApiKeySettings } from '@/components/settings/ApiKeySettings';
 import { 
   Settings as SettingsIcon, 
+  User, 
   Palette, 
   CreditCard, 
   Download, 
   Upload,
-  Trash2
+  Trash2,
+  Shield
 } from 'lucide-react';
 
 export default function SettingsPage() {
   const { credits, getRemainingCredits } = useCreditStore();
   const { theme, toggleTheme } = useThemeStore();
+  const { user } = useUser();
 
   const handleExportData = () => {
     // Export all data as JSON
@@ -24,7 +29,8 @@ export default function SettingsPage() {
       prompts: localStorage.getItem('promptduck-prompts'),
       credits: localStorage.getItem('promptduck-credits'),
       theme: localStorage.getItem('promptduck-theme'),
-      exportDate: new Date().toISOString()
+      exportDate: new Date().toISOString(),
+      userId: user?.id
     };
     
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -37,8 +43,10 @@ export default function SettingsPage() {
   };
 
   const handleClearData = () => {
-    if (confirm('This will permanently delete all your data. Are you sure?')) {
-      localStorage.clear();
+    if (confirm('This will permanently delete all your local data. Your account will remain active. Are you sure?')) {
+      // Clear only local data, not account data
+      localStorage.removeItem('promptduck-prompts');
+      localStorage.removeItem('promptduck-credits');
       window.location.reload();
     }
   };
@@ -51,11 +59,53 @@ export default function SettingsPage() {
           Settings
         </h1>
         <p className="text-muted-foreground">
-          Manage your PromptDuck preferences and configuration
+          Manage your PromptDuck account and preferences
         </p>
       </div>
 
       <div className="space-y-6">
+        {/* Account Information */}
+        {user && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <User className="w-5 h-5 mr-2" />
+                Account Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <span className="text-sm text-muted-foreground">Name:</span>
+                  <p className="font-medium">{user.firstName || 'Not set'} {user.lastName || ''}</p>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">Email:</span>
+                  <p className="font-medium">{user.emailAddresses[0]?.emailAddress}</p>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">User ID:</span>
+                  <p className="font-mono text-xs">{user.id}</p>
+                </div>
+                <div>
+                  <span className="text-sm text-muted-foreground">Member Since:</span>
+                  <p className="font-medium">
+                    {new Date(user.createdAt || '').toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Shield className="w-4 h-4 text-green-600" />
+                <span className="text-sm text-green-600">Account Verified</span>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* API Key Configuration */}
+        <ApiKeySettings />
+
         {/* Theme Settings */}
         <Card>
           <CardHeader>
@@ -126,7 +176,7 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Button variant="outline" onClick={handleExportData}>
                 <Download className="w-4 h-4 mr-2" />
-                Export Data
+                Export Local Data
               </Button>
               
               <Button variant="outline" disabled>
@@ -142,10 +192,10 @@ export default function SettingsPage() {
                 className="w-full md:w-auto"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
-                Clear All Data
+                Clear Local Data
               </Button>
               <p className="text-xs text-muted-foreground mt-2">
-                This will permanently delete all your prompts, settings, and data.
+                This will clear your local prompts and settings. Your account data remains safe.
               </p>
             </div>
           </CardContent>
@@ -168,7 +218,7 @@ export default function SettingsPage() {
             </div>
             
             <p className="text-sm text-muted-foreground">
-              Cognitive prompt engineering for the modern creator. Built with React, TypeScript, 
+              Your AI co-pilot for perfect prompts. Built with React, TypeScript, 
               and powered by Google Gemini AI.
             </p>
             
