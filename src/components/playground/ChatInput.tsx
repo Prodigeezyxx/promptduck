@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, Paperclip, Mic } from 'lucide-react';
+import { Send, Paperclip, Mic, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ChatInputProps {
@@ -11,6 +11,7 @@ interface ChatInputProps {
   onSend: (message: string) => void;
   disabled?: boolean;
   placeholder?: string;
+  isLoading?: boolean;
 }
 
 export function ChatInput({ 
@@ -18,12 +19,13 @@ export function ChatInput({
   onChange, 
   onSend, 
   disabled = false,
-  placeholder = "Message PromptDuck..."
+  placeholder = "Message PromptDuck...",
+  isLoading = false
 }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = () => {
-    if (value.trim() && !disabled) {
+    if (value.trim() && !disabled && !isLoading) {
       onSend(value);
     }
   };
@@ -45,19 +47,20 @@ export function ChatInput({
   }, [value]);
 
   return (
-    <div className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <div className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky bottom-0">
       <div className="max-w-4xl mx-auto p-4">
         <div className={cn(
           "relative flex items-end space-x-2 rounded-2xl border bg-background shadow-sm",
           "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 transition-all",
-          disabled && "opacity-50"
+          (disabled || isLoading) && "opacity-50"
         )}>
           {/* Attachment button */}
           <Button
             variant="ghost"
             size="sm"
-            disabled={disabled}
-            className="h-10 w-10 rounded-xl flex-shrink-0"
+            disabled={disabled || isLoading}
+            className="h-10 w-10 rounded-xl flex-shrink-0 min-h-[48px] min-w-[48px] touch-target"
+            aria-label="Attach file"
           >
             <Paperclip className="w-4 h-4" />
           </Button>
@@ -69,20 +72,22 @@ export function ChatInput({
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
-            disabled={disabled}
+            disabled={disabled || isLoading}
             className={cn(
               "flex-1 min-h-[40px] max-h-[200px] resize-none border-0 bg-transparent px-0 py-3",
               "focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground"
             )}
             rows={1}
+            aria-label="Message input"
           />
 
           {/* Voice input button */}
           <Button
             variant="ghost"
             size="sm"
-            disabled={disabled}
-            className="h-10 w-10 rounded-xl flex-shrink-0"
+            disabled={disabled || isLoading}
+            className="h-10 w-10 rounded-xl flex-shrink-0 min-h-[48px] min-w-[48px] touch-target"
+            aria-label="Voice input"
           >
             <Mic className="w-4 h-4" />
           </Button>
@@ -90,16 +95,21 @@ export function ChatInput({
           {/* Send button */}
           <Button
             onClick={handleSubmit}
-            disabled={disabled || !value.trim()}
+            disabled={disabled || !value.trim() || isLoading}
             size="sm"
             className={cn(
-              "h-10 w-10 rounded-xl flex-shrink-0",
-              value.trim() && !disabled 
+              "h-10 w-10 rounded-xl flex-shrink-0 min-h-[48px] min-w-[48px] touch-target",
+              value.trim() && !disabled && !isLoading
                 ? "bg-brand-500 hover:bg-brand-600 text-white" 
                 : "bg-muted text-muted-foreground"
             )}
+            aria-label="Send message"
           >
-            <Send className="w-4 h-4" />
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
           </Button>
         </div>
         

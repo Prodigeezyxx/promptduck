@@ -71,7 +71,20 @@ export function usePlaygroundConversation() {
       toast.success('Response generated successfully');
     } catch (error) {
       console.error('Gemini API error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to generate response';
+      let errorMessage = 'Failed to generate response';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('API key')) {
+          errorMessage = 'Invalid API key. Please check your Gemini API key in Settings.';
+        } else if (error.message.includes('quota')) {
+          errorMessage = 'API quota exceeded. Please try again later.';
+        } else if (error.message.includes('network')) {
+          errorMessage = 'Network error. Please check your connection and try again.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       updateMessage(aiMessageId, `Error: ${errorMessage}`, false);
       toast.error(`Error: ${errorMessage}`);
     } finally {

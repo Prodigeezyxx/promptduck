@@ -4,12 +4,14 @@ import { Button } from '@/components/ui/button';
 import { AlertCircle, RotateCcw, Sparkles, History, BookOpen, Zap } from 'lucide-react';
 import { MessageBubble } from './MessageBubble';
 import { ChatInput } from './ChatInput';
+import { ErrorMessage } from './ErrorMessage';
 import { usePlaygroundConversation } from '@/hooks/usePlaygroundConversation';
 import { useSmartPlaygroundSuggestions } from '@/hooks/useSmartPlaygroundSuggestions';
 import { cn } from '@/lib/utils';
 
 export function ChatInterface() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const {
     messages,
     isLoading,
@@ -23,13 +25,34 @@ export function ChatInterface() {
 
   const suggestions = useSmartPlaygroundSuggestions();
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom when new messages arrive or when typing animation updates
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    const scrollToBottom = () => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'end'
+        });
+      }
+    };
+
+    // Scroll immediately for new messages
+    scrollToBottom();
+
+    // Also scroll during typing animations with a slight delay
+    const timer = setTimeout(scrollToBottom, 100);
+    return () => clearTimeout(timer);
+  }, [messages, isLoading]);
 
   const handleSuggestionClick = (content: string) => {
     setCurrentInput(content);
+  };
+
+  const handleRetryLastMessage = () => {
+    const lastUserMessage = messages.filter(m => m.type === 'user').pop();
+    if (lastUserMessage) {
+      sendMessage(lastUserMessage.content);
+    }
   };
 
   const getSourceIcon = (source: string) => {
@@ -52,6 +75,9 @@ export function ChatInterface() {
     }
   };
 
+  const lastMessage = messages[messages.length - 1];
+  const showError = lastMessage?.type === 'ai' && lastMessage.content.startsWith('Error:');
+
   return (
     <div className="flex flex-col h-full">
       {/* API Key Warning */}
@@ -67,7 +93,13 @@ export function ChatInterface() {
       )}
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto">
+      <div 
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto chat-scrollbar"
+        role="log"
+        aria-live="polite"
+        aria-label="Chat messages"
+      >
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full px-4">
             <div className="text-center max-w-2xl">
@@ -77,10 +109,11 @@ export function ChatInterface() {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                 {suggestions.map((suggestion) => (
-                  <div 
+                  <button 
                     key={suggestion.id}
-                    className="p-3 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors group"
+                    className="p-3 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors group text-left min-h-[48px] touch-target"
                     onClick={() => handleSuggestionClick(suggestion.content)}
+                    aria-label={`Use suggestion: ${suggestion.title}`}
                   >
                     <div className="flex items-start justify-between mb-2">
                       <p className="font-medium text-left group-hover:text-brand-600 transition-colors">
@@ -111,22 +144,38 @@ export function ChatInterface() {
                         )}
                       </div>
                     )}
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
           </div>
         ) : (
           <div className="space-y-0">
-            {messages.map((message) => (
-              <MessageBubble
-                key={message.id}
-                type={message.type}
-                content={message.content}
-                isTyping={message.isTyping}
-                onCopy={() => copyMessage(message.content)}
-              />
-            ))}
+            {messages.map((message, index) => {
+              const isLastAiMessage = message.type === 'ai' && index === messages.length - 1;
+              const enableTyping = isLastAiMessage && !message.isTyping;
+              
+              if (message.type === 'ai' && message.content.startsWith('Error:')) {
+                return (
+                  <ErrorMessage
+                    key={message.id}
+                    message={message.content.replace('Error: ', '')}
+                    onRetry={handleRetryLastMessage}
+                  />
+                );
+              }
+              
+              return (
+                <MessageBubble
+                  key={message.id}
+                  type={message.type}
+                  content={message.content}
+                  isTyping={message.isTyping}
+                  onCopy={() => copyMessage(message.content)}
+                  enableTypingAnimation={enableTyping}
+                />
+              );
+            })}
             <div ref={messagesEndRef} />
           </div>
         )}
@@ -139,7 +188,8 @@ export function ChatInterface() {
             variant="ghost"
             size="sm"
             onClick={clearConversation}
-            className="text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground min-h-[48px] touch-target"
+            aria-label="Clear conversation"
           >
             <RotateCcw className="w-4 h-4 mr-2" />
             Clear conversation
@@ -152,7 +202,8 @@ export function ChatInterface() {
         value={currentInput}
         onChange={setCurrentInput}
         onSend={sendMessage}
-        disabled={isLoading || !isValidKey}
+        disabled={!isValidKey}
+        isLoading={isLoading}
       />
     </div>
   );
