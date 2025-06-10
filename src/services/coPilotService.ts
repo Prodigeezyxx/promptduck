@@ -27,11 +27,19 @@ export interface CoPilotSettings {
   complexity: 'simple' | 'intermediate' | 'advanced';
 }
 
+// Counter to ensure unique IDs even for rapid successive calls
+let coPilotMessageCounter = 0;
+
 export class CoPilotService {
   private conversationHistory: CoPilotMessage[] = [];
   private currentPrompt: string = '';
   private currentIntent: string = '';
   private iterations: PromptIteration[] = [];
+
+  private generateId(): string {
+    coPilotMessageCounter += 1;
+    return `copilot_${Date.now()}_${coPilotMessageCounter}_${Math.random().toString(36).substr(2, 9)}`;
+  }
 
   initialize() {
     this.conversationHistory = [
@@ -305,10 +313,6 @@ Apply the suggestion and return an improved version of the prompt.`;
         timestamp: new Date().toISOString()
       };
     }
-  }
-
-  private generateId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 }
 

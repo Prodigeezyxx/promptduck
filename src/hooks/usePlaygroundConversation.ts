@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useApiKeyStore } from '@/store/apiKeyStore';
@@ -12,15 +11,23 @@ interface Message {
   isTyping?: boolean;
 }
 
+// Counter to ensure unique IDs even for rapid successive calls
+let messageCounter = 0;
+
 export function usePlaygroundConversation() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentInput, setCurrentInput] = useState('');
   const { apiKey, isValidKey } = useApiKeyStore();
 
+  const generateUniqueId = () => {
+    messageCounter += 1;
+    return `msg_${Date.now()}_${messageCounter}_${Math.random().toString(36).substr(2, 9)}`;
+  };
+
   const addMessage = (content: string, type: 'user' | 'ai', isTyping = false) => {
     const newMessage: Message = {
-      id: Date.now().toString(),
+      id: generateUniqueId(),
       type,
       content,
       timestamp: new Date(),
