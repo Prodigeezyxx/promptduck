@@ -33,7 +33,11 @@ export type HeuristicType =
   | 'contradiction_stacking'
   | 'time_distortion'
   | 'context_anchoring'
-  | 'self_repairing';
+  | 'self_repairing'
+  | 'universal_clarity'
+  | 'format_optimization'
+  | 'contextual_adaptation'
+  | 'quality_enhancement';
 
 export type PromptCategory = 
   | 'content_creation'

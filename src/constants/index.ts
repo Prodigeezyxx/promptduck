@@ -78,6 +78,26 @@ export const HEURISTICS: Record<HeuristicType, {
     name: 'Self-Repairing',
     description: 'Auto-correct incoherent prompt chains',
     example: 'Detect low signal and repair mid-flow'
+  },
+  universal_clarity: {
+    name: 'Universal Clarity',
+    description: 'Enhance clarity and role definition for all prompts',
+    example: 'Add expert roles and clarify ambiguous terms'
+  },
+  format_optimization: {
+    name: 'Format Optimization',
+    description: 'Optimize output structure and formatting',
+    example: 'Specify numbered lists, headers, and clear structure'
+  },
+  contextual_adaptation: {
+    name: 'Contextual Adaptation',
+    description: 'Adapt to user expertise and urgency levels',
+    example: 'Adjust complexity for beginners vs experts'
+  },
+  quality_enhancement: {
+    name: 'Quality Enhancement',
+    description: 'Add examples, sensory details, and practical elements',
+    example: 'Include real-world examples and vivid descriptions'
   }
 };
 
@@ -143,6 +163,10 @@ Transform user intent into optimized, structured prompts using these principles:
    - Time distortion: Apply nonlinear temporal lenses
    - Context anchoring: Tie to metaphors and symbols
    - Self-repairing: Auto-correct incoherent chains
+   - Universal clarity: Enhance clarity and role definition
+   - Format optimization: Optimize output structure
+   - Contextual adaptation: Adapt to user expertise
+   - Quality enhancement: Add examples and details
 
 2. PERSONA ADAPTATION:
    - Strategist: Analytical, systematic, goal-oriented

@@ -34,7 +34,7 @@ const INTENT_PATTERNS: Record<IntentType, IntentPattern> = {
     phrases: ['show me how', 'teach me', 'step by step', 'walk me through'],
     contexts: ['education', 'learning', 'process', 'method'],
     weight: 1.0,
-    heuristics: ['multi_role_collision', 'recursive_refinement'],
+    heuristics: ['universal_clarity', 'format_optimization', 'multi_role_collision', 'recursive_refinement', 'quality_enhancement'],
     complexity: 'intermediate'
   },
   code: {
@@ -42,7 +42,7 @@ const INTENT_PATTERNS: Record<IntentType, IntentPattern> = {
     phrases: ['write a function', 'create a script', 'build a program'],
     contexts: ['programming', 'development', 'software', 'technical'],
     weight: 1.0,
-    heuristics: ['self_repairing', 'recursive_refinement'],
+    heuristics: ['universal_clarity', 'format_optimization', 'self_repairing', 'recursive_refinement', 'contextual_adaptation'],
     complexity: 'advanced'
   },
   analytical: {
@@ -50,7 +50,7 @@ const INTENT_PATTERNS: Record<IntentType, IntentPattern> = {
     phrases: ['break down', 'deep dive', 'pros and cons', 'what are the'],
     contexts: ['analysis', 'research', 'comparison', 'evaluation'],
     weight: 1.0,
-    heuristics: ['multi_role_collision', 'contradiction_stacking'],
+    heuristics: ['universal_clarity', 'format_optimization', 'multi_role_collision', 'contradiction_stacking', 'quality_enhancement'],
     complexity: 'advanced'
   },
   creative: {
@@ -58,7 +58,7 @@ const INTENT_PATTERNS: Record<IntentType, IntentPattern> = {
     phrases: ['come up with', 'think of', 'generate ideas'],
     contexts: ['writing', 'art', 'creativity', 'storytelling'],
     weight: 1.0,
-    heuristics: ['contradiction_stacking', 'time_distortion', 'context_anchoring'],
+    heuristics: ['universal_clarity', 'contradiction_stacking', 'time_distortion', 'context_anchoring', 'quality_enhancement'],
     complexity: 'intermediate'
   },
   conversational: {
@@ -66,7 +66,7 @@ const INTENT_PATTERNS: Record<IntentType, IntentPattern> = {
     phrases: ['let\'s talk about', 'have a conversation'],
     contexts: ['social', 'discussion', 'informal'],
     weight: 0.8,
-    heuristics: ['context_anchoring'],
+    heuristics: ['universal_clarity', 'context_anchoring', 'contextual_adaptation'],
     complexity: 'simple'
   },
   business: {
@@ -74,7 +74,7 @@ const INTENT_PATTERNS: Record<IntentType, IntentPattern> = {
     phrases: ['business plan', 'go to market', 'competitive analysis'],
     contexts: ['commercial', 'enterprise', 'corporate'],
     weight: 1.0,
-    heuristics: ['multi_role_collision', 'recursive_refinement'],
+    heuristics: ['universal_clarity', 'format_optimization', 'multi_role_collision', 'recursive_refinement', 'quality_enhancement'],
     complexity: 'advanced'
   },
   technical: {
@@ -82,7 +82,7 @@ const INTENT_PATTERNS: Record<IntentType, IntentPattern> = {
     phrases: ['system design', 'technical solution', 'architecture diagram'],
     contexts: ['technology', 'engineering', 'systems'],
     weight: 1.0,
-    heuristics: ['self_repairing', 'multi_role_collision'],
+    heuristics: ['universal_clarity', 'format_optimization', 'self_repairing', 'multi_role_collision', 'contextual_adaptation'],
     complexity: 'advanced'
   },
   unknown: {
@@ -90,7 +90,7 @@ const INTENT_PATTERNS: Record<IntentType, IntentPattern> = {
     phrases: [],
     contexts: [],
     weight: 0.0,
-    heuristics: ['multi_role_collision'],
+    heuristics: ['universal_clarity', 'format_optimization', 'contextual_adaptation'],
     complexity: 'intermediate'
   }
 };
