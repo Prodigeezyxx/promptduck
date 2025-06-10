@@ -2,8 +2,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
-import { AuthButtons } from '@/components/auth/AuthButtons';
-import { useAuth } from '@clerk/clerk-react';
+import { SignInButton, UserButton, useAuth } from '@clerk/clerk-react';
 
 export function LandingHeader() {
   const { isSignedIn } = useAuth();
@@ -23,13 +22,28 @@ export function LandingHeader() {
         <div className="flex items-center space-x-4">
           <ThemeToggle />
           {isSignedIn ? (
-            <Link to="/app/library">
+            <div className="flex items-center space-x-3">
+              <Link to="/app/library">
+                <Button className="bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white border-0 shadow-lg">
+                  Launch App
+                </Button>
+              </Link>
+              <UserButton 
+                afterSignOutUrl="/" 
+                appearance={{
+                  elements: {
+                    avatarBox: "w-8 h-8"
+                  }
+                }}
+              />
+            </div>
+          ) : (
+            <SignInButton mode="modal" fallbackRedirectUrl="/app/library">
               <Button className="bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white border-0 shadow-lg">
                 Launch App
               </Button>
-            </Link>
-          ) : null}
-          <AuthButtons />
+            </SignInButton>
+          )}
         </div>
       </div>
     </header>

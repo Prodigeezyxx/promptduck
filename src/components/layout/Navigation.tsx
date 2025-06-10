@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from './ThemeToggle';
 import { AuthButtons } from '@/components/auth/AuthButtons';
+import { CreditDisplay } from '@/components/CreditDisplay';
 import { 
   BookOpen, 
   Wand2, 
@@ -63,6 +64,9 @@ export function Navigation() {
 
         {/* Footer */}
         <div className="flex-shrink-0 p-4 border-t space-y-4">
+          {/* Credit Display */}
+          <CreditDisplay />
+          
           <div className="flex items-center justify-between">
             <ThemeToggle />
           </div>

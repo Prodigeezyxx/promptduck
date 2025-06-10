@@ -39,7 +39,7 @@ export function GeneratorLayout({
 
   if (isMobile) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 pb-6">
         <AIGeneratorInputPanel
           intent={intent}
           context={context}
@@ -63,24 +63,26 @@ export function GeneratorLayout({
   }
 
   return (
-    <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 max-w-7xl mx-auto">
+    <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 max-w-7xl mx-auto min-h-0">
       {/* Left Column - Input Panel (Fixed width) */}
-      <div className="lg:col-span-4">
-        <AIGeneratorInputPanel
-          intent={intent}
-          context={context}
-          complexity={complexity}
-          selectedHeuristics={selectedHeuristics}
-          isGenerating={isGenerating}
-          onIntentChange={onIntentChange}
-          onContextChange={onContextChange}
-          onComplexityChange={onComplexityChange}
-          onGenerate={onGenerate}
-        />
+      <div className="lg:col-span-4 min-h-0">
+        <div className="sticky top-6">
+          <AIGeneratorInputPanel
+            intent={intent}
+            context={context}
+            complexity={complexity}
+            selectedHeuristics={selectedHeuristics}
+            isGenerating={isGenerating}
+            onIntentChange={onIntentChange}
+            onContextChange={onContextChange}
+            onComplexityChange={onComplexityChange}
+            onGenerate={onGenerate}
+          />
+        </div>
       </div>
 
       {/* Right Column - Output Panel (Expandable) */}
-      <div className="lg:col-span-8">
+      <div className="lg:col-span-8 min-h-0 overflow-hidden">
         <AIGeneratorOutputPanel
           lastResult={lastResult}
           onCopyPrompt={onCopyPrompt}
