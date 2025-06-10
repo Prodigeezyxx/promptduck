@@ -2,6 +2,8 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
+import { AuthButtons } from '@/components/auth/AuthButtons';
+import { SignedIn } from '@clerk/clerk-react';
 
 export function LandingHeader() {
   return (
@@ -18,11 +20,14 @@ export function LandingHeader() {
         
         <div className="flex items-center space-x-4">
           <ThemeToggle />
-          <Link to="/app/library">
-            <Button className="bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white border-0 shadow-lg">
-              Launch App
-            </Button>
-          </Link>
+          <SignedIn>
+            <Link to="/app/library">
+              <Button className="bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white border-0 shadow-lg">
+                Dashboard
+              </Button>
+            </Link>
+          </SignedIn>
+          <AuthButtons />
         </div>
       </div>
     </header>

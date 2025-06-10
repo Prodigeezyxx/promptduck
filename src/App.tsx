@@ -13,7 +13,6 @@ import AppLayout from "./pages/AppLayout";
 import PromptLibraryPage from "./pages/PromptLibraryPage";
 import AIGeneratorPage from "./pages/AIGeneratorPage";
 import PlaygroundPage from "./pages/PlaygroundPage";
-import SystemEditorPage from "./pages/SystemEditorPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 
@@ -47,7 +46,6 @@ const App = () => {
               <Route path="library" element={<PromptLibraryPage />} />
               <Route path="generator" element={<AIGeneratorPage />} />
               <Route path="playground" element={<PlaygroundPage />} />
-              <Route path="system-editor" element={<SystemEditorPage />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
 
@@ -55,7 +53,6 @@ const App = () => {
             <Route path="/library" element={<Navigate to="/app/library" replace />} />
             <Route path="/generator" element={<Navigate to="/app/generator" replace />} />
             <Route path="/playground" element={<Navigate to="/app/playground" replace />} />
-            <Route path="/system-editor" element={<Navigate to="/app/system-editor" replace />} />
             <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
 
             {/* 404 */}
