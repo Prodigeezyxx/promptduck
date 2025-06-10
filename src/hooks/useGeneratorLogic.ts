@@ -5,6 +5,7 @@ import { useApiKeyStore } from '@/store/apiKeyStore';
 import { usePromptStore } from '@/store/promptStore';
 import { geminiService } from '@/services/geminiService';
 import { IntentDetectionEngine } from '@/services/intent/intentDetection';
+import { selectHeuristics } from '@/utils/heuristicSelector';
 import { HeuristicType, GenerationRequest, GenerationResult } from '@/types';
 import { toast } from '@/hooks/use-toast';
 

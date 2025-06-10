@@ -1,3 +1,4 @@
+
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { GenerationRequest, GenerationResult } from '@/types';
 import { GEMINI_CONFIG } from './config';
@@ -71,7 +72,7 @@ export class GeminiService {
     } catch (error) {
       console.error('Gemini generation failed:', error);
       const generationTime = Date.now() - startTime;
-      return GeminiFallbackGenerator.generateFallback(request, generationTime);
+      return GeminiFallbackGenerator.generateFallbackPrompt(request);
     }
   }
 

@@ -66,6 +66,10 @@ export interface GenerationResult {
     estimated_tokens: number;
     confidence_score: number;
     generation_time_ms: number;
+    improvement_confidence?: number;
+    template_used?: string;
+    intent_detected?: string;
+    heuristics_applied?: string[];
   };
   remix_suggestions: string[];
 }
