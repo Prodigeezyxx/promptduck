@@ -1,4 +1,3 @@
-
 import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 import { GenerationRequest, GenerationResult, HeuristicType } from '@/types';
 import { PROMPT_DUCK_SPECIFICATION, HEURISTICS } from '@/constants';
@@ -26,6 +25,7 @@ export class GeminiService {
     }
 
     console.log('Starting prompt generation with request:', request);
+    const startTime = Date.now();
 
     const heuristicsDesc = request.heuristics.map(h => HEURISTICS[h].description).join(', ');
 
@@ -73,7 +73,8 @@ Return ONLY valid JSON:
         console.log('Received response from Gemini, length:', text.length);
         console.log('Raw Gemini response:', text);
 
-        return this.parseResponse(text, request);
+        const endTime = Date.now();
+        return this.parseResponse(text, request, endTime - startTime);
       } catch (error) {
         console.error(`Model ${modelName} failed:`, error);
         
@@ -128,7 +129,7 @@ Return ONLY valid JSON:
            error?.message?.includes('temporarily unavailable');
   }
 
-  private parseResponse(text: string, request: GenerationRequest): GenerationResult {
+  private parseResponse(text: string, request: GenerationRequest, generationTimeMs: number): GenerationResult {
     // Try to parse JSON from the response
     let jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
@@ -143,7 +144,9 @@ Return ONLY valid JSON:
           complexity_score: Math.floor(Math.random() * 3) + 7,
           creativity_score: Math.floor(Math.random() * 3) + 7,
           coherence_score: Math.floor(Math.random() * 3) + 8,
-          estimated_tokens: Math.floor(text.length / 4)
+          estimated_tokens: Math.floor(text.length / 4),
+          confidence_score: Math.random() * 0.3 + 0.7, // 0.7-1.0
+          generation_time_ms: generationTimeMs
         },
         remix_suggestions: [
           'Add more specific constraints',
@@ -169,7 +172,9 @@ Return ONLY valid JSON:
           complexity_score: parsed.metadata?.complexity_score || Math.floor(Math.random() * 3) + 7,
           creativity_score: parsed.metadata?.creativity_score || Math.floor(Math.random() * 3) + 7,
           coherence_score: parsed.metadata?.coherence_score || Math.floor(Math.random() * 3) + 8,
-          estimated_tokens: parsed.metadata?.estimated_tokens || Math.floor(text.length / 4)
+          estimated_tokens: parsed.metadata?.estimated_tokens || Math.floor(text.length / 4),
+          confidence_score: parsed.metadata?.confidence_score || Math.random() * 0.3 + 0.7,
+          generation_time_ms: generationTimeMs
         },
         remix_suggestions: Array.isArray(parsed.remix_suggestions) 
           ? parsed.remix_suggestions 
@@ -182,7 +187,7 @@ Return ONLY valid JSON:
       };
     } catch (parseError) {
       console.error('JSON parsing failed:', parseError);
-      return this.parseResponse(text.replace(/```json|```/g, ''), request);
+      return this.parseResponse(text.replace(/```json|```/g, ''), request, generationTimeMs);
     }
   }
 
@@ -201,7 +206,9 @@ Return ONLY valid JSON:
         complexity_score: 7,
         creativity_score: 6,
         coherence_score: 8,
-        estimated_tokens: 150
+        estimated_tokens: 150,
+        confidence_score: 0.8,
+        generation_time_ms: 0
       },
       remix_suggestions: [
         'Add contradiction stacking',
