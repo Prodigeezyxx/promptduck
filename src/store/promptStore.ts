@@ -7,6 +7,7 @@ import { SAMPLE_PROMPTS } from '@/constants';
 interface PromptState {
   prompts: Prompt[];
   currentPrompt: Prompt | null;
+  featuredPromptStats: Record<string, { views: number; clicks: number }>;
   setCurrentPrompt: (prompt: Prompt | null) => void;
   addPrompt: (prompt: Omit<Prompt, 'id' | 'created_at' | 'updated_at' | 'version' | 'usage_count'>) => void;
   updatePrompt: (id: string, updates: Partial<Prompt>) => void;
@@ -17,6 +18,9 @@ interface PromptState {
   incrementUsage: (id: string) => void;
   searchPrompts: (query: string) => Prompt[];
   clearHistory: () => void;
+  trackFeaturedPromptView: (id: string) => void;
+  trackFeaturedPromptClick: (id: string) => void;
+  getFeaturedPromptStats: (id: string) => { views: number; clicks: number };
 }
 
 export const usePromptStore = create<PromptState>()(
@@ -24,6 +28,7 @@ export const usePromptStore = create<PromptState>()(
     (set, get) => ({
       prompts: [...SAMPLE_PROMPTS],
       currentPrompt: null,
+      featuredPromptStats: {},
       setCurrentPrompt: (prompt) => set({ currentPrompt: prompt }),
       addPrompt: (promptData) => {
         const newPrompt: Prompt = {
@@ -94,6 +99,32 @@ export const usePromptStore = create<PromptState>()(
       },
       clearHistory: () => {
         set({ prompts: [...SAMPLE_PROMPTS], currentPrompt: null });
+      },
+      trackFeaturedPromptView: (id) => {
+        set(state => ({
+          featuredPromptStats: {
+            ...state.featuredPromptStats,
+            [id]: {
+              views: (state.featuredPromptStats[id]?.views || 0) + 1,
+              clicks: state.featuredPromptStats[id]?.clicks || 0
+            }
+          }
+        }));
+      },
+      trackFeaturedPromptClick: (id) => {
+        set(state => ({
+          featuredPromptStats: {
+            ...state.featuredPromptStats,
+            [id]: {
+              views: state.featuredPromptStats[id]?.views || 0,
+              clicks: (state.featuredPromptStats[id]?.clicks || 0) + 1
+            }
+          }
+        }));
+      },
+      getFeaturedPromptStats: (id) => {
+        const stats = get().featuredPromptStats[id];
+        return stats || { views: 0, clicks: 0 };
       }
     }),
     {

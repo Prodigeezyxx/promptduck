@@ -1,13 +1,14 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePromptStore } from '@/store/promptStore';
+import { useFeaturedPrompt } from '@/hooks/useFeaturedPrompt';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Search, Plus, MoreHorizontal, Copy, Trash2, Edit } from 'lucide-react';
-import { PERSONAS, CATEGORIES } from '@/constants';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Search, Plus, MoreHorizontal, Copy, Trash2, Edit, RotateCcw, Info } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,35 +18,38 @@ import {
 
 export default function PromptLibraryPage() {
   const navigate = useNavigate();
-  const { prompts, deletePrompt, duplicatePrompt, setCurrentPrompt, searchPrompts } = usePromptStore();
+  const { prompts, deletePrompt, duplicatePrompt, setCurrentPrompt, searchPrompts, trackFeaturedPromptView, trackFeaturedPromptClick } = usePromptStore();
+  const { featuredPrompt, forceRotation } = useFeaturedPrompt();
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Show only the first template
-  const singleTemplate = prompts[0];
-  
   const filteredPrompts = searchQuery 
     ? searchPrompts(searchQuery)
     : prompts;
 
-  // User prompts exclude the first template
-  const userPrompts = filteredPrompts.slice(1);
+  // User prompts exclude the featured prompt
+  const userPrompts = filteredPrompts.filter(p => p.id !== featuredPrompt?.id);
 
-  const handleTemplateClick = () => {
-    if (singleTemplate) {
-      // Set the current prompt and navigate to generator
-      setCurrentPrompt(singleTemplate);
+  // Track featured prompt view when it's displayed
+  useEffect(() => {
+    if (featuredPrompt) {
+      trackFeaturedPromptView(featuredPrompt.id);
+    }
+  }, [featuredPrompt, trackFeaturedPromptView]);
+
+  const handleFeaturedPromptClick = () => {
+    if (featuredPrompt) {
+      trackFeaturedPromptClick(featuredPrompt.id);
+      setCurrentPrompt(featuredPrompt);
       navigate('/app/generator');
     }
   };
 
   const handleCardClick = (prompt: any) => {
-    // Set the current prompt and navigate to generator
     setCurrentPrompt(prompt);
     navigate('/app/generator');
   };
 
   const handleNewPrompt = () => {
-    // Clear any existing prompt state before creating new
     setCurrentPrompt(null);
     navigate('/app/generator');
   };
@@ -60,7 +64,7 @@ export default function PromptLibraryPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 lg:mb-6 gap-3 lg:gap-4">
         <div className="space-y-1">
           <h1 className="text-xl lg:text-3xl font-bold">Prompt Library</h1>
-          <p className="text-sm text-muted-foreground">Start with our template or create your own</p>
+          <p className="text-sm text-muted-foreground">Discover powerful prompts that rotate every session</p>
         </div>
         <Button 
           onClick={handleNewPrompt}
@@ -73,42 +77,76 @@ export default function PromptLibraryPage() {
       </div>
 
       {/* Featured Template */}
-      {singleTemplate && (
+      {featuredPrompt && (
         <div className="mb-6 lg:mb-8">
-          <h2 className="text-lg font-semibold mb-3">Featured Template</h2>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold">Featured Template</h2>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs">We rotate this prompt every time you open PromptDuck. It's a quick way to discover what you can build.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={forceRotation}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <RotateCcw className="w-4 h-4 mr-1" />
+              Rotate
+            </Button>
+          </div>
+          
           <Card 
-            className="cursor-pointer group hover:shadow-lg transition-all duration-200 border border-border/50 bg-gradient-to-br from-brand-50/30 to-purple-50/30 dark:from-brand-900/10 dark:to-purple-900/10"
-            onClick={handleTemplateClick}
+            className="cursor-pointer group hover:shadow-lg transition-all duration-200 border border-border/50 bg-gradient-to-br from-brand-50/30 to-purple-50/30 dark:from-brand-900/10 dark:to-purple-900/10 relative overflow-hidden"
+            onClick={handleFeaturedPromptClick}
           >
+            <div className="absolute top-2 right-2">
+              <Badge variant="secondary" className="bg-brand-100 text-brand-700 dark:bg-brand-900 dark:text-brand-300">
+                Featured
+              </Badge>
+            </div>
+            
             <CardHeader className="pb-2 lg:pb-3">
-              <div className="flex items-start justify-between gap-2">
+              <div className="flex items-start justify-between gap-2 pr-16">
                 <div className="flex-1 min-w-0">
                   <CardTitle className="text-base lg:text-lg font-semibold line-clamp-2 mb-1 lg:mb-2">
-                    {singleTemplate.title}
+                    {featuredPrompt.title}
                   </CardTitle>
                   <p className="text-sm text-muted-foreground line-clamp-3">
-                    {singleTemplate.description || singleTemplate.content.slice(0, 120) + '...'}
+                    {featuredPrompt.description || featuredPrompt.content.slice(0, 120) + '...'}
                   </p>
                 </div>
               </div>
             </CardHeader>
+            
             <CardContent className="space-y-2 lg:space-y-3 pt-0">
               <div className="flex flex-wrap gap-1">
-                {singleTemplate.tags.slice(0, 3).map((tag) => (
+                {featuredPrompt.tags.slice(0, 4).map((tag) => (
                   <span key={tag} className="heuristic-tag text-xs px-2 py-1 bg-accent rounded-md">
                     {tag}
                   </span>
                 ))}
-                {singleTemplate.tags.length > 3 && (
+                {featuredPrompt.tags.length > 4 && (
                   <span className="heuristic-tag text-xs px-2 py-1 bg-accent rounded-md">
-                    +{singleTemplate.tags.length - 3}
+                    +{featuredPrompt.tags.length - 4}
                   </span>
                 )}
               </div>
               
               <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
-                <span>Click to use this template</span>
-                <span>v{singleTemplate.version}</span>
+                <span className="flex items-center gap-1">
+                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  Click to use this template
+                </span>
+                <span>v{featuredPrompt.version}</span>
               </div>
             </CardContent>
           </Card>
