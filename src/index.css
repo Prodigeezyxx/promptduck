@@ -30,24 +30,24 @@
   }
 
   .dark {
-    --background: 220 13% 5%;
+    --background: 220 13% 2%;
     --foreground: 210 40% 98%;
-    --card: 220 13% 8%;
+    --card: 220 13% 4%;
     --card-foreground: 210 40% 98%;
-    --popover: 220 13% 8%;
+    --popover: 220 13% 4%;
     --popover-foreground: 210 40% 98%;
     --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 220 13% 12%;
+    --secondary: 220 13% 8%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 220 13% 12%;
+    --muted: 220 13% 8%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 220 13% 15%;
+    --accent: 220 13% 10%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 220 13% 20%;
-    --input: 220 13% 15%;
+    --border: 220 13% 15%;
+    --input: 220 13% 10%;
     --ring: 217.2 91.2% 59.8%;
   }
 }
@@ -222,7 +222,7 @@
   }
 
   .suggestion-card {
-    @apply playground-card cursor-pointer group hover:bg-muted/50 dark:hover:bg-gray-800/50;
+    @apply playground-card cursor-pointer hover:bg-muted/50 dark:hover:bg-gray-800/50;
   }
 
   .chat-message-user {

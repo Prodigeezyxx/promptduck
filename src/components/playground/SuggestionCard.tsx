@@ -40,7 +40,7 @@ export function SuggestionCard({ suggestion, onSuggestionClick }: SuggestionCard
   return (
     <button 
       key={suggestion.id}
-      className="suggestion-card text-left min-h-[48px] touch-target p-4"
+      className="suggestion-card text-left min-h-[48px] touch-target p-4 group"
       onClick={() => onSuggestionClick(suggestion.content)}
       aria-label={`Use suggestion: ${suggestion.title}`}
     >
@@ -52,7 +52,7 @@ export function SuggestionCard({ suggestion, onSuggestionClick }: SuggestionCard
           "flex items-center gap-1 px-2 py-1 rounded-full text-xs shrink-0 ml-2",
           getSourceColor(suggestion.source)
         )}>
-          {getSourceIcon(source)}
+          {getSourceIcon(suggestion.source)}
           <span className="capitalize">{suggestion.source}</span>
         </div>
       </div>
