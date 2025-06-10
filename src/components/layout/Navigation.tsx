@@ -4,12 +4,12 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from './ThemeToggle';
 import { CreditDisplay } from '@/components/CreditDisplay';
-import { AuthButtons } from '@/components/auth/AuthButtons';
 import { 
   BookOpen, 
   Wand2, 
   PlayCircle, 
   Settings as SettingsIcon, 
+  Code,
   Home
 } from 'lucide-react';
 
@@ -17,6 +17,7 @@ const navigation = [
   { name: 'Library', href: '/app/library', icon: BookOpen },
   { name: 'Generator', href: '/app/generator', icon: Wand2 },
   { name: 'Playground', href: '/app/playground', icon: PlayCircle },
+  { name: 'System Editor', href: '/app/system-editor', icon: Code },
   { name: 'Settings', href: '/app/settings', icon: SettingsIcon },
 ];
 
@@ -67,14 +68,11 @@ export function Navigation() {
         <CreditDisplay />
         <div className="flex items-center justify-between">
           <ThemeToggle />
-          <div className="flex items-center gap-2">
-            <Link to="/">
-              <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
-                <Home className="w-4 h-4" />
-              </Button>
-            </Link>
-            <AuthButtons />
-          </div>
+          <Link to="/">
+            <Button variant="ghost" size="sm" className="w-8 h-8 p-0">
+              <Home className="w-4 h-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </nav>
