@@ -64,6 +64,8 @@ export interface GenerationResult {
     creativity_score: number;
     coherence_score: number;
     estimated_tokens: number;
+    confidence_score: number;
+    generation_time_ms: number;
   };
   remix_suggestions: string[];
 }

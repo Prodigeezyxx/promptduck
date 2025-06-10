@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -13,16 +12,16 @@ import { cn } from '@/lib/utils';
 import { usePlaygroundConversation } from '@/hooks/usePlaygroundConversation';
 
 interface AIGeneratorOutputPanelProps {
-  result: GenerationResult | null;
-  isGenerating: boolean;
+  lastResult: GenerationResult | null;
+  isGenerating?: boolean;
   onCopyPrompt: () => void;
   onSavePrompt: () => void;
   onRemixSuggestion: (suggestion: string) => void;
 }
 
 export function AIGeneratorOutputPanel({
-  result,
-  isGenerating,
+  lastResult,
+  isGenerating = false,
   onCopyPrompt,
   onSavePrompt,
   onRemixSuggestion
@@ -32,9 +31,9 @@ export function AIGeneratorOutputPanel({
   const { setCurrentInput } = usePlaygroundConversation();
 
   const handleTestInPlayground = () => {
-    if (result) {
+    if (lastResult) {
       // Set the prompt in playground and navigate
-      setCurrentInput(result.optimized_prompt);
+      setCurrentInput(lastResult.optimized_prompt);
       navigate('/app/playground');
     }
   };
@@ -54,7 +53,7 @@ export function AIGeneratorOutputPanel({
     );
   }
 
-  if (!result) {
+  if (!lastResult) {
     return (
       <Card className="h-full border-dashed border-2 border-gray-200 dark:border-gray-800">
         <CardContent className="flex items-center justify-center h-full">
@@ -79,17 +78,17 @@ export function AIGeneratorOutputPanel({
       <CardHeader>
         <CardTitle className="text-lg flex items-center">
           <Sparkles className="w-5 h-5 mr-2 text-brand-500" />
-          {result.preview_title}
+          {lastResult.preview_title}
         </CardTitle>
         <div className="flex flex-wrap gap-1">
-          {result.tags.slice(0, 4).map((tag) => (
+          {lastResult.tags.slice(0, 4).map((tag) => (
             <Badge key={tag} variant="secondary" className="text-xs">
               {tag}
             </Badge>
           ))}
-          {result.tags.length > 4 && (
+          {lastResult.tags.length > 4 && (
             <Badge variant="outline" className="text-xs">
-              +{result.tags.length - 4} more
+              +{lastResult.tags.length - 4} more
             </Badge>
           )}
         </div>
@@ -100,7 +99,7 @@ export function AIGeneratorOutputPanel({
         <div>
           <label className="text-sm font-medium mb-2 block">Optimized Prompt</label>
           <Textarea
-            value={result.optimized_prompt}
+            value={lastResult.optimized_prompt}
             readOnly
             className="min-h-[120px] text-sm leading-relaxed resize-none"
           />
@@ -128,10 +127,10 @@ export function AIGeneratorOutputPanel({
         {/* Heuristics Applied */}
         <div>
           <label className="text-sm font-medium mb-2 block">
-            Applied Heuristics ({result.heuristics.length})
+            Applied Heuristics ({lastResult.heuristics.length})
           </label>
           <div className="flex flex-wrap gap-1">
-            {result.heuristics.map((heuristic) => (
+            {lastResult.heuristics.map((heuristic) => (
               <span 
                 key={heuristic} 
                 className="heuristic-tag text-xs px-2 py-1 bg-accent rounded-md"
@@ -143,12 +142,12 @@ export function AIGeneratorOutputPanel({
         </div>
 
         {/* Remix Suggestions */}
-        {result.remix_suggestions && result.remix_suggestions.length > 0 && (
+        {lastResult.remix_suggestions && lastResult.remix_suggestions.length > 0 && (
           <Collapsible open={isRemixOpen} onOpenChange={setIsRemixOpen}>
             <CollapsibleTrigger asChild>
               <Button variant="ghost" className="w-full justify-between p-2 h-auto">
                 <span className="text-sm font-medium">
-                  Remix Suggestions ({result.remix_suggestions.length})
+                  Remix Suggestions ({lastResult.remix_suggestions.length})
                 </span>
                 {isRemixOpen ? (
                   <ChevronDown className="w-4 h-4" />
@@ -160,7 +159,7 @@ export function AIGeneratorOutputPanel({
             <CollapsibleContent className="space-y-2">
               <ScrollArea className="h-32">
                 <div className="space-y-2 pr-4">
-                  {result.remix_suggestions.map((suggestion, index) => (
+                  {lastResult.remix_suggestions.map((suggestion, index) => (
                     <div
                       key={index}
                       className={cn(
@@ -185,15 +184,15 @@ export function AIGeneratorOutputPanel({
         <div className="text-xs text-muted-foreground space-y-1 pt-2 border-t">
           <div className="flex justify-between">
             <span>Estimated tokens:</span>
-            <span>{result.metadata.estimated_tokens}</span>
+            <span>{lastResult.metadata.estimated_tokens}</span>
           </div>
           <div className="flex justify-between">
             <span>Confidence:</span>
-            <span>{Math.round(result.metadata.confidence_score * 100)}%</span>
+            <span>{Math.round(lastResult.metadata.confidence_score * 100)}%</span>
           </div>
           <div className="flex justify-between">
             <span>Generation time:</span>
-            <span>{result.metadata.generation_time_ms}ms</span>
+            <span>{lastResult.metadata.generation_time_ms}ms</span>
           </div>
         </div>
       </CardContent>
