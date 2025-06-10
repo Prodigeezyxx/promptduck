@@ -1,76 +1,78 @@
-
-import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { GenerationRequest, GenerationResult } from '@/types';
 import { GEMINI_CONFIG } from './config';
 import { GeminiErrorHandler } from './errorHandler';
 import { GeminiResponseParser } from './responseParser';
 import { GeminiPromptBuilder } from './promptBuilder';
 import { GeminiFallbackGenerator } from './fallbackGenerator';
+import { defaultPromptImprover } from '../core/promptImprover';
 
 export class GeminiService {
   private genAI: GoogleGenerativeAI | null = null;
-  private model: GenerativeModel | null = null;
+  private isInitialized = false;
 
-  initialize(apiKey: string) {
-    console.log('Initializing Gemini service...');
+  initialize(apiKey: string): void {
     this.genAI = new GoogleGenerativeAI(apiKey);
-    // Use the latest Gemini 2.0 model
-    this.model = this.genAI.getGenerativeModel({ model: GEMINI_CONFIG.models[0] });
-    console.log('Gemini service initialized with model:', GEMINI_CONFIG.models[0]);
+    this.isInitialized = true;
   }
 
   async generatePrompt(request: GenerationRequest): Promise<GenerationResult> {
-    if (!this.genAI) {
+    if (!this.isInitialized || !this.genAI) {
       throw new Error('Gemini service not initialized');
     }
 
-    console.log('Starting prompt generation with request:', request);
     const startTime = Date.now();
 
-    const systemPrompt = GeminiPromptBuilder.buildSystemPrompt(request);
-    console.log('Sending request to Gemini with prompt length:', systemPrompt.length);
+    try {
+      // Use the new prompt improvement engine
+      const improvement = await defaultPromptImprover.improvePrompt(request);
+      console.log('Prompt improvement analysis:', improvement);
 
-    // Try each model with exponential backoff
-    for (let modelIndex = 0; modelIndex < GEMINI_CONFIG.models.length; modelIndex++) {
-      const modelName = GEMINI_CONFIG.models[modelIndex];
-      console.log(`Attempting generation with model: ${modelName}`);
+      // Use the enhanced prompt for generation
+      const enhancedRequest = {
+        ...request,
+        intent: improvement.enhancedPrompt,
+        heuristics: improvement.intentAnalysis.suggestedHeuristics
+      };
+
+      const systemPrompt = GeminiPromptBuilder.buildSystemPrompt(enhancedRequest);
       
-      try {
-        const model = this.genAI.getGenerativeModel({ model: modelName });
-        const result = await GeminiErrorHandler.retryWithBackoff(async () => {
-          return await model.generateContent(systemPrompt);
-        }, GEMINI_CONFIG.maxRetries);
+      return await GeminiErrorHandler.retryWithBackoff(async () => {
+        for (const modelName of GEMINI_CONFIG.models) {
+          try {
+            const model = this.genAI!.getGenerativeModel({ model: modelName });
+            const result = await model.generateContent(systemPrompt);
+            const response = await result.response;
+            const text = response.text();
 
-        const response = await result.response;
-        const text = response.text();
+            const generationTime = Date.now() - startTime;
+            const parsedResult = GeminiResponseParser.parseResponse(text, enhancedRequest, generationTime);
+            
+            // Add improvement metadata
+            parsedResult.metadata = {
+              ...parsedResult.metadata,
+              improvement_confidence: improvement.confidenceScore,
+              template_used: improvement.templateUsed,
+              intent_detected: improvement.intentAnalysis.primaryIntent,
+              heuristics_applied: improvement.heuristicsApplied
+            };
 
-        console.log('Received response from Gemini, length:', text.length);
-        console.log('Raw Gemini response:', text);
-
-        const endTime = Date.now();
-        return GeminiResponseParser.parseResponse(text, request, endTime - startTime);
-      } catch (error) {
-        console.error(`Model ${modelName} failed:`, error);
-        
-        // If this is a quota error and we have more models to try, continue
-        if (GeminiErrorHandler.isQuotaError(error) && modelIndex < GEMINI_CONFIG.models.length - 1) {
-          console.log(`Quota exceeded for ${modelName}, trying next model...`);
-          continue;
+            return parsedResult;
+          } catch (error) {
+            console.warn(`Model ${modelName} failed:`, error);
+            if (modelName === GEMINI_CONFIG.models[GEMINI_CONFIG.models.length - 1]) {
+              throw error;
+            }
+          }
         }
-        
-        // If this is the last model or a different error, handle accordingly
-        if (modelIndex === GEMINI_CONFIG.models.length - 1) {
-          console.log('All models failed, using fallback');
-          return GeminiFallbackGenerator.generateFallbackPrompt(request);
-        }
-        
-        // For non-quota errors, try next model
-        continue;
-      }
+        throw new Error('All models failed');
+      }, GEMINI_CONFIG.maxRetries);
+
+    } catch (error) {
+      console.error('Gemini generation failed:', error);
+      const generationTime = Date.now() - startTime;
+      return GeminiFallbackGenerator.generateFallback(request, generationTime);
     }
-
-    // This shouldn't be reached, but just in case
-    return GeminiFallbackGenerator.generateFallbackPrompt(request);
   }
 
   async testConnection(apiKey: string): Promise<boolean> {

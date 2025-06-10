@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
 import { useApiKeyStore } from '@/store/apiKeyStore';
 import { usePromptStore } from '@/store/promptStore';
 import { geminiService } from '@/services/geminiService';
-import { selectHeuristics } from '@/utils/heuristicSelector';
+import { IntentDetectionEngine } from '@/services/intent/intentDetection';
 import { HeuristicType, GenerationRequest, GenerationResult } from '@/types';
 import { toast } from '@/hooks/use-toast';
 
@@ -30,20 +29,29 @@ export function useGeneratorLogic() {
     }
   }, [currentPrompt, setCurrentPrompt]);
 
-  // Update heuristics when intent or context changes
+  // Enhanced intent change handler with smart heuristic selection
   const handleIntentChange = (value: string) => {
     setIntent(value);
     if (value.trim()) {
-      const autoHeuristics = selectHeuristics(value, context);
-      setSelectedHeuristics(autoHeuristics);
+      const intentAnalysis = IntentDetectionEngine.analyzeIntent(value, context);
+      setSelectedHeuristics(intentAnalysis.suggestedHeuristics);
+      
+      // Auto-adjust complexity based on intent analysis
+      setComplexity(intentAnalysis.complexity);
+      
+      // Show intent detection feedback
+      if (intentAnalysis.confidence > 0.7) {
+        console.log(`Detected intent: ${intentAnalysis.primaryIntent} (${Math.round(intentAnalysis.confidence * 100)}% confidence)`);
+      }
     }
   };
 
   const handleContextChange = (value: string) => {
     setContext(value);
     if (intent.trim()) {
-      const autoHeuristics = selectHeuristics(intent, value);
-      setSelectedHeuristics(autoHeuristics);
+      const intentAnalysis = IntentDetectionEngine.analyzeIntent(intent, value);
+      setSelectedHeuristics(intentAnalysis.suggestedHeuristics);
+      setComplexity(intentAnalysis.complexity);
     }
   };
 
