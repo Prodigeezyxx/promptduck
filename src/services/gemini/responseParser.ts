@@ -3,13 +3,14 @@ import { GenerationRequest, GenerationResult } from '@/types';
 
 export class GeminiResponseParser {
   static parseResponse(text: string, request: GenerationRequest, generationTimeMs: number): GenerationResult {
-    console.log('Raw API response:', text);
+    console.log('Raw API response length:', text.length);
+    console.log('Raw API response preview:', text.slice(0, 500));
     
     // Clean the text first
     const cleanedText = this.cleanFormatting(text);
     
     // Try multiple strategies to extract JSON
-    let parsedData = this.extractJsonFromResponse(cleanedText);
+    let parsedData = this.extractJsonFromResponse(text);
     
     if (!parsedData) {
       console.warn('Failed to parse JSON from response, using fallback');
@@ -41,37 +42,96 @@ export class GeminiResponseParser {
   }
 
   private static extractJsonFromResponse(text: string): any {
-    // Strategy 1: Look for JSON between curly braces
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    console.log('Attempting to extract JSON from response...');
+    
+    // Strategy 1: Remove code block markers first, then parse
+    let cleanText = text;
+    
+    // Remove code block markers more carefully
+    cleanText = cleanText.replace(/```json\s*/gi, '');
+    cleanText = cleanText.replace(/```\s*$/gm, '');
+    cleanText = cleanText.replace(/```/g, '');
+    
+    // Try to parse the cleaned text
+    try {
+      const parsed = JSON.parse(cleanText.trim());
+      console.log('Strategy 1 success: Parsed cleaned text');
+      return parsed;
+    } catch (error) {
+      console.warn('Strategy 1 failed:', error.message);
+    }
+
+    // Strategy 2: Look for JSON between curly braces
+    const jsonMatch = text.match(/\{[\s\S]*?\}/);
     if (jsonMatch) {
       try {
-        return JSON.parse(jsonMatch[0]);
+        const parsed = JSON.parse(jsonMatch[0]);
+        console.log('Strategy 2 success: Parsed matched JSON');
+        return parsed;
       } catch (error) {
-        console.warn('Failed to parse matched JSON:', error);
+        console.warn('Strategy 2 failed:', error.message);
       }
     }
 
-    // Strategy 2: Look for JSON after removing code blocks
-    const withoutCodeBlocks = text.replace(/```json|```/g, '');
-    try {
-      return JSON.parse(withoutCodeBlocks.trim());
-    } catch (error) {
-      console.warn('Failed to parse without code blocks:', error);
-    }
-
-    // Strategy 3: Try to find JSON starting from first {
-    const firstBraceIndex = text.indexOf('{');
-    const lastBraceIndex = text.lastIndexOf('}');
+    // Strategy 3: Find the most complete JSON object
+    let openBraces = 0;
+    let startIndex = -1;
+    let endIndex = -1;
     
-    if (firstBraceIndex !== -1 && lastBraceIndex !== -1 && lastBraceIndex > firstBraceIndex) {
+    for (let i = 0; i < text.length; i++) {
+      if (text[i] === '{') {
+        if (openBraces === 0) {
+          startIndex = i;
+        }
+        openBraces++;
+      } else if (text[i] === '}') {
+        openBraces--;
+        if (openBraces === 0 && startIndex !== -1) {
+          endIndex = i;
+          break;
+        }
+      }
+    }
+    
+    if (startIndex !== -1 && endIndex !== -1) {
+      const jsonCandidate = text.substring(startIndex, endIndex + 1);
       try {
-        const jsonCandidate = text.substring(firstBraceIndex, lastBraceIndex + 1);
-        return JSON.parse(jsonCandidate);
+        const parsed = JSON.parse(jsonCandidate);
+        console.log('Strategy 3 success: Parsed complete JSON object');
+        return parsed;
       } catch (error) {
-        console.warn('Failed to parse JSON candidate:', error);
+        console.warn('Strategy 3 failed:', error.message);
       }
     }
 
+    // Strategy 4: Try to fix common JSON issues
+    try {
+      let fixedText = text;
+      
+      // Remove any text before first {
+      const firstBrace = fixedText.indexOf('{');
+      if (firstBrace > 0) {
+        fixedText = fixedText.substring(firstBrace);
+      }
+      
+      // Remove any text after last }
+      const lastBrace = fixedText.lastIndexOf('}');
+      if (lastBrace !== -1) {
+        fixedText = fixedText.substring(0, lastBrace + 1);
+      }
+      
+      // Fix common issues
+      fixedText = fixedText.replace(/,\s*}/g, '}'); // Remove trailing commas
+      fixedText = fixedText.replace(/,\s*]/g, ']'); // Remove trailing commas in arrays
+      
+      const parsed = JSON.parse(fixedText);
+      console.log('Strategy 4 success: Parsed fixed JSON');
+      return parsed;
+    } catch (error) {
+      console.warn('Strategy 4 failed:', error.message);
+    }
+
+    console.error('All JSON parsing strategies failed');
     return null;
   }
 

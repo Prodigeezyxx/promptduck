@@ -88,19 +88,21 @@ export function useGeneratorLogic() {
         geminiService.initialize(apiKey.gemini);
       }
 
-      // Fix context handling - only include if it has actual content
-      const contextValue = context.trim();
+      // Ensure context is properly handled - convert to string or undefined
+      const contextValue = context?.trim();
       
       const request: GenerationRequest = {
         intent: intent.trim(),
         heuristics: heuristicsToUse,
-        context: contextValue || undefined, // Fixed: ensure undefined instead of empty string
+        context: contextValue || undefined, // Ensure it's a string or undefined, not an object
         complexity
       };
 
-      console.log('Sending generation request:', request);
+      console.log('Generation request object:', JSON.stringify(request, null, 2));
 
       const result = await geminiService.generatePrompt(request);
+      console.log('Generation result received:', result);
+      
       setLastResult(result);
       
       toast({ 
