@@ -15,6 +15,7 @@ export class GeminiService {
   initialize(apiKey: string): void {
     this.genAI = new GoogleGenerativeAI(apiKey);
     this.isInitialized = true;
+    console.log('Gemini service initialized');
   }
 
   async generatePrompt(request: GenerationRequest): Promise<GenerationResult> {
@@ -22,6 +23,7 @@ export class GeminiService {
       throw new Error('Gemini service not initialized');
     }
 
+    console.log('Starting prompt generation with request:', request);
     const startTime = Date.now();
 
     try {
@@ -36,15 +38,21 @@ export class GeminiService {
         heuristics: improvement.intentAnalysis.suggestedHeuristics
       };
 
+      console.log('Enhanced request:', enhancedRequest);
+
       const systemPrompt = GeminiPromptBuilder.buildSystemPrompt(enhancedRequest);
+      console.log('System prompt:', systemPrompt);
       
       return await GeminiErrorHandler.retryWithBackoff(async () => {
         for (const modelName of GEMINI_CONFIG.models) {
           try {
+            console.log(`Trying model: ${modelName}`);
             const model = this.genAI!.getGenerativeModel({ model: modelName });
             const result = await model.generateContent(systemPrompt);
             const response = await result.response;
             const text = response.text();
+
+            console.log(`Model ${modelName} response received:`, text.slice(0, 200) + '...');
 
             const generationTime = Date.now() - startTime;
             const parsedResult = GeminiResponseParser.parseResponse(text, enhancedRequest, generationTime);
@@ -58,6 +66,7 @@ export class GeminiService {
               heuristics_applied: improvement.heuristicsApplied
             };
 
+            console.log('Generation successful with model:', modelName);
             return parsedResult;
           } catch (error) {
             console.warn(`Model ${modelName} failed:`, error);
@@ -72,6 +81,7 @@ export class GeminiService {
     } catch (error) {
       console.error('Gemini generation failed:', error);
       const generationTime = Date.now() - startTime;
+      console.log('Using fallback generator');
       return GeminiFallbackGenerator.generateFallbackPrompt(request);
     }
   }
