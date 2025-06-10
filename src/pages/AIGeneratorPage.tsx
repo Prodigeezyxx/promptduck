@@ -9,9 +9,10 @@ import { selectHeuristics } from '@/utils/heuristicSelector';
 import { ApiKeyRequired } from '@/components/ApiKeyRequired';
 import { AIGeneratorInputPanel } from '@/components/generator/AIGeneratorInputPanel';
 import { AIGeneratorOutputPanel } from '@/components/generator/AIGeneratorOutputPanel';
-import { GeneratorHistory } from '@/components/generator/GeneratorHistory';
+import { GeneratorHistoryDrawer } from '@/components/generator/GeneratorHistoryDrawer';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Wand2 } from 'lucide-react';
+import { Wand2, History } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { HeuristicType, GenerationRequest, GenerationResult } from '@/types';
 import { toast } from '@/hooks/use-toast';
 
@@ -26,6 +27,7 @@ export default function AIGeneratorPage() {
   const [context, setContext] = useState('');
   const [complexity, setComplexity] = useState<'simple' | 'intermediate' | 'advanced'>('intermediate');
   const [selectedHeuristics, setSelectedHeuristics] = useState<HeuristicType[]>([]);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   // Pre-fill form when currentPrompt is set (from template click)
   useEffect(() => {
@@ -33,7 +35,6 @@ export default function AIGeneratorPage() {
       setIntent(currentPrompt.description || currentPrompt.title);
       setContext(currentPrompt.content);
       setSelectedHeuristics(currentPrompt.heuristics);
-      // Clear the current prompt after pre-filling
       setCurrentPrompt(null);
     }
   }, [currentPrompt, setCurrentPrompt]);
@@ -163,20 +164,33 @@ export default function AIGeneratorPage() {
   };
 
   return (
-    <div className="p-4 lg:p-6 max-w-7xl mx-auto">
+    <div className="p-4 lg:p-6 max-w-full mx-auto">
       <div className="mb-6 lg:mb-8">
-        <h1 className="text-2xl lg:text-3xl font-bold flex items-center">
-          <Wand2 className="w-6 h-6 lg:w-8 lg:h-8 mr-2 lg:mr-3 text-brand-500" />
-          AI Prompt Generator
-        </h1>
-        <p className="text-sm lg:text-base text-muted-foreground">
-          Transform your ideas using intelligently selected cognitive heuristics
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold flex items-center">
+              <Wand2 className="w-6 h-6 lg:w-8 lg:h-8 mr-2 lg:mr-3 text-brand-500" />
+              AI Prompt Generator
+            </h1>
+            <p className="text-sm lg:text-base text-muted-foreground">
+              Transform your ideas using intelligently selected cognitive heuristics
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setHistoryOpen(true)}
+            className="flex items-center gap-2"
+          >
+            <History className="w-4 h-4" />
+            History
+          </Button>
+        </div>
       </div>
 
       {isMobile ? (
+        // Mobile: Stack vertically
         <div className="space-y-6">
-          {/* Mobile: Input Panel */}
           <AIGeneratorInputPanel
             intent={intent}
             context={context}
@@ -189,21 +203,18 @@ export default function AIGeneratorPage() {
             onGenerate={handleGenerate}
           />
 
-          {/* Mobile: Output Panel */}
           <AIGeneratorOutputPanel
             lastResult={lastResult}
             onCopyPrompt={handleCopyPrompt}
             onSavePrompt={handleSavePrompt}
             onRemixSuggestion={handleRemixSuggestion}
           />
-
-          {/* Mobile: History Panel */}
-          <GeneratorHistory onSelectResult={handleSelectHistoryResult} />
         </div>
       ) : (
-        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
-          {/* Desktop: Input Panel */}
-          <div className="lg:col-span-1">
+        // Desktop: Two-column layout
+        <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 max-w-7xl mx-auto">
+          {/* Left Column - Input Panel (Fixed width) */}
+          <div className="lg:col-span-4">
             <AIGeneratorInputPanel
               intent={intent}
               context={context}
@@ -217,8 +228,8 @@ export default function AIGeneratorPage() {
             />
           </div>
 
-          {/* Desktop: Output Panel */}
-          <div className="lg:col-span-1">
+          {/* Right Column - Output Panel (Expandable) */}
+          <div className="lg:col-span-8">
             <AIGeneratorOutputPanel
               lastResult={lastResult}
               onCopyPrompt={handleCopyPrompt}
@@ -226,13 +237,15 @@ export default function AIGeneratorPage() {
               onRemixSuggestion={handleRemixSuggestion}
             />
           </div>
-
-          {/* Desktop: History Panel */}
-          <div className="lg:col-span-1">
-            <GeneratorHistory onSelectResult={handleSelectHistoryResult} />
-          </div>
         </div>
       )}
+
+      {/* History Drawer */}
+      <GeneratorHistoryDrawer
+        open={historyOpen}
+        onOpenChange={setHistoryOpen}
+        onSelectResult={handleSelectHistoryResult}
+      />
     </div>
   );
 }
