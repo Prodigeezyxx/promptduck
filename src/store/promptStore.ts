@@ -16,6 +16,7 @@ interface PromptState {
   getPromptsByPersona: (persona: PersonaType) => Prompt[];
   incrementUsage: (id: string) => void;
   searchPrompts: (query: string) => Prompt[];
+  clearHistory: () => void;
 }
 
 export const usePromptStore = create<PromptState>()(
@@ -90,6 +91,9 @@ export const usePromptStore = create<PromptState>()(
           prompt.content.toLowerCase().includes(lowercaseQuery) ||
           prompt.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery))
         );
+      },
+      clearHistory: () => {
+        set({ prompts: [...SAMPLE_PROMPTS], currentPrompt: null });
       }
     }),
     {
