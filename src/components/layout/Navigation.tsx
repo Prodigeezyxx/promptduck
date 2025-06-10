@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from './ThemeToggle';
 import { AuthButtons } from '@/components/auth/AuthButtons';
 import { CreditDisplay } from '@/components/CreditDisplay';
+import { DuckIcon } from '@/components/icons/DuckIcon';
 import { 
   BookOpen, 
   Wand2, 
@@ -30,7 +31,7 @@ export function Navigation() {
         <div className="flex items-center flex-shrink-0 px-6 py-4 border-b">
           <Link to="/" className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-gradient-to-br from-brand-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">🦆</span>
+              <DuckIcon size={20} className="text-white" />
             </div>
             <div>
               <h1 className="text-xl font-bold">PromptDuck</h1>

@@ -9,6 +9,7 @@ interface ChatInputProps {
   value: string;
   onChange: (value: string) => void;
   onSend: (message: string) => void;
+  onStop?: () => void;
   disabled?: boolean;
   placeholder?: string;
   isLoading?: boolean;
@@ -17,7 +18,8 @@ interface ChatInputProps {
 export function ChatInput({ 
   value, 
   onChange, 
-  onSend, 
+  onSend,
+  onStop,
   disabled = false,
   placeholder = "Message PromptDuck...",
   isLoading = false
@@ -27,6 +29,12 @@ export function ChatInput({
   const handleSubmit = () => {
     if (value.trim() && !disabled && !isLoading) {
       onSend(value);
+    }
+  };
+
+  const handleStop = () => {
+    if (onStop) {
+      onStop();
     }
   };
 
@@ -92,18 +100,20 @@ export function ChatInput({
             <Mic className="w-4 h-4" />
           </Button>
 
-          {/* Send button */}
+          {/* Send/Stop button */}
           <Button
-            onClick={handleSubmit}
-            disabled={disabled || !value.trim() || isLoading}
+            onClick={isLoading ? handleStop : handleSubmit}
+            disabled={disabled || (!value.trim() && !isLoading)}
             size="sm"
             className={cn(
               "h-10 w-10 rounded-xl flex-shrink-0 min-h-[48px] min-w-[48px] touch-target",
-              value.trim() && !disabled && !isLoading
+              isLoading
+                ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                : value.trim() && !disabled
                 ? "bg-brand-500 hover:bg-brand-600 text-white" 
                 : "bg-muted text-muted-foreground"
             )}
-            aria-label="Send message"
+            aria-label={isLoading ? "Stop generation" : "Send message"}
           >
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />

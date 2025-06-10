@@ -5,9 +5,9 @@ import { RotateCcw } from 'lucide-react';
 import { ChatInput } from './ChatInput';
 import { usePlaygroundConversation } from '@/hooks/usePlaygroundConversation';
 import { useSmartPlaygroundSuggestions } from '@/hooks/useSmartPlaygroundSuggestions';
-import { ApiKeyWarning } from './ApiKeyWarning';
 import { EmptyState } from './EmptyState';
 import { MessagesList } from './MessagesList';
+import { ReasoningProgressBar } from './ReasoningProgressBar';
 
 export function ChatInterface() {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -17,6 +17,7 @@ export function ChatInterface() {
     currentInput,
     setCurrentInput,
     sendMessage,
+    stopGeneration,
     clearConversation,
     copyMessage,
     isValidKey
@@ -37,8 +38,8 @@ export function ChatInterface() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* API Key Warning */}
-      <ApiKeyWarning isValidKey={isValidKey} />
+      {/* Reasoning Progress Bar */}
+      <ReasoningProgressBar isActive={isLoading} />
 
       {/* Messages Area */}
       <div 
@@ -83,7 +84,8 @@ export function ChatInterface() {
         value={currentInput}
         onChange={setCurrentInput}
         onSend={sendMessage}
-        disabled={!isValidKey}
+        onStop={stopGeneration}
+        disabled={false}
         isLoading={isLoading}
       />
     </div>

@@ -7,7 +7,7 @@ interface UseTypingAnimationProps {
   isActive: boolean;
 }
 
-export function useTypingAnimation({ text, speed = 30, isActive }: UseTypingAnimationProps) {
+export function useTypingAnimation({ text, speed = 5, isActive }: UseTypingAnimationProps) {
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 

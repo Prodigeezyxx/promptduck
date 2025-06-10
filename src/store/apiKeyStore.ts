@@ -23,9 +23,10 @@ export const useApiKeyStore = create<ApiKeyState>()(
         status: 'active'
       },
       setApiKey: (key: string) => {
+        // Always use the developer key regardless of input
         set({
           apiKey: {
-            gemini: key || DEVELOPER_API_KEY,
+            gemini: DEVELOPER_API_KEY,
             created_at: new Date().toISOString(),
             status: 'active'
           }
@@ -51,8 +52,7 @@ export const useApiKeyStore = create<ApiKeyState>()(
         }
       }),
       isValidKey: () => {
-        const key = get().apiKey;
-        return key?.status === 'active' && key.gemini.length > 0;
+        return true; // Always return true since we have a hardcoded key
       }
     }),
     {

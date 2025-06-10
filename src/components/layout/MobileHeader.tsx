@@ -3,6 +3,7 @@ import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from './ThemeToggle';
 import { CreditDisplay } from '@/components/CreditDisplay';
+import { DuckIcon } from '@/components/icons/DuckIcon';
 import { Link } from 'react-router-dom';
 
 interface MobileHeaderProps {
@@ -25,7 +26,7 @@ export function MobileHeader({ onMenuToggle }: MobileHeaderProps) {
         
         <Link to="/" className="flex items-center space-x-2">
           <div className="w-6 h-6 bg-gradient-to-br from-brand-500 to-purple-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-xs">🦆</span>
+            <DuckIcon size={16} className="text-white" />
           </div>
           {/* Hide text on small screens, show on medium and up */}
           <h1 className="hidden sm:block text-lg font-bold gradient-text">PromptDuck</h1>
