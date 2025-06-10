@@ -11,7 +11,7 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
-      theme: 'light',
+      theme: 'dark', // Set default to dark mode
       setTheme: (theme) => {
         set({ theme });
         // Apply theme to document
@@ -30,8 +30,8 @@ export const useThemeStore = create<ThemeState>()(
     {
       name: 'promptduck-theme',
       onRehydrateStorage: () => (state) => {
-        if (state?.theme === 'dark') {
-          document.documentElement.classList.add('dark');
+        if (state) {
+          state.setTheme(state.theme);
         }
       },
     }

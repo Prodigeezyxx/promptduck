@@ -55,14 +55,14 @@ export function MessageBubble({
     <div 
       className={cn(
         "flex items-start space-x-3 max-w-4xl mx-auto px-4 py-6 group",
-        isUser ? "bg-transparent" : "bg-muted/30"
+        isUser ? "chat-message-user" : "chat-message-ai"
       )}
       role="article"
       aria-label={`${isUser ? 'User' : 'AI'} message`}
     >
       <div className={cn(
         "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center",
-        isUser ? "bg-gray-700" : "bg-brand-500"
+        isUser ? "bg-gray-700 dark:bg-gray-800" : "bg-brand-500"
       )}>
         {isUser ? (
           <User className="w-4 h-4 text-white" />
@@ -73,7 +73,7 @@ export function MessageBubble({
       
       <div className="flex-1 min-w-0 space-y-2">
         <div 
-          className="prose prose-sm max-w-none text-foreground"
+          className="prose prose-sm max-w-none text-foreground dark:text-gray-200"
           aria-live={!isUser && isAnimating ? "polite" : "off"}
         >
           {finalContent.split('\n\n').map((paragraph, index) => (

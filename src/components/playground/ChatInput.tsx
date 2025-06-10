@@ -55,13 +55,9 @@ export function ChatInput({
   }, [value]);
 
   return (
-    <div className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky bottom-0">
+    <div className="chat-input-container">
       <div className="max-w-4xl mx-auto p-4">
-        <div className={cn(
-          "relative flex items-end space-x-2 rounded-2xl border bg-background shadow-sm",
-          "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 transition-all",
-          (disabled || isLoading) && "opacity-50"
-        )}>
+        <div className="chat-input-wrapper">
           {/* Attachment button */}
           <Button
             variant="ghost"
@@ -111,7 +107,7 @@ export function ChatInput({
                 ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                 : value.trim() && !disabled
                 ? "bg-brand-500 hover:bg-brand-600 text-white" 
-                : "bg-muted text-muted-foreground"
+                : "bg-muted text-muted-foreground dark:bg-gray-800"
             )}
             aria-label={isLoading ? "Stop generation" : "Send message"}
           >

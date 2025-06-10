@@ -4,9 +4,9 @@ import { ChatInterface } from '@/components/playground/ChatInterface';
 
 export default function PlaygroundPage() {
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full dark:bg-gray-950">
       {/* Header */}
-      <div className="flex-shrink-0 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex-shrink-0 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:bg-gray-950/95 dark:border-gray-800">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>

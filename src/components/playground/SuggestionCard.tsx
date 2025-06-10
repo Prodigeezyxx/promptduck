@@ -40,11 +40,11 @@ export function SuggestionCard({ suggestion, onSuggestionClick }: SuggestionCard
   return (
     <button 
       key={suggestion.id}
-      className="p-3 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors group text-left min-h-[48px] touch-target"
+      className="suggestion-card text-left min-h-[48px] touch-target p-4"
       onClick={() => onSuggestionClick(suggestion.content)}
       aria-label={`Use suggestion: ${suggestion.title}`}
     >
-      <div className="flex items-start justify-between mb-2">
+      <div className="flex items-start justify-between mb-3">
         <p className="font-medium text-left group-hover:text-brand-600 transition-colors">
           {suggestion.title}
         </p>
@@ -52,22 +52,22 @@ export function SuggestionCard({ suggestion, onSuggestionClick }: SuggestionCard
           "flex items-center gap-1 px-2 py-1 rounded-full text-xs shrink-0 ml-2",
           getSourceColor(suggestion.source)
         )}>
-          {getSourceIcon(suggestion.source)}
+          {getSourceIcon(source)}
           <span className="capitalize">{suggestion.source}</span>
         </div>
       </div>
-      <p className="text-muted-foreground text-left">
+      <p className="text-muted-foreground text-left text-sm mb-3">
         {suggestion.description}
       </p>
       {suggestion.metadata?.heuristics && (
-        <div className="flex flex-wrap gap-1 mt-2">
+        <div className="flex flex-wrap gap-2 mt-2">
           {suggestion.metadata.heuristics.slice(0, 2).map((heuristic) => (
-            <span key={heuristic} className="text-xs px-2 py-1 bg-accent rounded-md">
+            <span key={heuristic} className="text-xs px-2.5 py-1 bg-accent dark:bg-gray-800 rounded-md">
               {heuristic}
             </span>
           ))}
           {suggestion.metadata.heuristics.length > 2 && (
-            <span className="text-xs px-2 py-1 bg-accent rounded-md">
+            <span className="text-xs px-2.5 py-1 bg-accent dark:bg-gray-800 rounded-md">
               +{suggestion.metadata.heuristics.length - 2}
             </span>
           )}

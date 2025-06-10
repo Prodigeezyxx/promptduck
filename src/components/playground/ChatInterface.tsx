@@ -37,7 +37,7 @@ export function ChatInterface() {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full dark:bg-gray-950">
       {/* Reasoning Progress Bar */}
       <ReasoningProgressBar isActive={isLoading} />
 
