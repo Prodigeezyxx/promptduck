@@ -35,8 +35,14 @@ const App = () => {
   // Show loading while Clerk is initializing
   if (!isLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-500"></div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-purple-600 rounded-lg flex items-center justify-center animate-pulse">
+            <span className="text-white font-bold text-lg">🦆</span>
+          </div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
+          <p className="text-sm text-muted-foreground">Loading PromptDuck...</p>
+        </div>
       </div>
     );
   }
