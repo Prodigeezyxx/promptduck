@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/drawer';
 import { 
   BookOpen, 
-  Sparkles, 
+  Wand2, 
   PlayCircle, 
   Settings as SettingsIcon, 
   Code,
@@ -19,7 +19,7 @@ import {
 
 const navigation = [
   { name: 'Library', href: '/app/library', icon: BookOpen },
-  { name: 'Co-Pilot', href: '/app/generator', icon: Sparkles },
+  { name: 'Generator', href: '/app/generator', icon: Wand2 },
   { name: 'Playground', href: '/app/playground', icon: PlayCircle },
   { name: 'System Editor', href: '/app/system-editor', icon: Code },
   { name: 'Settings', href: '/app/settings', icon: SettingsIcon },
