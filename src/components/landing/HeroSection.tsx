@@ -22,8 +22,8 @@ export function HeroSection() {
       {/* Background gradients */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-100 to-gray-300 dark:from-gray-950 dark:via-gray-900 dark:to-black will-change-transform z-1" />
       
-      {/* Light mode overlay - reduced opacity to show matrix effect better */}
-      <div className="absolute inset-0 bg-white/40 dark:bg-transparent z-2" />
+      {/* Light mode overlay - much lower opacity to show matrix effect */}
+      <div className="absolute inset-0 bg-white/20 dark:bg-transparent z-2" />
       
       {/* Floating orbs */}
       <div className="absolute inset-0 overflow-hidden z-3">
@@ -67,7 +67,7 @@ export function HeroSection() {
             Cognitive prompt engineering
           </div>
           
-          <div className="flex flex-wrap justify-center gap-12 sm:gap-20 lg:gap-28">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 lg:gap-4">
             <VariableProximity 
               text="prompt" 
               className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold bg-gradient-to-r from-gray-900 via-brand-600 to-blue-600 dark:from-white dark:via-brand-200 dark:to-blue-200 bg-clip-text text-transparent leading-tight" 
