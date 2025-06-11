@@ -88,13 +88,11 @@ export function usePlaygroundConversation() {
     const aiMessageId = addMessage('', 'ai', true);
 
     try {
-      // Initialize the service
+      // Initialize the service once and reuse
       geminiService.initialize(apiKey.gemini);
       
-      // Simple playground prompt - just answer the question directly and helpfully
-      const playgroundPrompt = `Answer this question directly and helpfully: ${prompt.trim()}`;
-
-      const result = await geminiService.generateChatResponse(playgroundPrompt);
+      // Send prompt directly without additional instructions for speed
+      const result = await geminiService.generateChatResponse(prompt.trim());
       
       // Check if request was aborted
       if (abortControllerRef.current?.signal.aborted) {
@@ -106,8 +104,6 @@ export function usePlaygroundConversation() {
       updateMessage(aiMessageId, result, false);
       toast.success('Response generated successfully');
     } catch (error) {
-      console.error('Gemini API error:', error);
-      
       // Don't show error if request was aborted
       if (abortControllerRef.current?.signal.aborted) {
         return;

@@ -15,7 +15,6 @@ export class GeminiService {
   initialize(apiKey: string): void {
     this.genAI = new GoogleGenerativeAI(apiKey);
     this.isInitialized = true;
-    console.log('Gemini service initialized');
   }
 
   /**
@@ -26,41 +25,32 @@ export class GeminiService {
       throw new Error('Gemini service not initialized');
     }
 
-    console.log('Starting chat response generation for prompt:', prompt.slice(0, 100) + '...');
-
-    return await GeminiErrorHandler.retryWithBackoff(async () => {
-      for (const modelName of GEMINI_CONFIG.models) {
-        try {
-          console.log(`Attempting chat generation with model: ${modelName}`);
-          const model = this.genAI!.getGenerativeModel({ 
-            model: modelName,
-            generationConfig: {
-              temperature: 0.3,
-              topP: 0.8,
-              topK: 40,
-              maxOutputTokens: 4096, // Increased from 2048 to prevent truncation
-            }
-          });
-          
-          const result = await model.generateContent(prompt);
-          const response = await result.response;
-          const text = response.text();
-
-          if (!text || text.trim().length === 0) {
-            throw new Error(`Empty response from model ${modelName}`);
-          }
-
-          console.log(`Chat generation successful with model: ${modelName}`);
-          return this.cleanResponseForChat(text);
-        } catch (error) {
-          console.warn(`Model ${modelName} failed for chat:`, error.message);
-          if (modelName === GEMINI_CONFIG.models[GEMINI_CONFIG.models.length - 1]) {
-            throw error;
-          }
+    // Use only the fastest model for playground responses
+    const fastestModel = GEMINI_CONFIG.models[0]; // gemini-2.0-flash-exp
+    
+    try {
+      const model = this.genAI.getGenerativeModel({ 
+        model: fastestModel,
+        generationConfig: {
+          temperature: 0.7, // Increased for faster, less deliberative responses
+          maxOutputTokens: 4096, // Keep as requested
         }
+      });
+      
+      // Send prompt directly without additional instructions
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+
+      if (!text || text.trim().length === 0) {
+        throw new Error(`Empty response from model ${fastestModel}`);
       }
-      throw new Error('All models failed for chat generation');
-    }, GEMINI_CONFIG.maxRetries);
+
+      return this.cleanResponseForChat(text);
+    } catch (error) {
+      // Simplified error handling for playground
+      throw new Error(`Chat generation failed: ${error.message}`);
+    }
   }
 
   private cleanResponseForChat(text: string): string {
@@ -86,7 +76,6 @@ export class GeminiService {
       throw new Error('Gemini service not initialized');
     }
 
-    console.log('Starting prompt generation with request:', JSON.stringify(request, null, 2));
     const startTime = Date.now();
 
     try {
@@ -97,7 +86,6 @@ export class GeminiService {
 
       // Use the new prompt improvement engine
       const improvement = await defaultPromptImprover.improvePrompt(request);
-      console.log('Prompt improvement analysis:', improvement);
 
       // Use the enhanced prompt for generation
       const enhancedRequest = {
@@ -107,23 +95,15 @@ export class GeminiService {
         context: typeof request.context === 'string' ? request.context : undefined // Ensure context is string or undefined
       };
 
-      console.log('Enhanced request:', JSON.stringify(enhancedRequest, null, 2));
-
       const systemPrompt = GeminiPromptBuilder.buildSystemPrompt(enhancedRequest);
-      console.log('System prompt length:', systemPrompt.length);
-      console.log('System prompt preview:', systemPrompt.slice(0, 300) + '...');
       
       return await GeminiErrorHandler.retryWithBackoff(async () => {
         for (const modelName of GEMINI_CONFIG.models) {
           try {
-            console.log(`Attempting generation with model: ${modelName}`);
             const model = this.genAI!.getGenerativeModel({ model: modelName });
             const result = await model.generateContent(systemPrompt);
             const response = await result.response;
             const text = response.text();
-
-            console.log(`Model ${modelName} response length:`, text.length);
-            console.log(`Model ${modelName} response preview:`, text.slice(0, 500));
 
             if (!text || text.trim().length === 0) {
               throw new Error(`Empty response from model ${modelName}`);
@@ -140,18 +120,9 @@ export class GeminiService {
               intent_detected: improvement.intentAnalysis.primaryIntent,
               heuristics_applied: improvement.heuristicsApplied
             };
-
-            console.log('Generation successful with model:', modelName);
-            console.log('Final result preview:', {
-              title: parsedResult.preview_title,
-              promptLength: parsedResult.optimized_prompt.length,
-              tagsCount: parsedResult.tags.length,
-              heuristicsCount: parsedResult.heuristics.length
-            });
             
             return parsedResult;
           } catch (error) {
-            console.warn(`Model ${modelName} failed:`, error.message);
             if (modelName === GEMINI_CONFIG.models[GEMINI_CONFIG.models.length - 1]) {
               throw error;
             }
@@ -161,27 +132,21 @@ export class GeminiService {
       }, GEMINI_CONFIG.maxRetries);
 
     } catch (error) {
-      console.error('Gemini generation failed:', error.message);
-      console.error('Error details:', error);
       const generationTime = Date.now() - startTime;
-      console.log('Using fallback generator due to error');
       return GeminiFallbackGenerator.generateFallbackPrompt(request);
     }
   }
 
   async testConnection(apiKey: string): Promise<boolean> {
     try {
-      console.log('Testing API connection...');
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ model: GEMINI_CONFIG.models[0] });
       
       const result = await model.generateContent('Test connection. Respond with "OK".');
       const response = await result.response;
       const text = response.text();
-      console.log('API test response:', text);
       return text.includes('OK');
     } catch (error) {
-      console.error('API key test failed:', error);
       return false;
     }
   }
