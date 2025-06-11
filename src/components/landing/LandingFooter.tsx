@@ -1,5 +1,6 @@
 
 import { Link } from 'react-router-dom';
+import { DuckIcon } from '@/components/icons/DuckIcon';
 
 export function LandingFooter() {
   return (
@@ -8,9 +9,7 @@ export function LandingFooter() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-brand-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">🦆</span>
-              </div>
+              <DuckIcon size={32} />
               <h3 className="text-xl font-bold gradient-text">PromptDuck</h3>
             </div>
             <p className="text-muted-foreground text-sm">

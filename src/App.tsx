@@ -7,6 +7,7 @@ import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useThemeStore } from "@/store/themeStore";
 import { useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
+import { DuckIcon } from "@/components/icons/DuckIcon";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
@@ -37,8 +38,8 @@ const App = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-brand-500 to-purple-600 rounded-lg flex items-center justify-center animate-pulse">
-            <span className="text-white font-bold text-lg">🦆</span>
+          <div className="animate-pulse">
+            <DuckIcon size={48} />
           </div>
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
           <p className="text-sm text-muted-foreground">Loading PromptDuck...</p>

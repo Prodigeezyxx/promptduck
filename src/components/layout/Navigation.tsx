@@ -30,9 +30,7 @@ export function Navigation() {
         {/* Logo */}
         <div className="flex items-center flex-shrink-0 px-6 py-4 border-b">
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-brand-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <DuckIcon size={20} className="text-white" />
-            </div>
+            <DuckIcon size={32} />
             <div>
               <h1 className="text-xl font-bold">PromptDuck</h1>
             </div>
