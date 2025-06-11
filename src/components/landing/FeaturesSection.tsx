@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
@@ -32,7 +31,7 @@ const features = [
   {
     icon: RefreshCw,
     title: 'Recursive Evolution',
-    description: 'Self-evaluating prompts that suggest improvements and remix possibilities.',
+    description: 'Incorporating multiple perspectives, resolving conflicting ideas, and continuously refining thoughts to achieve a more in-depth understanding.',
     color: 'text-green-500'
   },
   {
