@@ -44,7 +44,8 @@ export function AIGeneratorInputPanel({
               placeholder="Describe your goal or what you want the prompt to help with..."
               value={intent}
               onChange={(e) => onIntentChange(e.target.value)}
-              rows={5}
+              rows={7}
+              className="resize-none"
             />
           </div>
 
@@ -75,13 +76,10 @@ export function AIGeneratorInputPanel({
               value={context}
               onChange={(e) => onContextChange(e.target.value)}
               rows={2}
+              className="resize-none"
             />
           </div>
-        </CardContent>
-      </Card>
 
-      <Card>
-        <CardContent className="space-y-4 pt-6">
           <div>
             <label className="text-sm font-medium mb-2 block">Complexity</label>
             <Select value={complexity} onValueChange={onComplexityChange}>

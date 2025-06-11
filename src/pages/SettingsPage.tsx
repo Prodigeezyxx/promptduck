@@ -1,15 +1,16 @@
-
 import { useState } from 'react';
 import { useUser } from '@clerk/clerk-react';
-import { Settings as SettingsIcon, User, Database, Trash2, Download, Loader2 } from 'lucide-react';
+import { Settings as SettingsIcon, User, Database, Trash2, Download, Loader2, Eye, EyeOff } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
 import { ApiKeySettings } from '@/components/settings/ApiKeySettings';
 import { usePromptStore } from '@/store/promptStore';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
+import { useUiStore } from '@/store/uiStore';
 import { toast } from '@/hooks/use-toast';
 
 export default function SettingsPage() {
@@ -17,6 +18,7 @@ export default function SettingsPage() {
   const { prompts, clearHistory: clearPrompts } = usePromptStore();
   const { history, clearHistory: clearGeneratorHistory } = useGeneratorStore();
   const { credits } = useCreditStore();
+  const { leftPaneVisible, toggleLeftPane } = useUiStore();
   const [isExporting, setIsExporting] = useState(false);
 
   const handleExportData = async () => {
@@ -78,7 +80,7 @@ export default function SettingsPage() {
             Settings
           </h1>
           <p className="text-muted-foreground mt-1">
-            Manage your account, API keys, and application preferences
+            Manage your account, preferences, and application settings
           </p>
         </div>
       </div>
@@ -125,7 +127,31 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* API Configuration */}
+      {/* UI Preferences */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Eye className="w-5 h-5 mr-2" />
+            Interface Preferences
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <label className="text-sm font-medium">Show Input Panel</label>
+              <p className="text-xs text-muted-foreground">
+                Toggle the visibility of the prompt input panel in the generator
+              </p>
+            </div>
+            <Switch
+              checked={leftPaneVisible}
+              onCheckedChange={toggleLeftPane}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* AI Engine Status */}
       <ApiKeySettings />
 
       {/* Data Management */}
@@ -215,7 +241,7 @@ export default function SettingsPage() {
           </div>
           <Separator />
           <p className="text-xs text-muted-foreground">
-            PromptDuck helps you create, optimize, and manage AI prompts with advanced heuristics 
+            PromptDuck helps you create, optimize, and manage prompts with advanced heuristics 
             and persona-based generation. Your data is secured and synced across devices when signed in.
           </p>
         </CardContent>

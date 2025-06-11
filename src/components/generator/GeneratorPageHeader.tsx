@@ -2,7 +2,8 @@
 import { Button } from '@/components/ui/button';
 import { CreditDisplay } from '@/components/CreditDisplay';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Wand2, History } from 'lucide-react';
+import { useUiStore } from '@/store/uiStore';
+import { Wand2, History, Eye, EyeOff } from 'lucide-react';
 
 interface GeneratorPageHeaderProps {
   onHistoryOpen: () => void;
@@ -10,6 +11,7 @@ interface GeneratorPageHeaderProps {
 
 export function GeneratorPageHeader({ onHistoryOpen }: GeneratorPageHeaderProps) {
   const isMobile = useIsMobile();
+  const { leftPaneVisible, toggleLeftPane } = useUiStore();
 
   return (
     <div className="mb-6 lg:mb-8">
@@ -23,15 +25,28 @@ export function GeneratorPageHeader({ onHistoryOpen }: GeneratorPageHeaderProps)
             Transform your ideas using intelligently selected cognitive heuristics
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onHistoryOpen}
-          className="flex items-center gap-2"
-        >
-          <History className="w-4 h-4" />
-          History
-        </Button>
+        <div className="flex items-center gap-2">
+          {!isMobile && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleLeftPane}
+              className="flex items-center gap-2"
+            >
+              {leftPaneVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              {leftPaneVisible ? 'Hide Panel' : 'Show Panel'}
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onHistoryOpen}
+            className="flex items-center gap-2"
+          >
+            <History className="w-4 h-4" />
+            History
+          </Button>
+        </div>
       </div>
       
       {/* Mobile Credit Display */}
