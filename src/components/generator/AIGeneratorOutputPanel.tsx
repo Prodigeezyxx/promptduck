@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,6 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Copy, Save, ChevronDown, ChevronRight, Sparkles, PlayCircle, RefreshCw } from 'lucide-react';
 import { GenerationResult } from '@/types';
 import { cn } from '@/lib/utils';
-import { usePlaygroundConversation } from '@/hooks/usePlaygroundConversation';
 
 interface AIGeneratorOutputPanelProps {
   lastResult: GenerationResult | null;
@@ -28,13 +28,13 @@ export function AIGeneratorOutputPanel({
 }: AIGeneratorOutputPanelProps) {
   const navigate = useNavigate();
   const [isRemixOpen, setIsRemixOpen] = useState(false);
-  const { setCurrentInput } = usePlaygroundConversation();
 
   const handleTestInPlayground = () => {
     if (lastResult) {
-      // Set the prompt in playground and navigate
-      setCurrentInput(lastResult.optimized_prompt);
-      navigate('/app/playground');
+      // Navigate with state to pre-fill the playground input
+      navigate('/app/playground', { 
+        state: { prefilledPrompt: lastResult.optimized_prompt }
+      });
     }
   };
 
@@ -141,7 +141,7 @@ export function AIGeneratorOutputPanel({
           </div>
         </div>
 
-        {/* Remix Suggestions */}
+        {/* Remix Suggestions - Improved Formatting */}
         {lastResult.remix_suggestions && lastResult.remix_suggestions.length > 0 && (
           <Collapsible open={isRemixOpen} onOpenChange={setIsRemixOpen}>
             <CollapsibleTrigger asChild>
@@ -163,14 +163,19 @@ export function AIGeneratorOutputPanel({
                     <div
                       key={index}
                       className={cn(
-                        "p-2 text-xs border rounded cursor-pointer",
-                        "hover:bg-muted/50 transition-colors"
+                        "p-3 text-sm border rounded-lg cursor-pointer transition-all duration-200",
+                        "hover:bg-muted/50 hover:border-brand-300 dark:hover:border-brand-600",
+                        "bg-card dark:bg-card/50 border-border dark:border-gray-700"
                       )}
                       onClick={() => onRemixSuggestion(suggestion)}
                     >
-                      <div className="flex items-start justify-between gap-2">
-                        <span className="flex-1">{suggestion}</span>
-                        <RefreshCw className="w-3 h-3 text-muted-foreground shrink-0" />
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm leading-relaxed break-words">
+                            {suggestion}
+                          </p>
+                        </div>
+                        <RefreshCw className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
                       </div>
                     </div>
                   ))}

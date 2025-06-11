@@ -1,7 +1,9 @@
-import { useState, useRef } from 'react';
+
+import { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useApiKeyStore } from '@/store/apiKeyStore';
 import { geminiService } from '@/services/geminiService';
+import { useLocation } from 'react-router-dom';
 
 interface Message {
   id: string;
@@ -20,6 +22,16 @@ export function usePlaygroundConversation() {
   const [currentInput, setCurrentInput] = useState('');
   const { apiKey } = useApiKeyStore();
   const abortControllerRef = useRef<AbortController | null>(null);
+  const location = useLocation();
+
+  // Check for pre-filled input from navigation state
+  useEffect(() => {
+    if (location.state?.prefilledPrompt) {
+      setCurrentInput(location.state.prefilledPrompt);
+      // Clear the state to prevent re-setting on subsequent renders
+      window.history.replaceState({}, '', location.pathname);
+    }
+  }, [location]);
 
   const generateUniqueId = () => {
     messageCounter += 1;

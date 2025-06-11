@@ -38,7 +38,7 @@ export class GeminiService {
               temperature: 0.3,
               topP: 0.8,
               topK: 40,
-              maxOutputTokens: 2048,
+              maxOutputTokens: 4096, // Increased from 2048 to prevent truncation
             }
           });
           
