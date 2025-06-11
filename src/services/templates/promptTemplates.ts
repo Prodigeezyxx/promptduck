@@ -16,135 +16,135 @@ export interface PromptTemplate {
 export const ENHANCED_TEMPLATES: Record<IntentType, PromptTemplate[]> = {
   instructional: [
     {
-      id: 'instructional-detailed',
-      name: 'Detailed Step-by-Step Guide',
+      id: 'instructional-comprehensive',
+      name: 'Technical Documentation Framework',
       intent: 'instructional',
       template: (input, context) => 
-        `You are a world-class expert instructor. Create a comprehensive, step-by-step guide for: ${input}${context ? `\n\nContext: ${context}` : ''}\n\nStructure your response with:\n1. Clear numbered steps\n2. Prerequisites and requirements\n3. Expected outcomes\n4. Common pitfalls to avoid\n5. Additional resources`,
+        `Generate comprehensive technical documentation for: ${input}${context ? `\n\nSpecifications: ${context}` : ''}\n\nStructure the output with:\n1. Technical overview and requirements\n2. Step-by-step implementation procedures\n3. Configuration parameters and dependencies\n4. Validation criteria and testing procedures\n5. Troubleshooting specifications and error handling`,
       requiredHeuristics: ['multi_role_collision', 'recursive_refinement'],
       optionalHeuristics: ['context_anchoring'],
-      complexity: 'intermediate',
-      tags: ['educational', 'step-by-step', 'comprehensive']
+      complexity: 'advanced',
+      tags: ['technical', 'documentation', 'systematic']
     },
     {
-      id: 'instructional-quick',
-      name: 'Quick How-To Guide',
+      id: 'instructional-procedural',
+      name: 'Procedural Implementation Guide',
       intent: 'instructional',
       template: (input, context) => 
-        `Provide a concise, actionable guide for: ${input}${context ? ` (Context: ${context})` : ''}\n\nFormat as a numbered list with clear, actionable steps.`,
+        `Create step-by-step implementation procedures for: ${input}${context ? ` (Technical context: ${context})` : ''}\n\nProvide numbered sequential steps with technical specifications and measurable outcomes.`,
       requiredHeuristics: ['recursive_refinement'],
       optionalHeuristics: ['context_anchoring'],
-      complexity: 'simple',
-      tags: ['quick', 'actionable', 'concise']
+      complexity: 'intermediate',
+      tags: ['procedural', 'systematic', 'implementation']
     }
   ],
   
   code: [
     {
-      id: 'code-implementation',
-      name: 'Code Implementation with Best Practices',
+      id: 'code-technical-implementation',
+      name: 'Technical Code Implementation',
       intent: 'code',
       template: (input, context) => 
-        `You are a senior software engineer with expertise in best practices. Implement the following: ${input}${context ? `\n\nAdditional context: ${context}` : ''}\n\nRequirements:\n- Write clean, readable code\n- Include comprehensive comments\n- Follow language-specific conventions\n- Add error handling where appropriate\n- Provide usage examples`,
+        `Implement the following technical specification: ${input}${context ? `\n\nTechnical requirements: ${context}` : ''}\n\nProvide:\n1. Complete implementation with inline documentation\n2. Technical specifications and dependencies\n3. Error handling and validation procedures\n4. Performance considerations and optimization notes\n5. Testing framework and verification methods`,
       requiredHeuristics: ['self_repairing', 'recursive_refinement'],
       optionalHeuristics: ['multi_role_collision'],
       complexity: 'advanced',
-      tags: ['code', 'best-practices', 'documentation']
+      tags: ['implementation', 'technical', 'systematic']
     },
     {
-      id: 'code-debug',
-      name: 'Code Debugging and Optimization',
+      id: 'code-analysis',
+      name: 'Code Analysis and Optimization',
       intent: 'code',
       template: (input, context) => 
-        `You are an expert debugger and code optimizer. Analyze and improve this code: ${input}${context ? `\n\nContext: ${context}` : ''}\n\nProvide:\n1. Issue identification\n2. Fixed code\n3. Performance improvements\n4. Security considerations\n5. Testing recommendations`,
+        `Analyze and optimize the following code implementation: ${input}${context ? `\n\nTechnical context: ${context}` : ''}\n\nProvide:\n1. Technical analysis of current implementation\n2. Identified issues and optimization opportunities\n3. Refactored code with improvements\n4. Performance metrics and security considerations\n5. Testing specifications and validation procedures`,
       requiredHeuristics: ['self_repairing', 'multi_role_collision'],
       optionalHeuristics: ['recursive_refinement'],
       complexity: 'advanced',
-      tags: ['debugging', 'optimization', 'analysis']
+      tags: ['analysis', 'optimization', 'technical-review']
     }
   ],
 
   analytical: [
     {
-      id: 'analytical-comprehensive',
-      name: 'Comprehensive Analysis',
+      id: 'analytical-technical',
+      name: 'Technical Analysis Framework',
       intent: 'analytical',
       template: (input, context) => 
-        `You are a critical thinking expert. Provide a thorough analysis of: ${input}${context ? `\n\nContext: ${context}` : ''}\n\nStructure your analysis with:\n1. Executive summary\n2. Key findings\n3. Supporting evidence\n4. Potential counterarguments\n5. Conclusions and recommendations`,
+        `Conduct technical analysis of: ${input}${context ? `\n\nAnalysis parameters: ${context}` : ''}\n\nStructure the analysis with:\n1. Technical overview and scope definition\n2. Data examination and methodology\n3. Quantitative findings with supporting evidence\n4. Technical implications and constraints\n5. Actionable recommendations with implementation specifications`,
       requiredHeuristics: ['multi_role_collision', 'contradiction_stacking'],
       optionalHeuristics: ['recursive_refinement'],
       complexity: 'advanced',
-      tags: ['analysis', 'critical-thinking', 'comprehensive']
+      tags: ['analysis', 'technical', 'data-driven']
     }
   ],
 
   creative: [
     {
-      id: 'creative-storytelling',
-      name: 'Creative Storytelling',
+      id: 'creative-structured',
+      name: 'Structured Content Generation',
       intent: 'creative',
       template: (input, context) => 
-        `You are a master storyteller with vivid imagination. Create an engaging story based on: ${input}${context ? `\n\nSetting/Context: ${context}` : ''}\n\nInclude:\n- Compelling characters\n- Rich descriptions\n- Engaging plot\n- Emotional depth\n- Satisfying resolution`,
+        `Generate structured content based on: ${input}${context ? `\n\nContent specifications: ${context}` : ''}\n\nProvide:\n1. Content framework and structural elements\n2. Technical specifications for each component\n3. Implementation guidelines and formatting requirements\n4. Quality metrics and validation criteria\n5. Optimization recommendations for target audience`,
       requiredHeuristics: ['contradiction_stacking', 'time_distortion'],
       optionalHeuristics: ['context_anchoring'],
       complexity: 'intermediate',
-      tags: ['creative', 'storytelling', 'narrative']
+      tags: ['structured', 'content-generation', 'systematic']
     }
   ],
 
   conversational: [
     {
-      id: 'conversational-friendly',
-      name: 'Friendly Conversation',
+      id: 'conversational-technical',
+      name: 'Technical Information Exchange',
       intent: 'conversational',
       template: (input, context) => 
-        `You are a friendly, knowledgeable conversation partner. Let's discuss: ${input}${context ? ` (Context: ${context})` : ''}\n\nEngage naturally while being informative and helpful.`,
+        `Provide technical information regarding: ${input}${context ? ` (Context: ${context})` : ''}\n\nDeliver factual, structured information with clear explanations and actionable details.`,
       requiredHeuristics: ['context_anchoring'],
       optionalHeuristics: [],
       complexity: 'simple',
-      tags: ['conversation', 'friendly', 'informal']
+      tags: ['informational', 'technical', 'factual']
     }
   ],
 
   business: [
     {
-      id: 'business-strategy',
-      name: 'Business Strategy Framework',
+      id: 'business-technical',
+      name: 'Business Process Framework',
       intent: 'business',
       template: (input, context) => 
-        `You are a seasoned business strategist. Develop a strategic approach for: ${input}${context ? `\n\nBusiness context: ${context}` : ''}\n\nProvide:\n1. Situation analysis\n2. Strategic options\n3. Recommended approach\n4. Implementation roadmap\n5. Success metrics`,
+        `Develop systematic business approach for: ${input}${context ? `\n\nBusiness parameters: ${context}` : ''}\n\nProvide:\n1. Situation analysis with quantifiable metrics\n2. Strategic framework with implementation steps\n3. Resource requirements and technical specifications\n4. Execution timeline with measurable milestones\n5. Success metrics and monitoring procedures`,
       requiredHeuristics: ['multi_role_collision', 'recursive_refinement'],
       optionalHeuristics: ['contradiction_stacking'],
       complexity: 'advanced',
-      tags: ['business', 'strategy', 'framework']
+      tags: ['business-process', 'systematic', 'implementation']
     }
   ],
 
   technical: [
     {
       id: 'technical-architecture',
-      name: 'Technical Architecture Design',
+      name: 'Technical Architecture Specification',
       intent: 'technical',
       template: (input, context) => 
-        `You are a principal architect with deep technical expertise. Design a solution for: ${input}${context ? `\n\nTechnical constraints: ${context}` : ''}\n\nInclude:\n1. Architecture overview\n2. Component design\n3. Technology choices\n4. Scalability considerations\n5. Risk mitigation`,
+        `Design technical architecture for: ${input}${context ? `\n\nTechnical constraints: ${context}` : ''}\n\nProvide:\n1. Architecture overview with component specifications\n2. Technical design patterns and implementation details\n3. Technology stack selection with justification\n4. Scalability framework and performance specifications\n5. Risk assessment and mitigation procedures`,
       requiredHeuristics: ['self_repairing', 'multi_role_collision'],
       optionalHeuristics: ['recursive_refinement'],
       complexity: 'advanced',
-      tags: ['technical', 'architecture', 'design']
+      tags: ['architecture', 'technical-design', 'systematic']
     }
   ],
 
   unknown: [
     {
-      id: 'unknown-clarification',
-      name: 'Request Clarification',
+      id: 'unknown-specification',
+      name: 'Requirement Specification',
       intent: 'unknown',
       template: (input, context) => 
-        `Help clarify and improve this request: ${input}${context ? `\n\nAdditional context: ${context}` : ''}\n\nProvide specific questions to better understand the intent and suggest a more detailed prompt.`,
+        `Analyze and clarify the following requirement: ${input}${context ? `\n\nAdditional context: ${context}` : ''}\n\nProvide technical clarification questions and suggest structured approaches for requirement refinement.`,
       requiredHeuristics: ['multi_role_collision'],
       optionalHeuristics: ['context_anchoring'],
       complexity: 'intermediate',
-      tags: ['clarification', 'improvement', 'refinement']
+      tags: ['specification', 'clarification', 'systematic']
     }
   ]
 };

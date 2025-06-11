@@ -6,42 +6,49 @@ export class GeminiPromptBuilder {
   static buildSystemPrompt(request: GenerationRequest): string {
     const heuristicsDesc = request.heuristics.map(h => HEURISTICS[h].description).join(', ');
 
-    return `You are an expert prompt engineer. Create an optimized prompt using cognitive heuristics.
+    return `Generate an optimized technical prompt following PromptDuck specifications.
 
-TASK DETAILS:
+TECHNICAL REQUIREMENTS:
 - Intent: ${request.intent}
-- Applied Heuristics: ${heuristicsDesc}
+- Applied Methodologies: ${heuristicsDesc}
 - Context: ${request.context || 'No additional context provided'}
 - Complexity Level: ${request.complexity || 'intermediate'}
 
-Apply these cognitive approaches: ${request.heuristics.join(', ')}.
+MANDATORY OUTPUT CHARACTERISTICS:
+1. Technical and factual language only
+2. Step-by-step instructional format
+3. Data-oriented and expert-level content
+4. No roleplay, anthropomorphic framing, or emotional language
+5. Structured, numbered procedures where applicable
 
-CRITICAL: Your response MUST be ONLY valid JSON. No markdown, no code blocks, no additional text.
+Applied cognitive methodologies: ${request.heuristics.join(', ')}.
 
-Respond with this EXACT JSON structure:
+OUTPUT FORMAT: Return ONLY valid JSON with no markdown formatting.
+
+Required JSON structure:
 
 {
-  "optimized_prompt": "Your enhanced prompt text here - make this detailed and comprehensive",
-  "preview_title": "Brief descriptive title for the prompt",
-  "tags": ["relevant", "descriptive", "tags"],
-  "variables": [{"name": "variable_name", "type": "text", "required": true, "description": "What this variable represents"}],
+  "optimized_prompt": "Technical prompt with step-by-step instructions and factual specifications",
+  "preview_title": "Factual description of the prompt's technical purpose",
+  "tags": ["technical", "descriptive", "tags"],
+  "variables": [{"name": "variable_name", "type": "text", "required": true, "description": "Technical specification of this parameter"}],
   "metadata": {
     "complexity_score": 8,
     "creativity_score": 7,
     "coherence_score": 9,
     "estimated_tokens": 200
   },
-  "remix_suggestions": ["Specific improvement suggestion", "Another enhancement idea", "Third optimization option"]
+  "remix_suggestions": ["Technical improvement specification", "Additional methodology integration", "Enhanced structural optimization"]
 }
 
-REQUIREMENTS:
-- optimized_prompt: Must be a complete, actionable prompt (minimum 100 words)
-- preview_title: Concise title describing the prompt's purpose
-- tags: 3-5 relevant tags for categorization
-- variables: Array of customizable elements (can be empty if none needed)
-- metadata: Numerical scores from 1-10 and realistic token estimate
-- remix_suggestions: 3-4 specific ways to improve or modify the prompt
+SPECIFICATIONS:
+- optimized_prompt: Technical instruction set with numbered steps (minimum 100 words)
+- preview_title: Factual summary of prompt functionality
+- tags: 3-5 technical classification tags
+- variables: Configurable parameters with technical specifications
+- metadata: Numerical assessments (1-10 scale) and token estimation
+- remix_suggestions: 3-4 technical enhancement specifications
 
-Return ONLY the JSON object. No other text, formatting, or explanations.`;
+Generate structured, factual content without anthropomorphic language or roleplay elements.`;
   }
 }

@@ -1,4 +1,3 @@
-
 import { GenerationRequest, GenerationResult } from '@/types';
 
 export class GeminiResponseParser {
@@ -23,8 +22,8 @@ export class GeminiResponseParser {
     
     return {
       optimized_prompt: this.cleanFormatting(optimizedPrompt),
-      preview_title: parsedData.preview_title || `AI Generated: ${request.intent.slice(0, 50)}...`,
-      tags: Array.isArray(parsedData.tags) ? parsedData.tags : ['ai-generated', ...request.heuristics],
+      preview_title: parsedData.preview_title || `Technical Specification: ${request.intent.slice(0, 50)}...`,
+      tags: Array.isArray(parsedData.tags) ? parsedData.tags : ['technical', 'specification', ...request.heuristics],
       heuristics: request.heuristics,
       variables: Array.isArray(parsedData.variables) ? parsedData.variables : [],
       metadata: {
@@ -37,7 +36,7 @@ export class GeminiResponseParser {
       },
       remix_suggestions: Array.isArray(parsedData.remix_suggestions) 
         ? parsedData.remix_suggestions 
-        : this.getDefaultRemixSuggestions()
+        : this.getTechnicalRemixSuggestions()
     };
   }
 
@@ -160,8 +159,8 @@ export class GeminiResponseParser {
     
     return {
       optimized_prompt: cleanedText,
-      preview_title: `AI Generated: ${request.intent.slice(0, 50)}...`,
-      tags: ['ai-generated', ...request.heuristics],
+      preview_title: `Technical Specification: ${request.intent.slice(0, 50)}...`,
+      tags: ['technical', 'specification', ...request.heuristics],
       heuristics: request.heuristics,
       variables: [],
       metadata: {
@@ -172,16 +171,16 @@ export class GeminiResponseParser {
         confidence_score: Math.random() * 0.3 + 0.7,
         generation_time_ms: generationTimeMs
       },
-      remix_suggestions: this.getDefaultRemixSuggestions()
+      remix_suggestions: this.getTechnicalRemixSuggestions()
     };
   }
 
-  private static getDefaultRemixSuggestions(): string[] {
+  private static getTechnicalRemixSuggestions(): string[] {
     return [
-      'Add more specific constraints',
-      'Include examples in the prompt', 
-      'Add step-by-step instructions',
-      'Specify desired output format'
+      'Add quantifiable success metrics',
+      'Include technical validation procedures', 
+      'Specify implementation dependencies',
+      'Define error handling protocols'
     ];
   }
 }
