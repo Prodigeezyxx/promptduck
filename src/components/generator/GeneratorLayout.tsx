@@ -3,6 +3,10 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { AIGeneratorInputPanel } from './AIGeneratorInputPanel';
 import { AIGeneratorOutputPanel } from './AIGeneratorOutputPanel';
 import { HeuristicType, GenerationResult } from '@/types';
+import { memo, useMemo } from 'react';
+
+const OptimizedInputPanel = memo(AIGeneratorInputPanel);
+const OptimizedOutputPanel = memo(AIGeneratorOutputPanel);
 
 interface GeneratorLayoutProps {
   intent: string;
@@ -36,28 +40,32 @@ export function GeneratorLayout({
   onRemixSuggestion,
 }: GeneratorLayoutProps) {
   const isMobile = useIsMobile();
+  
+  // Memoize props objects to prevent unnecessary re-renders
+  const inputPanelProps = useMemo(() => ({
+    intent,
+    context,
+    complexity,
+    selectedHeuristics,
+    isGenerating,
+    onIntentChange,
+    onContextChange,
+    onComplexityChange,
+    onGenerate,
+  }), [intent, context, complexity, selectedHeuristics, isGenerating, onIntentChange, onContextChange, onComplexityChange, onGenerate]);
+
+  const outputPanelProps = useMemo(() => ({
+    lastResult,
+    onCopyPrompt,
+    onSavePrompt,
+    onRemixSuggestion,
+  }), [lastResult, onCopyPrompt, onSavePrompt, onRemixSuggestion]);
 
   if (isMobile) {
     return (
-      <div className="space-y-6 pb-6">
-        <AIGeneratorInputPanel
-          intent={intent}
-          context={context}
-          complexity={complexity}
-          selectedHeuristics={selectedHeuristics}
-          isGenerating={isGenerating}
-          onIntentChange={onIntentChange}
-          onContextChange={onContextChange}
-          onComplexityChange={onComplexityChange}
-          onGenerate={onGenerate}
-        />
-
-        <AIGeneratorOutputPanel
-          lastResult={lastResult}
-          onCopyPrompt={onCopyPrompt}
-          onSavePrompt={onSavePrompt}
-          onRemixSuggestion={onRemixSuggestion}
-        />
+      <div className="space-y-4 sm:space-y-6 pb-4 sm:pb-6">
+        <OptimizedInputPanel {...inputPanelProps} />
+        <OptimizedOutputPanel {...outputPanelProps} />
       </div>
     );
   }
@@ -67,28 +75,13 @@ export function GeneratorLayout({
       {/* Left Column - Input Panel */}
       <div className="lg:col-span-4 min-h-0">
         <div className="sticky top-6">
-          <AIGeneratorInputPanel
-            intent={intent}
-            context={context}
-            complexity={complexity}
-            selectedHeuristics={selectedHeuristics}
-            isGenerating={isGenerating}
-            onIntentChange={onIntentChange}
-            onContextChange={onContextChange}
-            onComplexityChange={onComplexityChange}
-            onGenerate={onGenerate}
-          />
+          <OptimizedInputPanel {...inputPanelProps} />
         </div>
       </div>
 
       {/* Right Column - Output Panel */}
       <div className="lg:col-span-8 min-h-0 overflow-hidden">
-        <AIGeneratorOutputPanel
-          lastResult={lastResult}
-          onCopyPrompt={onCopyPrompt}
-          onSavePrompt={onSavePrompt}
-          onRemixSuggestion={onRemixSuggestion}
-        />
+        <OptimizedOutputPanel {...outputPanelProps} />
       </div>
     </div>
   );

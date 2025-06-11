@@ -1,5 +1,4 @@
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +6,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { RefreshCw, Sparkles } from 'lucide-react';
 import { HeuristicType } from '@/types';
 import { HeuristicsDisplay } from './HeuristicsDisplay';
+import { memo } from 'react';
+
+const OptimizedHeuristicsDisplay = memo(HeuristicsDisplay);
 
 interface AIGeneratorInputPanelProps {
   intent: string;
@@ -32,10 +34,10 @@ export function AIGeneratorInputPanel({
   onGenerate
 }: AIGeneratorInputPanelProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle>Intent & Context</CardTitle>
+        <CardHeader className="pb-4 sm:pb-6">
+          <CardTitle className="text-lg sm:text-xl">Intent & Context</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
@@ -44,16 +46,16 @@ export function AIGeneratorInputPanel({
               placeholder="Describe your goal or what you want the prompt to help with..."
               value={intent}
               onChange={(e) => onIntentChange(e.target.value)}
-              rows={8}
-              className="resize-none"
+              rows={6}
+              className="resize-none text-base"
             />
           </div>
 
-          {/* Generate Button - Prominently placed after intent */}
+          {/* Generate Button - Prominently placed after intent with better mobile sizing */}
           <Button 
             onClick={onGenerate} 
             disabled={isGenerating || !intent.trim()}
-            className="w-full bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700"
+            className="w-full bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 min-h-[48px] text-base font-medium"
             size="lg"
           >
             {isGenerating ? (
@@ -76,20 +78,20 @@ export function AIGeneratorInputPanel({
               value={context}
               onChange={(e) => onContextChange(e.target.value)}
               rows={2}
-              className="resize-none"
+              className="resize-none text-base"
             />
           </div>
 
           <div>
             <label className="text-sm font-medium mb-2 block">Complexity</label>
             <Select value={complexity} onValueChange={onComplexityChange}>
-              <SelectTrigger>
+              <SelectTrigger className="min-h-[44px] text-base">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="simple">Simple</SelectItem>
-                <SelectItem value="intermediate">Intermediate</SelectItem>
-                <SelectItem value="advanced">Advanced</SelectItem>
+                <SelectItem value="simple" className="text-base">Simple</SelectItem>
+                <SelectItem value="intermediate" className="text-base">Intermediate</SelectItem>
+                <SelectItem value="advanced" className="text-base">Advanced</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -97,7 +99,7 @@ export function AIGeneratorInputPanel({
       </Card>
 
       {selectedHeuristics.length > 0 && (
-        <HeuristicsDisplay selectedHeuristics={selectedHeuristics} />
+        <OptimizedHeuristicsDisplay selectedHeuristics={selectedHeuristics} />
       )}
     </div>
   );
