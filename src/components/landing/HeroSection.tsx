@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -15,15 +14,15 @@ export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
       {/* Matrix Rain background effect */}
-      <div className="absolute inset-0 will-change-transform z-0">
+      <div className="absolute inset-0 will-change-transform z-10">
         <OptimizedMatrixRain />
       </div>
 
       {/* Background gradients */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-100 to-gray-300 dark:from-gray-950 dark:via-gray-900 dark:to-black will-change-transform z-1" />
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-100 to-gray-300 dark:from-gray-950 dark:via-gray-900 dark:to-black will-change-transform z-0" />
       
-      {/* Light mode overlay - much lower opacity to show matrix effect */}
-      <div className="absolute inset-0 bg-white/20 dark:bg-transparent z-2" />
+      {/* Light mode overlay - much reduced to show matrix effect */}
+      <div className="absolute inset-0 bg-white/5 dark:bg-transparent z-5" />
       
       {/* Floating orbs */}
       <div className="absolute inset-0 overflow-hidden z-3">
@@ -55,7 +54,7 @@ export function HeroSection() {
         />
       </div>
 
-      <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
+      <div className="relative z-20 text-center max-w-4xl mx-auto px-4">
         <motion.div 
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
