@@ -43,6 +43,37 @@
     --brand-800: 228 100% 51%;
     --brand-900: 227 100% 45%;
     --brand-950: 229 100% 25%;
+
+    /* Responsive font sizes */
+    --text-xs: clamp(0.65rem, 0.5vw + 0.5rem, 0.75rem);
+    --text-sm: clamp(0.75rem, 0.75vw + 0.6rem, 0.875rem);
+    --text-base: clamp(0.875rem, 1vw + 0.7rem, 1rem);
+    --text-lg: clamp(1rem, 1.25vw + 0.8rem, 1.125rem);
+    --text-xl: clamp(1.125rem, 1.5vw + 0.9rem, 1.25rem);
+    --text-2xl: clamp(1.25rem, 2vw + 1rem, 1.5rem);
+    --text-3xl: clamp(1.5rem, 3vw + 1.2rem, 1.875rem);
+    --text-4xl: clamp(1.875rem, 4vw + 1.5rem, 2.25rem);
+    --text-5xl: clamp(2.25rem, 5vw + 2rem, 3rem);
+    --text-6xl: clamp(3rem, 6vw + 2.5rem, 3.75rem);
+    --text-7xl: clamp(3.75rem, 7vw + 3rem, 4.5rem);
+    --text-8xl: clamp(4.5rem, 8vw + 4rem, 6rem);
+
+    /* Responsive spacing */
+    --space-xs: clamp(0.25rem, 0.5vw + 0.1rem, 0.5rem);
+    --space-sm: clamp(0.5rem, 1vw + 0.25rem, 0.75rem);
+    --space-md: clamp(0.75rem, 1.5vw + 0.5rem, 1rem);
+    --space-lg: clamp(1rem, 2vw + 0.75rem, 1.5rem);
+    --space-xl: clamp(1.5rem, 3vw + 1rem, 2rem);
+    --space-2xl: clamp(2rem, 4vw + 1.5rem, 3rem);
+    --space-3xl: clamp(3rem, 6vw + 2rem, 4rem);
+
+    /* Responsive containers */
+    --container-xs: clamp(16rem, 90vw, 20rem);
+    --container-sm: clamp(20rem, 95vw, 24rem);
+    --container-md: clamp(28rem, 90vw, 32rem);
+    --container-lg: clamp(32rem, 85vw, 48rem);
+    --container-xl: clamp(48rem, 80vw, 64rem);
+    --container-2xl: clamp(64rem, 75vw, 80rem);
   }
 
   .dark {
@@ -94,9 +125,81 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
+
+  /* Responsive text utilities */
+  .text-fluid-xs { font-size: var(--text-xs); }
+  .text-fluid-sm { font-size: var(--text-sm); }
+  .text-fluid-base { font-size: var(--text-base); }
+  .text-fluid-lg { font-size: var(--text-lg); }
+  .text-fluid-xl { font-size: var(--text-xl); }
+  .text-fluid-2xl { font-size: var(--text-2xl); }
+  .text-fluid-3xl { font-size: var(--text-3xl); }
+  .text-fluid-4xl { font-size: var(--text-4xl); }
+  .text-fluid-5xl { font-size: var(--text-5xl); }
+  .text-fluid-6xl { font-size: var(--text-6xl); }
+  .text-fluid-7xl { font-size: var(--text-7xl); }
+  .text-fluid-8xl { font-size: var(--text-8xl); }
+
+  /* Responsive spacing utilities */
+  .p-fluid-xs { padding: var(--space-xs); }
+  .p-fluid-sm { padding: var(--space-sm); }
+  .p-fluid-md { padding: var(--space-md); }
+  .p-fluid-lg { padding: var(--space-lg); }
+  .p-fluid-xl { padding: var(--space-xl); }
+  .p-fluid-2xl { padding: var(--space-2xl); }
+  .p-fluid-3xl { padding: var(--space-3xl); }
+
+  .m-fluid-xs { margin: var(--space-xs); }
+  .m-fluid-sm { margin: var(--space-sm); }
+  .m-fluid-md { margin: var(--space-md); }
+  .m-fluid-lg { margin: var(--space-lg); }
+  .m-fluid-xl { margin: var(--space-xl); }
+  .m-fluid-2xl { margin: var(--space-2xl); }
+  .m-fluid-3xl { margin: var(--space-3xl); }
+
+  /* Touch target utilities */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Chat interface utilities */
+  .chat-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground)) transparent;
+  }
+
+  .chat-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .chat-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .chat-scrollbar::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground));
+    border-radius: 3px;
+  }
+
+  .chat-input-container {
+    background: hsl(var(--background));
+    border-top: 1px solid hsl(var(--border));
+  }
+
+  .chat-input-wrapper {
+    max-width: var(--container-2xl);
+    width: 100%;
+  }
+
+  .chat-message-user,
+  .chat-message-ai {
+    max-width: var(--container-2xl);
+    width: 100%;
+  }
 }
 
-/* New Rain Effect */
+/* Rain Effect - Enhanced for better light mode visibility */
 .rain-container::after {
   content: "";
   position: absolute;
@@ -121,7 +224,7 @@
   overflow: hidden;
   z-index: 10;
   pointer-events: none;
-  --c: hsl(var(--brand-600));
+  --c: hsl(var(--brand-700)); /* Darker color for light mode visibility */
   background-color: transparent;
   background-image: radial-gradient(4px 100px at 0px 235px, var(--c), #0000),
     radial-gradient(4px 100px at 300px 235px, var(--c), #0000),
@@ -197,7 +300,7 @@
     300px 210px,
     300px 210px;
   animation: rainFall 150s linear infinite;
-  opacity: 0.21;
+  opacity: 0.35; /* Increased opacity for better visibility */
 }
 
 @keyframes rainFall {
@@ -285,12 +388,27 @@
 /* Dark mode adjustments */
 .dark .rain-container {
   --c: hsl(var(--brand-400));
-  opacity: 0.175;
+  opacity: 0.25; /* Slightly increased for dark mode */
 }
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .rain-container {
-    opacity: 0.14;
+    opacity: 0.2;
+  }
+  
+  .dark .rain-container {
+    opacity: 0.15;
+  }
+}
+
+/* Enhanced responsive breakpoints */
+@media (max-width: 480px) {
+  .rain-container {
+    opacity: 0.15;
+  }
+  
+  .dark .rain-container {
+    opacity: 0.1;
   }
 }

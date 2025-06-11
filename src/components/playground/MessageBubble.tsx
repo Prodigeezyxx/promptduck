@@ -31,7 +31,7 @@ export function MessageBubble({
   if (showTypingIndicator && !finalContent) {
     return (
       <div 
-        className="flex items-start space-x-3 max-w-4xl mx-auto px-4 py-6"
+        className="flex items-start space-x-3 w-full max-w-none mx-auto p-fluid-md chat-message-ai"
         role="status"
         aria-live="polite"
         aria-label="AI is typing"
@@ -54,7 +54,7 @@ export function MessageBubble({
   return (
     <div 
       className={cn(
-        "flex items-start space-x-3 max-w-4xl mx-auto px-4 py-6 group",
+        "flex items-start space-x-3 w-full max-w-none mx-auto p-fluid-md group",
         isUser ? "chat-message-user" : "chat-message-ai"
       )}
       role="article"
@@ -77,7 +77,7 @@ export function MessageBubble({
           aria-live={!isUser && isAnimating ? "polite" : "off"}
         >
           {finalContent.split('\n\n').map((paragraph, index) => (
-            <p key={index} className="mb-4 last:mb-0 leading-relaxed whitespace-pre-wrap">
+            <p key={index} className="mb-4 last:mb-0 leading-relaxed whitespace-pre-wrap text-fluid-base">
               {paragraph}
             </p>
           ))}
@@ -91,7 +91,7 @@ export function MessageBubble({
             variant="ghost" 
             size="sm" 
             onClick={onCopy}
-            className="h-8 px-2 text-muted-foreground hover:text-foreground min-h-[48px] min-w-[48px] touch-target"
+            className="h-8 px-2 text-muted-foreground hover:text-foreground touch-target text-fluid-xs"
             aria-label={`Copy ${isUser ? 'user' : 'AI'} message`}
           >
             <Copy className="w-3 h-3 mr-1" />

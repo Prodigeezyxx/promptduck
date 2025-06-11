@@ -45,19 +45,21 @@ export function ChatInput({
     }
   };
 
-  // Auto-resize textarea
+  // Auto-resize textarea with responsive max height
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = 'auto';
-      textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+      // Responsive max height based on viewport
+      const maxHeight = window.innerWidth < 768 ? 150 : 200;
+      textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + 'px';
     }
   }, [value]);
 
   return (
     <div className="chat-input-container">
-      <div className="max-w-4xl mx-auto p-4">
-        <div className="chat-input-wrapper flex items-end gap-2 p-3 border border-input rounded-xl bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+      <div className="w-full max-w-none mx-auto p-fluid-md">
+        <div className="chat-input-wrapper flex items-end gap-2 p-fluid-sm border border-input rounded-xl bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
           {/* Textarea */}
           <Textarea
             ref={textareaRef}
@@ -67,8 +69,9 @@ export function ChatInput({
             placeholder={placeholder}
             disabled={disabled || isLoading}
             className={cn(
-              "flex-1 min-h-[40px] max-h-[200px] resize-none border-0 bg-transparent px-0 py-3",
-              "focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground"
+              "flex-1 resize-none border-0 bg-transparent px-0 py-3 text-fluid-base",
+              "focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground",
+              "min-h-[40px] max-h-[150px] sm:max-h-[200px]"
             )}
             rows={1}
             aria-label="Message input"
@@ -80,7 +83,7 @@ export function ChatInput({
             disabled={disabled || (!value.trim() && !isLoading)}
             size="sm"
             className={cn(
-              "h-10 w-10 rounded-xl flex-shrink-0 min-h-[48px] min-w-[48px] touch-target",
+              "h-10 w-10 rounded-xl flex-shrink-0 touch-target",
               isLoading
                 ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                 : value.trim() && !disabled
@@ -97,7 +100,7 @@ export function ChatInput({
           </Button>
         </div>
         
-        <p className="text-xs text-muted-foreground mt-2 text-center">
+        <p className="text-fluid-xs text-muted-foreground mt-2 text-center">
           PromptDuck can make mistakes. Consider checking important information.
         </p>
       </div>

@@ -8,17 +8,37 @@ interface ThemeState {
   toggleTheme: () => void;
 }
 
+// Detect system preference for initial theme
+const getInitialTheme = (): 'light' | 'dark' => {
+  if (typeof window !== 'undefined') {
+    // Check for stored preference first
+    const stored = localStorage.getItem('promptduck-theme');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return parsed.state?.theme || 'dark';
+    }
+    
+    // Fallback to system preference, defaulting to dark
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+      return 'light';
+    }
+  }
+  return 'dark'; // Default to dark mode
+};
+
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set, get) => ({
-      theme: 'dark', // Set default to dark mode
+      theme: getInitialTheme(),
       setTheme: (theme) => {
         set({ theme });
-        // Apply theme to document
-        if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
+        // Apply theme to document immediately
+        if (typeof document !== 'undefined') {
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
         }
       },
       toggleTheme: () => {
@@ -30,7 +50,7 @@ export const useThemeStore = create<ThemeState>()(
     {
       name: 'promptduck-theme',
       onRehydrateStorage: () => (state) => {
-        if (state) {
+        if (state && typeof document !== 'undefined') {
           state.setTheme(state.theme);
         }
       },
