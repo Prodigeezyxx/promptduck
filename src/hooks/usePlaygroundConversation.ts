@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useApiKeyStore } from '@/store/apiKeyStore';
@@ -22,13 +23,17 @@ export function usePlaygroundConversation() {
   const { apiKey } = useApiKeyStore();
   const abortControllerRef = useRef<AbortController | null>(null);
   const location = useLocation();
-  const serviceInitializedRef = useRef(false);
 
-  // Initialize service once when component mounts or API key changes
+  // Initialize service when API key is available
   useEffect(() => {
-    if (apiKey?.gemini && (!serviceInitializedRef.current || !geminiService)) {
-      geminiService.initialize(apiKey.gemini);
-      serviceInitializedRef.current = true;
+    if (apiKey?.gemini) {
+      try {
+        geminiService.initialize(apiKey.gemini);
+        console.log('Gemini service initialized successfully');
+      } catch (error) {
+        console.error('Failed to initialize Gemini service:', error);
+        toast.error('Failed to initialize AI service');
+      }
     }
   }, [apiKey?.gemini]);
 
@@ -96,7 +101,9 @@ export function usePlaygroundConversation() {
     const aiMessageId = addMessage('', 'ai', true);
 
     try {
-      // Service should already be initialized, just use it directly
+      // Ensure service is initialized before making the call
+      geminiService.initialize(apiKey.gemini);
+      
       const result = await geminiService.generateChatResponse(prompt.trim());
       
       // Check if request was aborted
