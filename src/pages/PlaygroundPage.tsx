@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ChatInterface } from '@/components/playground/ChatInterface';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useUiStore } from '@/store/uiStore';
+import { DuckIcon } from '@/components/icons/DuckIcon';
 
 export default function PlaygroundPage() {
   const isMobile = useIsMobile();
@@ -26,6 +27,12 @@ export default function PlaygroundPage() {
                 >
                   <LayoutPanelLeft className={`w-4 h-4 transition-transform ${!sidebarVisible ? 'rotate-180' : ''}`} />
                 </Button>
+              )}
+              {!isMobile && !sidebarVisible && (
+                <div className="flex items-center gap-2">
+                  <DuckIcon size={24} />
+                  <span className="text-lg font-bold gradient-text">PromptDuck</span>
+                </div>
               )}
               <div>
                 <h1 className="text-xl lg:text-2xl font-bold flex items-center">
