@@ -1,9 +1,8 @@
+
 import { useState, useRef } from 'react';
 import { toast } from 'sonner';
 import { useApiKeyStore } from '@/store/apiKeyStore';
 import { geminiService } from '@/services/geminiService';
-import { selectHeuristics } from '@/utils/heuristicSelector';
-import { GenerationRequest } from '@/types';
 
 interface Message {
   id: string;
@@ -81,15 +80,19 @@ export function usePlaygroundConversation() {
       // Initialize the service
       geminiService.initialize(apiKey.gemini);
       
-      // Use the main PromptDuck generator instead of chat
-      const heuristics = selectHeuristics(prompt, '');
-      const request: GenerationRequest = {
-        intent: prompt.trim(),
-        heuristics: heuristics,
-        complexity: 'intermediate'
-      };
+      // Create a specialized playground prompt for direct answers
+      const playgroundPrompt = `You are a technical expert providing direct, factual instructions. The user has asked: "${prompt.trim()}"
 
-      const result = await geminiService.generatePrompt(request);
+Provide a clear, step-by-step technical response that:
+1. Uses factual, technical language only
+2. Gives numbered, actionable instructions
+3. Includes specific technical details and specifications
+4. Avoids roleplay or anthropomorphic framing
+5. Focuses on practical implementation
+
+Respond directly to their question with technical instructions, not as a prompt for an AI system.`;
+
+      const result = await geminiService.generateChatResponse(playgroundPrompt);
       
       // Check if request was aborted
       if (abortControllerRef.current?.signal.aborted) {
@@ -97,8 +100,8 @@ export function usePlaygroundConversation() {
         return;
       }
       
-      // Extract just the optimized prompt for display
-      updateMessage(aiMessageId, result.optimized_prompt, false);
+      // Display the direct response
+      updateMessage(aiMessageId, result, false);
       toast.success('Response generated successfully');
     } catch (error) {
       console.error('Gemini API error:', error);

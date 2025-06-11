@@ -1,3 +1,4 @@
+
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { GenerationRequest, GenerationResult } from '@/types';
 import { GEMINI_CONFIG } from './config';
@@ -18,7 +19,7 @@ export class GeminiService {
   }
 
   /**
-   * Simple chat method for playground interactions
+   * Optimized chat method for playground interactions - provides direct conversational responses
    */
   async generateChatResponse(prompt: string): Promise<string> {
     if (!this.isInitialized || !this.genAI) {
@@ -31,7 +32,16 @@ export class GeminiService {
       for (const modelName of GEMINI_CONFIG.models) {
         try {
           console.log(`Attempting chat generation with model: ${modelName}`);
-          const model = this.genAI!.getGenerativeModel({ model: modelName });
+          const model = this.genAI!.getGenerativeModel({ 
+            model: modelName,
+            generationConfig: {
+              temperature: 0.3,
+              topP: 0.8,
+              topK: 40,
+              maxOutputTokens: 2048,
+            }
+          });
+          
           const result = await model.generateContent(prompt);
           const response = await result.response;
           const text = response.text();
