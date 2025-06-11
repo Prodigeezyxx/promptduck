@@ -60,8 +60,8 @@ export class GeminiService {
         throw new Error('Empty response from model');
       }
 
-      // Return raw response without heavy cleaning for speed
-      return text.trim();
+      // Apply text cleaning while maintaining speed
+      return this.cleanResponseForChat(text);
     } catch (error) {
       // Simplified error handling - fail fast
       throw new Error(`Chat generation failed: ${error.message}`);
