@@ -122,10 +122,10 @@
   font-family: 'Courier New', monospace;
   font-size: 16px;
   line-height: 20px;
-  color: #00ff41;
-  text-shadow: 0 0 10px #00ff41;
+  color: hsl(var(--brand-600));
+  text-shadow: 0 0 10px hsl(var(--brand-600));
   animation: matrixFall linear infinite;
-  opacity: 1;
+  opacity: 0.3;
   white-space: pre;
   z-index: 10;
 }
@@ -136,10 +136,10 @@
     opacity: 0;
   }
   10% {
-    opacity: 1;
+    opacity: 0.3;
   }
   90% {
-    opacity: 1;
+    opacity: 0.3;
   }
   100% {
     transform: translateY(100vh);
@@ -149,16 +149,16 @@
 
 /* Dark mode adjustments */
 .dark .matrix-column {
-  color: #00ff41;
-  text-shadow: 0 0 15px #00ff41;
-  opacity: 1;
+  color: hsl(var(--brand-400));
+  text-shadow: 0 0 15px hsl(var(--brand-400));
+  opacity: 0.3;
 }
 
 /* Light mode - make more visible */
 html:not(.dark) .matrix-column {
-  color: #00aa00;
-  text-shadow: 0 0 8px #00aa00;
-  opacity: 0.8;
+  color: hsl(var(--brand-700));
+  text-shadow: 0 0 8px hsl(var(--brand-700));
+  opacity: 0.25;
 }
 
 /* Mobile responsiveness */
@@ -166,6 +166,6 @@ html:not(.dark) .matrix-column {
   .matrix-column {
     font-size: 14px;
     line-height: 18px;
-    opacity: 0.8;
+    opacity: 0.2;
   }
 }
