@@ -1,14 +1,15 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePromptStore } from '@/store/promptStore';
 import { useFeaturedPrompt } from '@/hooks/useFeaturedPrompt';
+import { downloadPromptAsJSON } from '@/utils/promptExporter';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Search, Plus, MoreHorizontal, Copy, Trash2, Edit, Zap, Info } from 'lucide-react';
+import { Search, Plus, MoreHorizontal, Copy, Trash2, Edit, Zap, Info, Download } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,6 +21,7 @@ export default function PromptLibraryPage() {
   const navigate = useNavigate();
   const { prompts, deletePrompt, duplicatePrompt, setCurrentPrompt, searchPrompts } = usePromptStore();
   const { featuredPrompt, forceRotation } = useFeaturedPrompt();
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredPrompts = searchQuery 
@@ -46,6 +48,14 @@ export default function PromptLibraryPage() {
   const handleEdit = (prompt: any) => {
     setCurrentPrompt(prompt);
     navigate('/app/generator');
+  };
+
+  const handleDownloadPrompt = (prompt: any) => {
+    downloadPromptAsJSON(prompt);
+    toast({
+      title: "Download started",
+      description: `"${prompt.title}" has been downloaded as a JSON file.`
+    });
   };
 
   return (
@@ -212,6 +222,13 @@ export default function PromptLibraryPage() {
                         }}>
                           <Copy className="w-4 h-4 mr-2" />
                           Duplicate
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => {
+                          e.stopPropagation();
+                          handleDownloadPrompt(prompt);
+                        }}>
+                          <Download className="w-4 h-4 mr-2" />
+                          Download JSON
                         </DropdownMenuItem>
                         <DropdownMenuItem 
                           onClick={(e) => {

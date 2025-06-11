@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,8 +6,11 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Copy, Save, ChevronDown, ChevronRight, Sparkles, PlayCircle, RefreshCw } from 'lucide-react';
+import { Copy, Save, ChevronDown, ChevronRight, Sparkles, PlayCircle, RefreshCw, Download } from 'lucide-react';
 import { GenerationResult } from '@/types';
+import { usePromptStore } from '@/store/promptStore';
+import { downloadPromptAsJSON } from '@/utils/promptExporter';
+import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
 interface AIGeneratorOutputPanelProps {
@@ -28,12 +30,41 @@ export function AIGeneratorOutputPanel({
 }: AIGeneratorOutputPanelProps) {
   const navigate = useNavigate();
   const [isRemixOpen, setIsRemixOpen] = useState(false);
+  const { prompts } = usePromptStore();
+  const { toast } = useToast();
 
   const handleTestInPlayground = () => {
     if (lastResult) {
       // Navigate with state to pre-fill the playground input
       navigate('/app/playground', { 
         state: { prefilledPrompt: lastResult.optimized_prompt }
+      });
+    }
+  };
+
+  const handleDownloadJSON = () => {
+    if (lastResult) {
+      // Create a temporary prompt object for download
+      const tempPrompt = {
+        id: 'temp-' + Date.now(),
+        title: lastResult.preview_title,
+        content: lastResult.optimized_prompt,
+        description: lastResult.preview_title,
+        tags: lastResult.tags,
+        persona: 'creator' as const,
+        heuristics: lastResult.heuristics,
+        variables: lastResult.variables,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        version: 1,
+        usage_count: 0,
+        category: 'general' as const
+      };
+      
+      downloadPromptAsJSON(tempPrompt);
+      toast({
+        title: "Download started",
+        description: "Your prompt has been downloaded as a JSON file."
       });
     }
   };
@@ -121,6 +152,10 @@ export function AIGeneratorOutputPanel({
           <Button onClick={onSavePrompt} variant="outline" size="sm">
             <Save className="w-4 h-4 mr-2" />
             Save
+          </Button>
+          <Button onClick={handleDownloadJSON} variant="outline" size="sm">
+            <Download className="w-4 h-4 mr-2" />
+            JSON
           </Button>
         </div>
 
