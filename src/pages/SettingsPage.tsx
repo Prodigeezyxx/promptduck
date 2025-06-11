@@ -18,7 +18,7 @@ export default function SettingsPage() {
   const { prompts, clearHistory: clearPrompts } = usePromptStore();
   const { history, clearHistory: clearGeneratorHistory } = useGeneratorStore();
   const { credits } = useCreditStore();
-  const { leftPaneVisible, toggleLeftPane } = useUiStore();
+  const { sidebarVisible, toggleSidebar } = useUiStore();
   const [isExporting, setIsExporting] = useState(false);
 
   const handleExportData = async () => {
@@ -138,14 +138,14 @@ export default function SettingsPage() {
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <label className="text-sm font-medium">Show Input Panel</label>
+              <label className="text-sm font-medium">Show Navigation Sidebar</label>
               <p className="text-xs text-muted-foreground">
-                Toggle the visibility of the prompt input panel in the generator
+                Toggle the visibility of the main navigation sidebar
               </p>
             </div>
             <Switch
-              checked={leftPaneVisible}
-              onCheckedChange={toggleLeftPane}
+              checked={sidebarVisible}
+              onCheckedChange={toggleSidebar}
             />
           </div>
         </CardContent>
