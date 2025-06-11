@@ -153,18 +153,20 @@ export default function PromptLibraryPage() {
         </div>
       )}
 
-      {/* Search */}
-      <div className="mb-4 lg:mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search your prompts..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
+      {/* Search - Only show if there are user prompts */}
+      {userPrompts.length > 0 && (
+        <div className="mb-4 lg:mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search your prompts..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Your Prompts */}
       <div className="mb-4">
@@ -250,9 +252,18 @@ export default function PromptLibraryPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-8 lg:py-12 border-2 border-dashed border-border rounded-lg">
-            <p className="text-muted-foreground mb-4">Your saved prompts appear here</p>
-            <Button onClick={handleNewPrompt}>Create your first prompt</Button>
+          <div className="text-center py-12 lg:py-16 border-2 border-dashed border-border rounded-lg">
+            <div className="max-w-md mx-auto">
+              <h3 className="text-lg font-semibold mb-2">No saved prompts yet</h3>
+              <p className="text-muted-foreground mb-6">
+                Start creating and saving your own prompts to build your personal library. 
+                You can also try the featured template above to get started.
+              </p>
+              <Button onClick={handleNewPrompt} size="lg">
+                <Plus className="w-4 h-4 mr-2" />
+                Create your first prompt
+              </Button>
+            </div>
           </div>
         )}
       </div>

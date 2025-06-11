@@ -2,7 +2,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Prompt, PromptCategory, PersonaType } from '@/types';
-import { SAMPLE_PROMPTS } from '@/constants';
 
 interface PromptState {
   prompts: Prompt[];
@@ -26,7 +25,7 @@ interface PromptState {
 export const usePromptStore = create<PromptState>()(
   persist(
     (set, get) => ({
-      prompts: [...SAMPLE_PROMPTS],
+      prompts: [],
       currentPrompt: null,
       featuredPromptStats: {},
       setCurrentPrompt: (prompt) => set({ currentPrompt: prompt }),
@@ -98,7 +97,7 @@ export const usePromptStore = create<PromptState>()(
         );
       },
       clearHistory: () => {
-        set({ prompts: [...SAMPLE_PROMPTS], currentPrompt: null });
+        set({ prompts: [], currentPrompt: null });
       },
       trackFeaturedPromptView: (id) => {
         set(state => ({
