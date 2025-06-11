@@ -17,6 +17,60 @@ export class GeminiService {
     console.log('Gemini service initialized');
   }
 
+  /**
+   * Simple chat method for playground interactions
+   */
+  async generateChatResponse(prompt: string): Promise<string> {
+    if (!this.isInitialized || !this.genAI) {
+      throw new Error('Gemini service not initialized');
+    }
+
+    console.log('Starting chat response generation for prompt:', prompt.slice(0, 100) + '...');
+
+    return await GeminiErrorHandler.retryWithBackoff(async () => {
+      for (const modelName of GEMINI_CONFIG.models) {
+        try {
+          console.log(`Attempting chat generation with model: ${modelName}`);
+          const model = this.genAI!.getGenerativeModel({ model: modelName });
+          const result = await model.generateContent(prompt);
+          const response = await result.response;
+          const text = response.text();
+
+          if (!text || text.trim().length === 0) {
+            throw new Error(`Empty response from model ${modelName}`);
+          }
+
+          console.log(`Chat generation successful with model: ${modelName}`);
+          return this.cleanResponseForChat(text);
+        } catch (error) {
+          console.warn(`Model ${modelName} failed for chat:`, error.message);
+          if (modelName === GEMINI_CONFIG.models[GEMINI_CONFIG.models.length - 1]) {
+            throw error;
+          }
+        }
+      }
+      throw new Error('All models failed for chat generation');
+    }, GEMINI_CONFIG.maxRetries);
+  }
+
+  private cleanResponseForChat(text: string): string {
+    // Remove asterisks used for bold/italic
+    let cleaned = text.replace(/\*\*(.*?)\*\*/g, '$1'); // Remove **bold**
+    cleaned = cleaned.replace(/\*(.*?)\*/g, '$1'); // Remove *italic*
+    
+    // Clean up other markdown formatting
+    cleaned = cleaned.replace(/#{1,6}\s*/g, ''); // Remove headers
+    cleaned = cleaned.replace(/`{3}[\s\S]*?`{3}/g, ''); // Remove code blocks
+    cleaned = cleaned.replace(/`([^`]*)`/g, '$1'); // Remove inline code
+    cleaned = cleaned.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1'); // Remove links, keep text
+    
+    // Clean up extra whitespace
+    cleaned = cleaned.replace(/\n{3,}/g, '\n\n'); // Max 2 line breaks
+    cleaned = cleaned.trim();
+    
+    return cleaned;
+  }
+
   async generatePrompt(request: GenerationRequest): Promise<GenerationResult> {
     if (!this.isInitialized || !this.genAI) {
       throw new Error('Gemini service not initialized');
