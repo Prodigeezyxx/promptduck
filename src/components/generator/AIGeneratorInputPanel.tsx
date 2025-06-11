@@ -44,9 +44,29 @@ export function AIGeneratorInputPanel({
               placeholder="Describe your goal or what you want the prompt to help with..."
               value={intent}
               onChange={(e) => onIntentChange(e.target.value)}
-              rows={3}
+              rows={5}
             />
           </div>
+
+          {/* Generate Button - Prominently placed after intent */}
+          <Button 
+            onClick={onGenerate} 
+            disabled={isGenerating || !intent.trim()}
+            className="w-full bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700"
+            size="lg"
+          >
+            {isGenerating ? (
+              <>
+                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 mr-2" />
+                Generate Prompt
+              </>
+            )}
+          </Button>
           
           <div>
             <label className="text-sm font-medium mb-2 block">Additional Context (Optional)</label>
@@ -61,10 +81,7 @@ export function AIGeneratorInputPanel({
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Settings</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 pt-6">
           <div>
             <label className="text-sm font-medium mb-2 block">Complexity</label>
             <Select value={complexity} onValueChange={onComplexityChange}>
@@ -84,25 +101,6 @@ export function AIGeneratorInputPanel({
       {selectedHeuristics.length > 0 && (
         <HeuristicsDisplay selectedHeuristics={selectedHeuristics} />
       )}
-
-      <Button 
-        onClick={onGenerate} 
-        disabled={isGenerating || !intent.trim()}
-        className="w-full bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700"
-        size="lg"
-      >
-        {isGenerating ? (
-          <>
-            <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-            Generating...
-          </>
-        ) : (
-          <>
-            <Sparkles className="w-4 h-4 mr-2" />
-            Generate Prompt
-          </>
-        )}
-      </Button>
     </div>
   );
 }

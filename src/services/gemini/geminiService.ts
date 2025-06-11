@@ -92,44 +92,78 @@ export class GeminiService {
         ...request,
         intent: improvement.enhancedPrompt,
         heuristics: improvement.intentAnalysis.suggestedHeuristics,
-        context: typeof request.context === 'string' ? request.context : undefined // Ensure context is string or undefined
+        context: typeof request.context === 'string' ? request.context : undefined
       };
 
       const systemPrompt = GeminiPromptBuilder.buildSystemPrompt(enhancedRequest);
       
-      return await GeminiErrorHandler.retryWithBackoff(async () => {
-        for (const modelName of GEMINI_CONFIG.models) {
-          try {
-            const model = this.genAI!.getGenerativeModel({ model: modelName });
-            const result = await model.generateContent(systemPrompt);
-            const response = await result.response;
-            const text = response.text();
+      // Optimized generation: try fastest model first, fallback if needed
+      try {
+        const fastestModel = GEMINI_CONFIG.models[0]; // gemini-2.0-flash-exp
+        const model = this.genAI.getGenerativeModel({ 
+          model: fastestModel,
+          generationConfig: {
+            temperature: 0.6, // Slightly higher for faster generation
+          }
+        });
+        
+        const result = await model.generateContent(systemPrompt);
+        const response = await result.response;
+        const text = response.text();
 
-            if (!text || text.trim().length === 0) {
-              throw new Error(`Empty response from model ${modelName}`);
-            }
+        if (!text || text.trim().length === 0) {
+          throw new Error(`Empty response from model ${fastestModel}`);
+        }
 
-            const generationTime = Date.now() - startTime;
-            const parsedResult = GeminiResponseParser.parseResponse(text, enhancedRequest, generationTime);
-            
-            // Add improvement metadata
-            parsedResult.metadata = {
-              ...parsedResult.metadata,
-              improvement_confidence: improvement.confidenceScore,
-              template_used: improvement.templateUsed,
-              intent_detected: improvement.intentAnalysis.primaryIntent,
-              heuristics_applied: improvement.heuristicsApplied
-            };
-            
-            return parsedResult;
-          } catch (error) {
-            if (modelName === GEMINI_CONFIG.models[GEMINI_CONFIG.models.length - 1]) {
-              throw error;
+        const generationTime = Date.now() - startTime;
+        const parsedResult = GeminiResponseParser.parseResponse(text, enhancedRequest, generationTime);
+        
+        // Add improvement metadata
+        parsedResult.metadata = {
+          ...parsedResult.metadata,
+          improvement_confidence: improvement.confidenceScore,
+          template_used: improvement.templateUsed,
+          intent_detected: improvement.intentAnalysis.primaryIntent,
+          heuristics_applied: improvement.heuristicsApplied
+        };
+        
+        return parsedResult;
+      } catch (fastModelError) {
+        // Fallback to full retry logic with all models if fastest fails
+        return await GeminiErrorHandler.retryWithBackoff(async () => {
+          for (const modelName of GEMINI_CONFIG.models) {
+            try {
+              const model = this.genAI!.getGenerativeModel({ model: modelName });
+              const result = await model.generateContent(systemPrompt);
+              const response = await result.response;
+              const text = response.text();
+
+              if (!text || text.trim().length === 0) {
+                throw new Error(`Empty response from model ${modelName}`);
+              }
+
+              const generationTime = Date.now() - startTime;
+              const parsedResult = GeminiResponseParser.parseResponse(text, enhancedRequest, generationTime);
+              
+              // Add improvement metadata
+              parsedResult.metadata = {
+                ...parsedResult.metadata,
+                improvement_confidence: improvement.confidenceScore,
+                template_used: improvement.templateUsed,
+                intent_detected: improvement.intentAnalysis.primaryIntent,
+                heuristics_applied: improvement.heuristicsApplied
+              };
+              
+              return parsedResult;
+            } catch (error) {
+              if (modelName === GEMINI_CONFIG.models[GEMINI_CONFIG.models.length - 1]) {
+                throw error;
+              }
             }
           }
-        }
-        throw new Error('All models failed');
-      }, GEMINI_CONFIG.maxRetries);
+          throw new Error('All models failed');
+        }, GEMINI_CONFIG.maxRetries);
+      }
 
     } catch (error) {
       const generationTime = Date.now() - startTime;
