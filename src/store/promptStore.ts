@@ -127,7 +127,7 @@ export const usePromptStore = create<PromptState>()(
       }
     }),
     {
-      name: 'promptduck-prompts'
+      name: 'promptduck-prompts-v2'
     }
   )
 );
