@@ -1,4 +1,3 @@
-
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { GenerationRequest, GenerationResult } from '@/types';
 import { GEMINI_CONFIG } from './config';
@@ -41,7 +40,7 @@ export class GeminiService {
   }
 
   /**
-   * Optimized chat method for playground interactions - fast responses under 5s
+   * Optimized chat method for playground interactions - direct response generation
    */
   async generateChatResponse(prompt: string): Promise<string> {
     if (!this.isInitialized || !this.genAI) {
@@ -51,8 +50,21 @@ export class GeminiService {
     try {
       const model = this.getOptimizedModel();
       
-      // Send prompt directly without additional processing
-      const result = await model.generateContent(prompt);
+      // Create a focused system prompt for direct response generation
+      const systemPrompt = `You are a helpful AI assistant designed to provide direct, comprehensive responses to user prompts. Your primary goal is to fulfill the user's request directly without asking clarifying questions unless absolutely necessary.
+
+Guidelines:
+- Generate direct, substantive responses to the user's prompt
+- Provide complete information rather than asking follow-up questions
+- Be informative and helpful while staying focused on the request
+- Only ask questions if the prompt is genuinely unclear or ambiguous
+- Prioritize giving useful content over conversation
+
+User prompt: ${prompt}
+
+Respond directly to this prompt:`;
+      
+      const result = await model.generateContent(systemPrompt);
       const response = await result.response;
       const text = response.text();
 
