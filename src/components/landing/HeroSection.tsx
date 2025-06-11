@@ -14,7 +14,7 @@ const OptimizedAnimatedPromptDisplay = memo(AnimatedPromptDisplay);
 export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      {/* Matrix background effect - optimized */}
+      {/* Matrix background effect - re-implemented */}
       <div className="absolute inset-0 will-change-transform">
         <OptimizedLetterGlitch 
           glitchColors={["#6366f1", "#8b5cf6", "#06b6d4", "#10b981"]} 
@@ -25,13 +25,13 @@ export function HeroSection() {
         />
       </div>
 
-      {/* Optimized background gradients */}
+      {/* Background gradients */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-100 to-gray-300 dark:from-gray-950 dark:via-gray-900 dark:to-black will-change-transform" />
       
       {/* Light mode overlay */}
       <div className="absolute inset-0 bg-white/80 dark:bg-transparent" />
       
-      {/* Optimized floating orbs with reduced motion on mobile */}
+      {/* Floating orbs */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div 
           className="absolute top-1/4 left-1/4 w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64 bg-brand-500/15 dark:bg-brand-500/10 rounded-full blur-2xl sm:blur-3xl will-change-transform" 
@@ -73,10 +73,24 @@ export function HeroSection() {
             Cognitive prompt engineering
           </div>
           
-          <VariableProximity 
-            text="prompt like a PRO" 
-            className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold bg-gradient-to-r from-gray-900 via-brand-600 to-blue-600 dark:from-white dark:via-brand-200 dark:to-blue-200 bg-clip-text text-transparent mb-3 lg:mb-6 leading-tight" 
-          />
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-8">
+            <VariableProximity 
+              text="prompt" 
+              className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold bg-gradient-to-r from-gray-900 via-brand-600 to-blue-600 dark:from-white dark:via-brand-200 dark:to-blue-200 bg-clip-text text-transparent leading-tight" 
+            />
+            <VariableProximity 
+              text="like" 
+              className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold bg-gradient-to-r from-gray-900 via-brand-600 to-blue-600 dark:from-white dark:via-brand-200 dark:to-blue-200 bg-clip-text text-transparent leading-tight" 
+            />
+            <VariableProximity 
+              text="a" 
+              className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold bg-gradient-to-r from-gray-900 via-brand-600 to-blue-600 dark:from-white dark:via-brand-200 dark:to-blue-200 bg-clip-text text-transparent leading-tight" 
+            />
+            <VariableProximity 
+              text="PRO" 
+              className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold bg-gradient-to-r from-gray-900 via-brand-600 to-blue-600 dark:from-white dark:via-brand-200 dark:to-blue-200 bg-clip-text text-transparent leading-tight" 
+            />
+          </div>
           
           <motion.p 
             initial={{ opacity: 0 }} 
@@ -118,11 +132,11 @@ export function HeroSection() {
             transition={{ delay: 0.6, duration: 0.6 }} 
             className="pt-4 lg:pt-8 text-xs lg:text-sm text-gray-500 dark:text-gray-400"
           >
-            <p>20 free generations daily • No credit card required</p>
+            <p>40 free generations daily • No credit card required</p>
           </motion.div>
         </motion.div>
 
-        {/* Animated Prompt Display - optimized loading */}
+        {/* Animated Prompt Display */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
