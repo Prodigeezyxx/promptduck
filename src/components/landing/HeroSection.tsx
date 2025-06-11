@@ -13,19 +13,19 @@ const OptimizedAnimatedPromptDisplay = memo(AnimatedPromptDisplay);
 export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      {/* Matrix Rain background effect */}
-      <div className="absolute inset-0 will-change-transform z-10">
+      {/* Background gradients */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-100 to-gray-300 dark:from-gray-950 dark:via-gray-900 dark:to-black z-0" />
+      
+      {/* Matrix Rain background effect - Higher z-index */}
+      <div className="absolute inset-0 z-10">
         <OptimizedMatrixRain />
       </div>
 
-      {/* Background gradients */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-100 to-gray-300 dark:from-gray-950 dark:via-gray-900 dark:to-black will-change-transform z-0" />
-      
-      {/* Light mode overlay - much reduced to show matrix effect */}
-      <div className="absolute inset-0 bg-white/5 dark:bg-transparent z-5" />
+      {/* Very light overlay to not completely hide matrix */}
+      <div className="absolute inset-0 bg-white/10 dark:bg-transparent z-15" />
       
       {/* Floating orbs */}
-      <div className="absolute inset-0 overflow-hidden z-3">
+      <div className="absolute inset-0 overflow-hidden z-5">
         <motion.div 
           className="absolute top-1/4 left-1/4 w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64 bg-brand-500/15 dark:bg-brand-500/10 rounded-full blur-2xl sm:blur-3xl will-change-transform" 
           animate={{
