@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { toast } from 'sonner';
 import { useApiKeyStore } from '@/store/apiKeyStore';
@@ -80,17 +79,8 @@ export function usePlaygroundConversation() {
       // Initialize the service
       geminiService.initialize(apiKey.gemini);
       
-      // Create a specialized playground prompt for direct answers
-      const playgroundPrompt = `You are a technical expert providing direct, factual instructions. The user has asked: "${prompt.trim()}"
-
-Provide a clear, step-by-step technical response that:
-1. Uses factual, technical language only
-2. Gives numbered, actionable instructions
-3. Includes specific technical details and specifications
-4. Avoids roleplay or anthropomorphic framing
-5. Focuses on practical implementation
-
-Respond directly to their question with technical instructions, not as a prompt for an AI system.`;
+      // Simple playground prompt - just answer the question directly and helpfully
+      const playgroundPrompt = `Answer this question directly and helpfully: ${prompt.trim()}`;
 
       const result = await geminiService.generateChatResponse(playgroundPrompt);
       
