@@ -197,7 +197,7 @@
     300px 210px,
     300px 210px;
   animation: rainFall 150s linear infinite;
-  opacity: 0.3;
+  opacity: 0.21;
 }
 
 @keyframes rainFall {
@@ -285,12 +285,12 @@
 /* Dark mode adjustments */
 .dark .rain-container {
   --c: hsl(var(--brand-400));
-  opacity: 0.25;
+  opacity: 0.175;
 }
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .rain-container {
-    opacity: 0.2;
+    opacity: 0.14;
   }
 }
