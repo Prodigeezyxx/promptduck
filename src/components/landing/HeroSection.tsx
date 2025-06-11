@@ -1,13 +1,14 @@
+
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { VariableProximity } from '@/components/VariableProximity';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import MatrixRain from '@/components/effects/MatrixRain';
+import RainEffect from '@/components/effects/RainEffect';
 import { AnimatedPromptDisplay } from './AnimatedPromptDisplay';
 import { memo } from 'react';
 
-const OptimizedMatrixRain = memo(MatrixRain);
+const OptimizedRainEffect = memo(RainEffect);
 const OptimizedAnimatedPromptDisplay = memo(AnimatedPromptDisplay);
 
 export function HeroSection() {
@@ -16,12 +17,12 @@ export function HeroSection() {
       {/* Background gradients */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-100 to-gray-300 dark:from-gray-950 dark:via-gray-900 dark:to-black z-0" />
       
-      {/* Matrix Rain background effect - Higher z-index */}
+      {/* Rain effect background - Higher z-index */}
       <div className="absolute inset-0 z-10">
-        <OptimizedMatrixRain />
+        <OptimizedRainEffect />
       </div>
 
-      {/* Very light overlay to not completely hide matrix */}
+      {/* Very light overlay to not completely hide rain */}
       <div className="absolute inset-0 bg-white/10 dark:bg-transparent z-15" />
       
       {/* Floating orbs */}
