@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { CreditDisplay } from '@/components/CreditDisplay';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useUiStore } from '@/store/uiStore';
-import { Wand2, History, Eye, EyeOff } from 'lucide-react';
+import { Wand2, History, LayoutPanelLeft } from 'lucide-react';
 
 interface GeneratorPageHeaderProps {
   onHistoryOpen: () => void;
@@ -33,8 +33,7 @@ export function GeneratorPageHeader({ onHistoryOpen }: GeneratorPageHeaderProps)
               onClick={toggleLeftPane}
               className="flex items-center gap-2"
             >
-              {leftPaneVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              {leftPaneVisible ? 'Hide Panel' : 'Show Panel'}
+              <LayoutPanelLeft className={`w-4 h-4 transition-transform ${!leftPaneVisible ? 'rotate-180' : ''}`} />
             </Button>
           )}
           <Button

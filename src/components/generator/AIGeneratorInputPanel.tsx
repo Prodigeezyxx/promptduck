@@ -44,7 +44,7 @@ export function AIGeneratorInputPanel({
               placeholder="Describe your goal or what you want the prompt to help with..."
               value={intent}
               onChange={(e) => onIntentChange(e.target.value)}
-              rows={7}
+              rows={8}
               className="resize-none"
             />
           </div>
