@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { History, ChevronDown, ChevronRight, Copy, Trash2, X } from 'lucide-react';
+import { History, ChevronDown, ChevronRight, Copy, Trash2 } from 'lucide-react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { GenerationResult } from '@/types';
 import { toast } from '@/hooks/use-toast';
@@ -34,8 +34,19 @@ export function GeneratorHistoryDrawer({
   };
 
   const handleClearHistory = () => {
-    clearHistory();
-    toast({ title: 'Cleared!', description: 'History cleared successfully.' });
+    if (window.confirm('Are you sure you want to clear your generation history? This action cannot be undone.')) {
+      clearHistory();
+      toast({ title: 'Cleared!', description: 'History cleared successfully.' });
+    }
+  };
+
+  const handleSelectResult = (result: GenerationResult) => {
+    onSelectResult(result);
+    onOpenChange(false);
+    toast({ 
+      title: 'Loaded!', 
+      description: 'Previous generation loaded into the form.' 
+    });
   };
 
   const toggleExpanded = (index: number) => {
@@ -85,7 +96,7 @@ export function GeneratorHistoryDrawer({
                     <CollapsibleTrigger asChild>
                       <Button
                         variant="ghost"
-                        className="w-full justify-between p-2 h-auto text-left"
+                        className="w-full justify-between p-2 h-auto text-left hover:bg-muted/50"
                       >
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">
@@ -129,10 +140,7 @@ export function GeneratorHistoryDrawer({
                             variant="outline"
                             size="sm"
                             className="text-xs h-8 px-3 flex-1"
-                            onClick={() => {
-                              onSelectResult(result);
-                              onOpenChange(false);
-                            }}
+                            onClick={() => handleSelectResult(result)}
                           >
                             Load
                           </Button>
