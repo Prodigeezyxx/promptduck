@@ -4,25 +4,19 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { VariableProximity } from '@/components/VariableProximity';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import LetterGlitch from '@/components/effects/LetterGlitch';
+import MatrixRain from '@/components/effects/MatrixRain';
 import { AnimatedPromptDisplay } from './AnimatedPromptDisplay';
 import { memo } from 'react';
 
-const OptimizedLetterGlitch = memo(LetterGlitch);
+const OptimizedMatrixRain = memo(MatrixRain);
 const OptimizedAnimatedPromptDisplay = memo(AnimatedPromptDisplay);
 
 export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      {/* Matrix background effect - properly implemented */}
-      <div className="absolute inset-0 will-change-transform opacity-20 z-0">
-        <OptimizedLetterGlitch 
-          glitchColors={["#6366f1", "#8b5cf6", "#06b6d4", "#10b981"]} 
-          glitchSpeed={100} 
-          centerVignette={false} 
-          outerVignette={true} 
-          smooth={true} 
-        />
+      {/* Matrix Rain background effect */}
+      <div className="absolute inset-0 will-change-transform z-0">
+        <OptimizedMatrixRain />
       </div>
 
       {/* Background gradients */}
@@ -73,7 +67,7 @@ export function HeroSection() {
             Cognitive prompt engineering
           </div>
           
-          <div className="flex flex-wrap justify-center gap-6 sm:gap-8 lg:gap-12">
+          <div className="flex flex-wrap justify-center gap-8 sm:gap-12 lg:gap-16">
             <VariableProximity 
               text="prompt" 
               className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold bg-gradient-to-r from-gray-900 via-brand-600 to-blue-600 dark:from-white dark:via-brand-200 dark:to-blue-200 bg-clip-text text-transparent leading-tight" 

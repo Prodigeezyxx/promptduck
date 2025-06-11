@@ -19,12 +19,14 @@ export function LandingHeader() {
           </div>
         </Link>
         
-        <div className="flex items-center space-x-4">
-          <ThemeToggle />
+        <div className="flex items-center space-x-2 sm:space-x-4">
           {isSignedIn ? (
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="hidden sm:block">
+                <ThemeToggle />
+              </div>
               <Link to="/app/library">
-                <Button className="bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white border-0 shadow-lg">
+                <Button className="bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white border-0 shadow-lg text-sm px-4 py-2">
                   Launch App
                 </Button>
               </Link>
@@ -36,13 +38,24 @@ export function LandingHeader() {
                   }
                 }}
               />
+              <div className="sm:hidden">
+                <ThemeToggle />
+              </div>
             </div>
           ) : (
-            <SignInButton mode="modal" fallbackRedirectUrl="/app/library">
-              <Button className="bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white border-0 shadow-lg">
-                Launch App
-              </Button>
-            </SignInButton>
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="hidden sm:block">
+                <ThemeToggle />
+              </div>
+              <SignInButton mode="modal" fallbackRedirectUrl="/app/library">
+                <Button className="bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white border-0 shadow-lg text-sm px-4 py-2">
+                  Launch App
+                </Button>
+              </SignInButton>
+              <div className="sm:hidden">
+                <ThemeToggle />
+              </div>
+            </div>
           )}
         </div>
       </div>
