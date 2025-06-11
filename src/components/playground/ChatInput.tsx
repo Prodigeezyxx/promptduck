@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, Paperclip, Mic, Loader2 } from 'lucide-react';
+import { Send, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ChatInputProps {
@@ -57,18 +57,7 @@ export function ChatInput({
   return (
     <div className="chat-input-container">
       <div className="max-w-4xl mx-auto p-4">
-        <div className="chat-input-wrapper">
-          {/* Attachment button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={disabled || isLoading}
-            className="h-10 w-10 rounded-xl flex-shrink-0 min-h-[48px] min-w-[48px] touch-target"
-            aria-label="Attach file"
-          >
-            <Paperclip className="w-4 h-4" />
-          </Button>
-
+        <div className="chat-input-wrapper flex items-end gap-2 p-3 border border-input rounded-xl bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
           {/* Textarea */}
           <Textarea
             ref={textareaRef}
@@ -84,17 +73,6 @@ export function ChatInput({
             rows={1}
             aria-label="Message input"
           />
-
-          {/* Voice input button */}
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={disabled || isLoading}
-            className="h-10 w-10 rounded-xl flex-shrink-0 min-h-[48px] min-w-[48px] touch-target"
-            aria-label="Voice input"
-          >
-            <Mic className="w-4 h-4" />
-          </Button>
 
           {/* Send/Stop button */}
           <Button

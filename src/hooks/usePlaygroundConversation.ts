@@ -1,8 +1,9 @@
-
 import { useState, useRef } from 'react';
 import { toast } from 'sonner';
 import { useApiKeyStore } from '@/store/apiKeyStore';
 import { geminiService } from '@/services/geminiService';
+import { selectHeuristics } from '@/utils/heuristicSelector';
+import { GenerationRequest } from '@/types';
 
 interface Message {
   id: string;
@@ -80,8 +81,15 @@ export function usePlaygroundConversation() {
       // Initialize the service
       geminiService.initialize(apiKey.gemini);
       
-      // Use the new chat method
-      const aiResponse = await geminiService.generateChatResponse(prompt);
+      // Use the main PromptDuck generator instead of chat
+      const heuristics = selectHeuristics(prompt, '');
+      const request: GenerationRequest = {
+        intent: prompt.trim(),
+        heuristics: heuristics,
+        complexity: 'intermediate'
+      };
+
+      const result = await geminiService.generatePrompt(request);
       
       // Check if request was aborted
       if (abortControllerRef.current?.signal.aborted) {
@@ -89,7 +97,8 @@ export function usePlaygroundConversation() {
         return;
       }
       
-      updateMessage(aiMessageId, aiResponse, false);
+      // Extract just the optimized prompt for display
+      updateMessage(aiMessageId, result.optimized_prompt, false);
       toast.success('Response generated successfully');
     } catch (error) {
       console.error('Gemini API error:', error);
