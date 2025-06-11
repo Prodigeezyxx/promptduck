@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Search, Plus, MoreHorizontal, Copy, Trash2, Edit, RotateCcw, Info } from 'lucide-react';
+import { Search, Plus, MoreHorizontal, Copy, Trash2, Edit, Zap, Info } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +18,7 @@ import {
 
 export default function PromptLibraryPage() {
   const navigate = useNavigate();
-  const { prompts, deletePrompt, duplicatePrompt, setCurrentPrompt, searchPrompts, trackFeaturedPromptView, trackFeaturedPromptClick } = usePromptStore();
+  const { prompts, deletePrompt, duplicatePrompt, setCurrentPrompt, searchPrompts } = usePromptStore();
   const { featuredPrompt, forceRotation } = useFeaturedPrompt();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -26,19 +26,8 @@ export default function PromptLibraryPage() {
     ? searchPrompts(searchQuery)
     : prompts;
 
-  // User prompts exclude the featured prompt
-  const userPrompts = filteredPrompts.filter(p => p.id !== featuredPrompt?.id);
-
-  // Track featured prompt view when it's displayed
-  useEffect(() => {
-    if (featuredPrompt) {
-      trackFeaturedPromptView(featuredPrompt.id);
-    }
-  }, [featuredPrompt, trackFeaturedPromptView]);
-
   const handleFeaturedPromptClick = () => {
     if (featuredPrompt) {
-      trackFeaturedPromptClick(featuredPrompt.id);
       setCurrentPrompt(featuredPrompt);
       navigate('/app/generator');
     }
@@ -64,7 +53,7 @@ export default function PromptLibraryPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 lg:mb-6 gap-3 lg:gap-4">
         <div className="space-y-1">
           <h1 className="text-xl lg:text-3xl font-bold">Prompt Library</h1>
-          <p className="text-sm text-muted-foreground">Discover powerful prompts that rotate every session</p>
+          <p className="text-sm text-muted-foreground">Discover curated prompts and manage your collection</p>
         </div>
         <Button 
           onClick={handleNewPrompt}
@@ -88,20 +77,29 @@ export default function PromptLibraryPage() {
                     <Info className="w-4 h-4 text-muted-foreground cursor-help" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p className="max-w-xs">We rotate this prompt every time you open PromptDuck. It's a quick way to discover what you can build.</p>
+                    <p className="max-w-xs">Curated prompts that showcase PromptDuck's capabilities. We rotate this every session to help you discover new possibilities.</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={forceRotation}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <RotateCcw className="w-4 h-4 mr-1" />
-              Rotate
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={forceRotation}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <Zap className="w-4 h-4 mr-1" />
+                    I'm feeling lucky
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Get a new featured prompt to spark your creativity</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           
           <Card 
@@ -154,7 +152,7 @@ export default function PromptLibraryPage() {
       )}
 
       {/* Search - Only show if there are user prompts */}
-      {userPrompts.length > 0 && (
+      {filteredPrompts.length > 0 && (
         <div className="mb-4 lg:mb-6">
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -171,9 +169,9 @@ export default function PromptLibraryPage() {
       {/* Your Prompts */}
       <div className="mb-4">
         <h2 className="text-lg font-semibold mb-3">Your Prompts</h2>
-        {userPrompts.length > 0 ? (
+        {filteredPrompts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
-            {userPrompts.map((prompt) => (
+            {filteredPrompts.map((prompt) => (
               <Card 
                 key={prompt.id} 
                 className="prompt-card cursor-pointer group hover:shadow-lg transition-all duration-200 border border-border/50"

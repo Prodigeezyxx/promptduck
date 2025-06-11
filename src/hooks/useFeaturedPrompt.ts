@@ -1,13 +1,12 @@
 
 import { useState, useEffect } from 'react';
-import { usePromptStore } from '@/store/promptStore';
+import { FEATURED_PROMPTS } from '@/constants/featuredPrompts';
 import { Prompt } from '@/types';
 
 const FEATURED_PROMPT_SESSION_KEY = 'promptduck_featured_prompt_session';
 const LAST_FEATURED_ID_KEY = 'promptduck_last_featured_id';
 
 export function useFeaturedPrompt() {
-  const { prompts } = usePromptStore();
   const [featuredPrompt, setFeaturedPrompt] = useState<Prompt | null>(null);
 
   useEffect(() => {
@@ -21,23 +20,23 @@ export function useFeaturedPrompt() {
     } else {
       // Use existing featured prompt from this session
       const lastFeaturedId = localStorage.getItem(LAST_FEATURED_ID_KEY);
-      const existing = prompts.find(p => p.id === lastFeaturedId);
-      setFeaturedPrompt(existing || prompts[0]);
+      const existing = FEATURED_PROMPTS.find(p => p.id === lastFeaturedId);
+      setFeaturedPrompt(existing || FEATURED_PROMPTS[0]);
     }
-  }, [prompts]);
+  }, []);
 
   const selectNewFeaturedPrompt = () => {
-    if (prompts.length === 0) return;
+    if (FEATURED_PROMPTS.length === 0) return;
 
     const lastFeaturedId = localStorage.getItem(LAST_FEATURED_ID_KEY);
     
     // Get available prompts excluding the last featured one
-    const availablePrompts = prompts.filter(p => p.id !== lastFeaturedId);
+    const availablePrompts = FEATURED_PROMPTS.filter(p => p.id !== lastFeaturedId);
     
     if (availablePrompts.length === 0) {
       // If only one prompt or all filtered out, use the first one
-      setFeaturedPrompt(prompts[0]);
-      localStorage.setItem(LAST_FEATURED_ID_KEY, prompts[0].id);
+      setFeaturedPrompt(FEATURED_PROMPTS[0]);
+      localStorage.setItem(LAST_FEATURED_ID_KEY, FEATURED_PROMPTS[0].id);
       return;
     }
 
@@ -50,7 +49,7 @@ export function useFeaturedPrompt() {
   const selectByVariety = (availablePrompts: Prompt[], lastFeaturedId: string | null): Prompt => {
     // Try to select a prompt from a different category than the last one
     if (lastFeaturedId) {
-      const lastPrompt = prompts.find(p => p.id === lastFeaturedId);
+      const lastPrompt = FEATURED_PROMPTS.find(p => p.id === lastFeaturedId);
       if (lastPrompt) {
         const differentCategory = availablePrompts.filter(p => p.category !== lastPrompt.category);
         if (differentCategory.length > 0) {
