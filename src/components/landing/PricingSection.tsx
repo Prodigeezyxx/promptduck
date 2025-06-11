@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,7 +21,7 @@ const plans = [
   },
   {
     name: 'Pro',
-    price: '$19',
+    price: '$12',
     period: 'month',
     description: 'For power users and teams',
     features: [
