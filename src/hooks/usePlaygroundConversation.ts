@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useApiKeyStore } from '@/store/apiKeyStore';
@@ -23,6 +22,15 @@ export function usePlaygroundConversation() {
   const { apiKey } = useApiKeyStore();
   const abortControllerRef = useRef<AbortController | null>(null);
   const location = useLocation();
+  const serviceInitializedRef = useRef(false);
+
+  // Initialize service once when component mounts or API key changes
+  useEffect(() => {
+    if (apiKey?.gemini && (!serviceInitializedRef.current || !geminiService)) {
+      geminiService.initialize(apiKey.gemini);
+      serviceInitializedRef.current = true;
+    }
+  }, [apiKey?.gemini]);
 
   // Check for pre-filled input from navigation state
   useEffect(() => {
@@ -88,10 +96,7 @@ export function usePlaygroundConversation() {
     const aiMessageId = addMessage('', 'ai', true);
 
     try {
-      // Initialize the service once and reuse
-      geminiService.initialize(apiKey.gemini);
-      
-      // Send prompt directly without additional instructions for speed
+      // Service should already be initialized, just use it directly
       const result = await geminiService.generateChatResponse(prompt.trim());
       
       // Check if request was aborted
@@ -100,7 +105,7 @@ export function usePlaygroundConversation() {
         return;
       }
       
-      // Display the direct response
+      // Display the response
       updateMessage(aiMessageId, result, false);
       toast.success('Response generated successfully');
     } catch (error) {

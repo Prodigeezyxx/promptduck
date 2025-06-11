@@ -11,44 +11,59 @@ import { defaultPromptImprover } from '../core/promptImprover';
 export class GeminiService {
   private genAI: GoogleGenerativeAI | null = null;
   private isInitialized = false;
+  private cachedModel: any = null;
+  private currentApiKey: string = '';
 
   initialize(apiKey: string): void {
-    this.genAI = new GoogleGenerativeAI(apiKey);
+    // Only reinitialize if API key changed
+    if (this.currentApiKey !== apiKey) {
+      this.genAI = new GoogleGenerativeAI(apiKey);
+      this.currentApiKey = apiKey;
+      this.cachedModel = null; // Reset cached model
+    }
     this.isInitialized = true;
   }
 
+  private getOptimizedModel() {
+    if (!this.cachedModel || !this.genAI) {
+      const fastestModel = GEMINI_CONFIG.models[0]; // gemini-2.0-flash-exp
+      this.cachedModel = this.genAI!.getGenerativeModel({ 
+        model: fastestModel,
+        generationConfig: {
+          temperature: 0.9, // Higher for faster responses
+          topP: 0.8,
+          topK: 20,
+          maxOutputTokens: 1024, // Reduced from 4096
+        }
+      });
+    }
+    return this.cachedModel;
+  }
+
   /**
-   * Optimized chat method for playground interactions - provides direct conversational responses
+   * Optimized chat method for playground interactions - fast responses under 5s
    */
   async generateChatResponse(prompt: string): Promise<string> {
     if (!this.isInitialized || !this.genAI) {
       throw new Error('Gemini service not initialized');
     }
 
-    // Use only the fastest model for playground responses
-    const fastestModel = GEMINI_CONFIG.models[0]; // gemini-2.0-flash-exp
-    
     try {
-      const model = this.genAI.getGenerativeModel({ 
-        model: fastestModel,
-        generationConfig: {
-          temperature: 0.7, // Increased for faster, less deliberative responses
-          maxOutputTokens: 4096, // Keep as requested
-        }
-      });
+      const model = this.getOptimizedModel();
       
-      // Send prompt directly without additional instructions
+      // Send prompt directly without additional processing
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
 
       if (!text || text.trim().length === 0) {
-        throw new Error(`Empty response from model ${fastestModel}`);
+        throw new Error('Empty response from model');
       }
 
-      return this.cleanResponseForChat(text);
+      // Return raw response without heavy cleaning for speed
+      return text.trim();
     } catch (error) {
-      // Simplified error handling for playground
+      // Simplified error handling - fail fast
       throw new Error(`Chat generation failed: ${error.message}`);
     }
   }

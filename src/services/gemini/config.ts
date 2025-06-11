@@ -6,7 +6,7 @@ export const GEMINI_CONFIG = {
     'gemini-1.5-flash',
     'gemini-1.5-pro'
   ],
-  maxRetries: 3,
+  maxRetries: 1, // Reduced from 3 for faster failure
   fallbackPrompt: {
     complexity_score: 7,
     creativity_score: 6,
