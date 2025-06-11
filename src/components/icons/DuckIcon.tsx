@@ -9,7 +9,7 @@ interface DuckIconProps {
 export function DuckIcon({ className = "", size = 24 }: DuckIconProps) {
   return (
     <img
-      src="/lovable-uploads/f532bc4c-6a57-4c7e-9651-92160c2b7ab1.png"
+      src="/lovable-uploads/eb95d4b6-dc5c-4694-a867-cbb6caefa746.png"
       alt="PromptDuck Logo"
       width={size}
       height={size}
