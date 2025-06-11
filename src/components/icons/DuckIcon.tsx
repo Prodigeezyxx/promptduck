@@ -17,34 +17,35 @@ export function DuckIcon({ className = "", size = 24 }: DuckIconProps) {
       className={className}
     >
       <defs>
-        {/* Body gradient from orange to purple */}
-        <linearGradient id="bodyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#FF6B35" />
-          <stop offset="30%" stopColor="#FF8E53" />
-          <stop offset="60%" stopColor="#9B59B6" />
-          <stop offset="100%" stopColor="#3498DB" />
+        {/* Main body gradient - orange to pink to purple to blue */}
+        <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FFA500" />
+          <stop offset="25%" stopColor="#FF6B35" />
+          <stop offset="50%" stopColor="#FF1493" />
+          <stop offset="75%" stopColor="#8A2BE2" />
+          <stop offset="100%" stopColor="#4169E1" />
         </linearGradient>
         
-        {/* Head gradient */}
+        {/* Head gradient - warm orange tones */}
         <linearGradient id="headGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#FFB347" />
-          <stop offset="50%" stopColor="#FF8C42" />
+          <stop offset="0%" stopColor="#FFD700" />
+          <stop offset="50%" stopColor="#FFA500" />
           <stop offset="100%" stopColor="#FF6B35" />
         </linearGradient>
 
-        {/* Beak gradient */}
+        {/* Beak gradient - orange to red */}
         <linearGradient id="beakGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#E74C3C" />
-          <stop offset="100%" stopColor="#C0392B" />
+          <stop offset="0%" stopColor="#FF8C00" />
+          <stop offset="100%" stopColor="#FF4500" />
         </linearGradient>
       </defs>
 
-      {/* Dark outline/shadow */}
-      <ellipse cx="52" cy="67" rx="35" ry="20" fill="#2C3E50" opacity="0.3"/>
-      <circle cx="32" cy="35" r="22" fill="#2C3E50" opacity="0.3"/>
+      {/* Shadow/outline */}
+      <ellipse cx="52" cy="67" rx="35" ry="20" fill="#2C3E50" opacity="0.2"/>
+      <circle cx="32" cy="35" r="22" fill="#2C3E50" opacity="0.2"/>
       
-      {/* Duck body */}
-      <ellipse cx="50" cy="65" rx="33" ry="18" fill="url(#bodyGradient)" stroke="#2C3E50" strokeWidth="2"/>
+      {/* Duck body with vibrant gradient */}
+      <ellipse cx="50" cy="65" rx="33" ry="18" fill="url(#mainGradient)" stroke="#2C3E50" strokeWidth="2"/>
       
       {/* Duck head */}
       <circle cx="30" cy="33" r="20" fill="url(#headGradient)" stroke="#2C3E50" strokeWidth="2"/>
@@ -56,8 +57,8 @@ export function DuckIcon({ className = "", size = 24 }: DuckIconProps) {
       <circle cx="28" cy="28" r="3" fill="#2C3E50"/>
       <circle cx="29" cy="27" r="1" fill="white"/>
       
-      {/* Wing highlight */}
-      <ellipse cx="55" cy="55" rx="12" ry="8" fill="url(#bodyGradient)" opacity="0.7" stroke="#2C3E50" strokeWidth="1"/>
+      {/* Wing highlight with same gradient */}
+      <ellipse cx="55" cy="55" rx="12" ry="8" fill="url(#mainGradient)" opacity="0.8" stroke="#2C3E50" strokeWidth="1"/>
     </svg>
   );
 }
