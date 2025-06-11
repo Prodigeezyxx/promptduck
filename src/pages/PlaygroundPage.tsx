@@ -33,7 +33,7 @@ export default function PlaygroundPage() {
                   Prompt Playground
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  Test and experiment with prompts using Gemini Pro
+                  Test and experiment with prompts using Advanced AI
                 </p>
               </div>
             </div>

@@ -1,7 +1,7 @@
 
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
-import { Brain, Layers, Zap, RefreshCw, Target, Sparkles } from 'lucide-react';
+import { Brain, Layers, Zap, Target } from 'lucide-react';
 import { memo } from 'react';
 
 const features = [
@@ -20,26 +20,14 @@ const features = [
   {
     icon: Zap,
     title: 'AI Generation',
-    description: 'Google Gemini integration with PromptDuck specification for optimized outputs.',
+    description: 'Unique AI engine with PromptDuck specification for optimized outputs.',
     color: 'text-yellow-500'
-  },
-  {
-    icon: RefreshCw,
-    title: 'Recursive Evolution',
-    description: 'Incorporating multiple perspectives, resolving conflicting ideas, and continuously refining thoughts to achieve a more in-depth understanding.',
-    color: 'text-green-500'
   },
   {
     icon: Target,
     title: 'Context Anchoring',
     description: 'Metaphorical and symbolic anchors create coherent, memorable prompt structures.',
     color: 'text-red-500'
-  },
-  {
-    icon: Sparkles,
-    title: 'Time Distortion',
-    description: 'Nonlinear temporal lenses and past-future mashups for creative perspectives.',
-    color: 'text-indigo-500'
   }
 ];
 
@@ -89,7 +77,7 @@ export function FeaturesSection() {
           </p>
         </motion.div>
         
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 max-w-4xl mx-auto">
           {features.map((feature, index) => (
             <FeatureCard key={feature.title} feature={feature} index={index} />
           ))}

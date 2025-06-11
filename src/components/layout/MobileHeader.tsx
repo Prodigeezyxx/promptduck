@@ -16,28 +16,28 @@ interface MobileHeaderProps {
 
 export function MobileHeader({ onMenuToggle }: MobileHeaderProps) {
   return (
-    <header className="lg:hidden flex items-center justify-between p-4 bg-card border-b border-border">
-      <div className="flex items-center space-x-3">
+    <header className="lg:hidden flex items-center justify-between p-3 sm:p-4 bg-card border-b border-border">
+      <div className="flex items-center space-x-2 min-w-0 flex-1">
         <Button
           variant="ghost"
           size="sm"
           onClick={onMenuToggle}
-          className="w-11 h-11 px-0 min-h-[44px]"
+          className="w-10 h-10 px-0 min-h-[40px] flex-shrink-0"
           aria-label="Toggle menu"
         >
-          <Menu className="h-5 w-5" />
+          <Menu className="h-4 w-4" />
         </Button>
         
-        <Link to="/" className="flex items-center space-x-2 touch-manipulation">
-          <div className="w-6 h-6 bg-gradient-to-br from-brand-500 to-purple-600 rounded-lg flex items-center justify-center">
-            <DuckIcon size={16} className="text-white" />
+        <Link to="/" className="flex items-center space-x-2 touch-manipulation min-w-0">
+          <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-br from-brand-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+            <DuckIcon size={14} className="text-white sm:w-4 sm:h-4" />
           </div>
-          {/* Hide text on extra small screens, show on small and up */}
-          <h1 className="hidden xs:hidden sm:block text-lg font-bold gradient-text">PromptDuck</h1>
+          {/* Responsive text sizing with proper truncation */}
+          <h1 className="text-sm sm:text-lg font-bold gradient-text truncate">PromptDuck</h1>
         </Link>
       </div>
 
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
         <OptimizedCreditDisplay />
         <OptimizedThemeToggle />
       </div>
