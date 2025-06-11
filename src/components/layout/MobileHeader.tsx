@@ -37,7 +37,7 @@ export function MobileHeader({ onMenuToggle }: MobileHeaderProps) {
           </Link>
         </div>
 
-        <div className="flex flex-col items-end space-y-1 flex-shrink-0">
+        <div className="flex items-center space-x-2 flex-shrink-0">
           <OptimizedThemeToggle />
           <div className="scale-75 origin-right">
             <OptimizedCreditDisplay />

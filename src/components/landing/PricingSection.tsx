@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,7 @@ const plans = [
     period: 'forever',
     description: 'Perfect for getting started',
     features: [
-      '40 daily generations',
+      '20 daily generations',
       'Basic prompt templates',
       'Community support',
       'Export prompts'
