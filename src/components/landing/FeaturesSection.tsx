@@ -46,8 +46,7 @@ export function FeaturesSection() {
       }} viewport={{
         once: true
       }} className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold gradient-text mb-6">GetGet exactly what you need from LLM's, every
-time.</h2>
+          <h2 className="text-4xl md:text-5xl font-bold gradient-text mb-6">Get exactly what you need from LLM's, every time.</h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">PromptDuck unlocks the full Potential of AI by creating prompts that spark awe, action, and clarity.</p>
         </motion.div>
         
