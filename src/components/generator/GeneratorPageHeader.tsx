@@ -11,7 +11,7 @@ interface GeneratorPageHeaderProps {
 
 export function GeneratorPageHeader({ onHistoryOpen }: GeneratorPageHeaderProps) {
   const isMobile = useIsMobile();
-  const { leftPaneVisible, toggleLeftPane } = useUiStore();
+  const { sidebarVisible, toggleSidebar } = useUiStore();
 
   return (
     <div className="mb-6 lg:mb-8">
@@ -30,10 +30,10 @@ export function GeneratorPageHeader({ onHistoryOpen }: GeneratorPageHeaderProps)
             <Button
               variant="outline"
               size="sm"
-              onClick={toggleLeftPane}
+              onClick={toggleSidebar}
               className="flex items-center gap-2"
             >
-              <LayoutPanelLeft className={`w-4 h-4 transition-transform ${!leftPaneVisible ? 'rotate-180' : ''}`} />
+              <LayoutPanelLeft className={`w-4 h-4 transition-transform ${!sidebarVisible ? 'rotate-180' : ''}`} />
             </Button>
           )}
           <Button

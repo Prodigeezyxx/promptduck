@@ -1,6 +1,5 @@
 
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useUiStore } from '@/store/uiStore';
 import { AIGeneratorInputPanel } from './AIGeneratorInputPanel';
 import { AIGeneratorOutputPanel } from './AIGeneratorOutputPanel';
 import { HeuristicType, GenerationResult } from '@/types';
@@ -37,7 +36,6 @@ export function GeneratorLayout({
   onRemixSuggestion,
 }: GeneratorLayoutProps) {
   const isMobile = useIsMobile();
-  const { leftPaneVisible } = useUiStore();
 
   if (isMobile) {
     return (
@@ -65,32 +63,26 @@ export function GeneratorLayout({
   }
 
   return (
-    <div className={`grid gap-6 lg:gap-8 max-w-7xl mx-auto min-h-0 transition-all duration-300 ${
-      leftPaneVisible ? 'lg:grid-cols-12' : 'lg:grid-cols-1'
-    }`}>
-      {/* Left Column - Input Panel (Conditionally rendered) */}
-      {leftPaneVisible && (
-        <div className="lg:col-span-4 min-h-0">
-          <div className="sticky top-6">
-            <AIGeneratorInputPanel
-              intent={intent}
-              context={context}
-              complexity={complexity}
-              selectedHeuristics={selectedHeuristics}
-              isGenerating={isGenerating}
-              onIntentChange={onIntentChange}
-              onContextChange={onContextChange}
-              onComplexityChange={onComplexityChange}
-              onGenerate={onGenerate}
-            />
-          </div>
+    <div className="grid gap-6 lg:gap-8 max-w-7xl mx-auto min-h-0 lg:grid-cols-12">
+      {/* Left Column - Input Panel */}
+      <div className="lg:col-span-4 min-h-0">
+        <div className="sticky top-6">
+          <AIGeneratorInputPanel
+            intent={intent}
+            context={context}
+            complexity={complexity}
+            selectedHeuristics={selectedHeuristics}
+            isGenerating={isGenerating}
+            onIntentChange={onIntentChange}
+            onContextChange={onContextChange}
+            onComplexityChange={onComplexityChange}
+            onGenerate={onGenerate}
+          />
         </div>
-      )}
+      </div>
 
-      {/* Right Column - Output Panel (Expandable) */}
-      <div className={`min-h-0 overflow-hidden ${
-        leftPaneVisible ? 'lg:col-span-8' : 'lg:col-span-12'
-      }`}>
+      {/* Right Column - Output Panel */}
+      <div className="lg:col-span-8 min-h-0 overflow-hidden">
         <AIGeneratorOutputPanel
           lastResult={lastResult}
           onCopyPrompt={onCopyPrompt}
