@@ -35,12 +35,6 @@ export function LandingFooter() {
           </div>
           
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <Link to="/privacy" className="hover:text-foreground transition-colors font-medium">
-              Privacy Policy
-            </Link>
-            <Link to="/terms" className="hover:text-foreground transition-colors font-medium">
-              Terms of Service
-            </Link>
             <a href="#" className="hover:text-foreground transition-colors">
               Documentation
             </a>
