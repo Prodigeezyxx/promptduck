@@ -1,5 +1,5 @@
+
 import { useState } from 'react';
-import { useUser } from '@clerk/clerk-react';
 import { Settings as SettingsIcon, User, Database, Trash2, Download, Loader2, Eye, EyeOff } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,10 +11,11 @@ import { usePromptStore } from '@/store/promptStore';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
 import { useUiStore } from '@/store/uiStore';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 import { toast } from '@/hooks/use-toast';
 
 export default function SettingsPage() {
-  const { user } = useUser();
+  const { user } = useAuthContext();
   const { prompts, clearHistory: clearPrompts } = usePromptStore();
   const { history, clearHistory: clearGeneratorHistory } = useGeneratorStore();
   const { credits } = useCreditStore();
@@ -98,21 +99,21 @@ export default function SettingsPage() {
             <div className="space-y-3">
               <div className="flex items-center space-x-4">
                 <img 
-                  src={user.imageUrl} 
-                  alt={user.fullName || 'User'} 
+                  src={user.user_metadata?.avatar_url} 
+                  alt={user.user_metadata?.full_name || 'User'} 
                   className="w-12 h-12 rounded-full"
                 />
                 <div>
-                  <h3 className="font-medium">{user.fullName || 'User'}</h3>
+                  <h3 className="font-medium">{user.user_metadata?.full_name || 'User'}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {user.primaryEmailAddress?.emailAddress}
+                    {user.email}
                   </p>
                 </div>
               </div>
               
               <div className="flex items-center space-x-2">
                 <Badge variant="secondary">
-                  Joined {new Date(user.createdAt!).toLocaleDateString()}
+                  Joined {new Date(user.created_at).toLocaleDateString()}
                 </Badge>
                 <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
                   Verified

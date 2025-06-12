@@ -1,11 +1,12 @@
 
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { SignInButton, UserButton, useAuth } from '@clerk/clerk-react';
+import { AuthButtons } from '@/components/auth/AuthButtons';
 import { DuckIcon } from '@/components/icons/DuckIcon';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 
 export function LandingHeader() {
-  const { isSignedIn } = useAuth();
+  const { isSignedIn } = useAuthContext();
 
   return (
     <header className="fixed top-0 w-full z-50 backdrop-blur-xl bg-gray-900/80 dark:bg-black/80 border-b border-gray-700/50 dark:border-gray-800/50">
@@ -25,21 +26,10 @@ export function LandingHeader() {
                   Launch App
                 </Button>
               </Link>
-              <UserButton 
-                afterSignOutUrl="/" 
-                appearance={{
-                  elements: {
-                    avatarBox: "w-7 h-7 sm:w-8 sm:h-8"
-                  }
-                }}
-              />
+              <AuthButtons />
             </div>
           ) : (
-            <SignInButton mode="modal" fallbackRedirectUrl="/app/library">
-              <Button className="bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white border-0 shadow-lg text-xs sm:text-sm px-3 sm:px-4 py-2">
-                Launch App
-              </Button>
-            </SignInButton>
+            <AuthButtons />
           )}
         </div>
       </div>

@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useThemeStore } from "@/store/themeStore";
-import { useAuth } from "@clerk/clerk-react";
+import { AuthProvider, useAuthContext } from "@/components/auth/AuthProvider";
 import { useEffect } from "react";
 import { DuckIcon } from "@/components/icons/DuckIcon";
 
@@ -22,7 +22,7 @@ const queryClient = new QueryClient();
 
 function AppContent() {
   const { theme } = useThemeStore();
-  const { isSignedIn, isLoaded } = useAuth();
+  const { isSignedIn, isLoaded } = useAuthContext();
   const location = useLocation();
 
   useEffect(() => {
@@ -34,7 +34,7 @@ function AppContent() {
     }
   }, [theme, location.pathname]);
 
-  // Show loading while Clerk is initializing
+  // Show loading while auth is initializing
   if (!isLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -80,13 +80,15 @@ function AppContent() {
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <HashRouter>
-          <AppContent />
-        </HashRouter>
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <HashRouter>
+            <AppContent />
+          </HashRouter>
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };

@@ -9,7 +9,177 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_conversations: {
+        Row: {
+          created_at: string | null
+          id: string
+          messages: Json | null
+          title: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          messages?: Json | null
+          title?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          messages?: Json | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_credits: {
+        Row: {
+          created_at: string | null
+          daily_limit: number | null
+          id: string
+          last_reset: string | null
+          premium: boolean | null
+          updated_at: string | null
+          used_today: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          daily_limit?: number | null
+          id?: string
+          last_reset?: string | null
+          premium?: boolean | null
+          updated_at?: string | null
+          used_today?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          daily_limit?: number | null
+          id?: string
+          last_reset?: string | null
+          premium?: boolean | null
+          updated_at?: string | null
+          used_today?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_generations: {
+        Row: {
+          complexity: string | null
+          context: string | null
+          created_at: string | null
+          heuristics: string[] | null
+          id: string
+          intent: string
+          metadata: Json | null
+          result: string
+          user_id: string
+        }
+        Insert: {
+          complexity?: string | null
+          context?: string | null
+          created_at?: string | null
+          heuristics?: string[] | null
+          id?: string
+          intent: string
+          metadata?: Json | null
+          result: string
+          user_id: string
+        }
+        Update: {
+          complexity?: string | null
+          context?: string | null
+          created_at?: string | null
+          heuristics?: string[] | null
+          id?: string
+          intent?: string
+          metadata?: Json | null
+          result?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_prompts: {
+        Row: {
+          category: string | null
+          content: string
+          created_at: string | null
+          description: string | null
+          id: string
+          parent_id: string | null
+          persona: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          usage_count: number | null
+          user_id: string
+          version: number | null
+        }
+        Insert: {
+          category?: string | null
+          content: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          parent_id?: string | null
+          persona?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          usage_count?: number | null
+          user_id: string
+          version?: number | null
+        }
+        Update: {
+          category?: string | null
+          content?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          parent_id?: string | null
+          persona?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          usage_count?: number | null
+          user_id?: string
+          version?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
