@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useThemeStore } from "@/store/themeStore";
 import { useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
@@ -20,18 +20,19 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => {
+function AppContent() {
   const { theme } = useThemeStore();
   const { isSignedIn, isLoaded } = useAuth();
+  const location = useLocation();
 
   useEffect(() => {
-    // Apply theme on app initialization
+    // Apply theme on app initialization and route changes
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
-  }, [theme]);
+  }, [theme, location.pathname]);
 
   // Show loading while Clerk is initializing
   if (!isLoaded) {
@@ -49,35 +50,41 @@ const App = () => {
   }
 
   return (
+    <Routes>
+      {/* Landing Page */}
+      <Route path="/" element={<LandingPage />} />
+      
+      {/* Protected App Routes */}
+      <Route path="/app" element={
+        isSignedIn ? <AppLayout /> : <Navigate to="/" replace />
+      }>
+        <Route index element={<Navigate to="/app/library" replace />} />
+        <Route path="library" element={<PromptLibraryPage />} />
+        <Route path="generator" element={<AIGeneratorPage />} />
+        <Route path="playground" element={<PlaygroundPage />} />
+        <Route path="settings" element={<SettingsPage />} />
+      </Route>
+
+      {/* Redirects for convenience */}
+      <Route path="/library" element={<Navigate to="/app/library" replace />} />
+      <Route path="/generator" element={<Navigate to="/app/generator" replace />} />
+      <Route path="/playground" element={<Navigate to="/app/playground" replace />} />
+      <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
+
+      {/* 404 */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
+
+const App = () => {
+  return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <HashRouter>
-          <Routes>
-            {/* Landing Page */}
-            <Route path="/" element={<LandingPage />} />
-            
-            {/* Protected App Routes */}
-            <Route path="/app" element={
-              isSignedIn ? <AppLayout /> : <Navigate to="/" replace />
-            }>
-              <Route index element={<Navigate to="/app/library" replace />} />
-              <Route path="library" element={<PromptLibraryPage />} />
-              <Route path="generator" element={<AIGeneratorPage />} />
-              <Route path="playground" element={<PlaygroundPage />} />
-              <Route path="settings" element={<SettingsPage />} />
-            </Route>
-
-            {/* Redirects for convenience */}
-            <Route path="/library" element={<Navigate to="/app/library" replace />} />
-            <Route path="/generator" element={<Navigate to="/app/generator" replace />} />
-            <Route path="/playground" element={<Navigate to="/app/playground" replace />} />
-            <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
-
-            {/* 404 */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AppContent />
         </HashRouter>
       </TooltipProvider>
     </QueryClientProvider>

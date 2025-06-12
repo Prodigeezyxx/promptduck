@@ -1,7 +1,6 @@
 
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import { SignInButton, UserButton, useAuth } from '@clerk/clerk-react';
 import { DuckIcon } from '@/components/icons/DuckIcon';
 
@@ -19,10 +18,6 @@ export function LandingHeader() {
         </Link>
         
         <div className="flex items-center space-x-1 sm:space-x-2">
-          <div className="order-1 sm:order-none">
-            <ThemeToggle />
-          </div>
-          
           {isSignedIn ? (
             <div className="flex items-center space-x-1 sm:space-x-2">
               <Link to="/app/library">
