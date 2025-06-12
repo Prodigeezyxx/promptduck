@@ -1,4 +1,3 @@
-
 import { SuggestionCard } from './SuggestionCard';
 
 interface EmptyStateProps {
@@ -17,12 +16,32 @@ interface EmptyStateProps {
 
 export function EmptyState({ suggestions, onSuggestionClick }: EmptyStateProps) {
   return (
-    <div className="flex items-center justify-center h-full p-4 md:p-6">
-      <div className="text-center max-w-3xl w-full">
-        <h2 className="text-xl md:text-2xl font-semibold mb-2">Test your prompts here</h2>
-        <p className="text-muted-foreground mb-6 md:mb-8">
-          Start a conversation with your generated prompts or try something new.
-        </p>
+    <div className="flex-1 flex items-center justify-center p-8">
+      <div className="text-center max-w-2xl space-y-8">
+        {/* Enhanced PromptDuck Logo with Animation */}
+        <div className="flex justify-center mb-8">
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-brand-500/20 to-brand-600/20 rounded-full blur-xl animate-pulse"></div>
+            <div className="relative bg-gradient-to-br from-brand-500 to-brand-600 p-6 rounded-full shadow-2xl transition-transform hover:scale-105 duration-300">
+              <DuckIcon 
+                size={48} 
+                className="text-white drop-shadow-lg" 
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Welcome Message */}
+        <div className="space-y-4">
+          <h2 className="text-2xl lg:text-3xl font-bold gradient-text">
+            Welcome to the Prompt Playground
+          </h2>
+          <p className="text-muted-foreground text-lg">
+            Test and experiment with prompts using Advanced AI. Start a conversation below or try one of these suggestions.
+          </p>
+        </div>
+
+        {/* Suggestions Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {suggestions.map((suggestion) => (
             <SuggestionCard

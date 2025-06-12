@@ -1,8 +1,10 @@
 
 import { Button } from '@/components/ui/button';
-import { Copy, User, Bot } from 'lucide-react';
+import { Copy, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTypingAnimation } from '@/hooks/useTypingAnimation';
+import { DuckIcon } from '@/components/icons/DuckIcon';
+import { ThinkingDuckAnimation } from './ThinkingDuckAnimation';
 
 interface MessageBubbleProps {
   type: 'user' | 'ai';
@@ -34,16 +36,17 @@ export function MessageBubble({
         className="flex items-start space-x-3 w-full max-w-none mx-auto p-fluid-md chat-message-ai"
         role="status"
         aria-live="polite"
-        aria-label="AI is typing"
+        aria-label="AI is thinking"
       >
-        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center">
-          <Bot className="w-4 h-4 text-white" />
+        <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center shadow-lg">
+          <ThinkingDuckAnimation />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center space-x-1" aria-hidden="true">
+          <div className="flex items-center space-x-2 bg-muted/50 rounded-lg px-3 py-2 backdrop-blur-sm" aria-hidden="true">
             <div className="w-2 h-2 bg-brand-500 rounded-full animate-bounce"></div>
-            <div className="w-2 h-2 bg-brand-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-            <div className="w-2 h-2 bg-brand-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            <div className="w-2 h-2 bg-brand-500 rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></div>
+            <div className="w-2 h-2 bg-brand-500 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></div>
+            <span className="text-sm text-muted-foreground ml-2">Thinking...</span>
           </div>
           <span className="sr-only">AI is generating response</span>
         </div>
@@ -61,13 +64,18 @@ export function MessageBubble({
       aria-label={`${isUser ? 'User' : 'AI'} message`}
     >
       <div className={cn(
-        "flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center",
-        isUser ? "bg-gray-700 dark:bg-gray-800" : "bg-brand-500"
+        "flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shadow-md transition-transform hover:scale-105",
+        isUser 
+          ? "bg-gray-700 dark:bg-gray-800" 
+          : "bg-gradient-to-br from-brand-500 to-brand-600"
       )}>
         {isUser ? (
-          <User className="w-4 h-4 text-white" />
+          <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
         ) : (
-          <Bot className="w-4 h-4 text-white" />
+          <DuckIcon 
+            size={24} 
+            className="text-white drop-shadow-sm" 
+          />
         )}
       </div>
       
