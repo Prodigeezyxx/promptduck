@@ -1,4 +1,6 @@
+
 import { SuggestionCard } from './SuggestionCard';
+import { DuckIcon } from '@/components/icons/DuckIcon';
 
 interface EmptyStateProps {
   suggestions: Array<{

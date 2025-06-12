@@ -65,15 +65,17 @@ export function ThinkingDuckAnimation() {
       )}
 
       {/* Gentle floating animation for the entire container */}
-      <style jsx>{`
-        @keyframes gentle-float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          50% { transform: translateY(-2px) rotate(1deg); }
-        }
-        .animate-gentle-float {
-          animation: gentle-float 2s ease-in-out infinite;
-        }
-      `}</style>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @keyframes gentle-float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-2px) rotate(1deg); }
+          }
+          .animate-gentle-float {
+            animation: gentle-float 2s ease-in-out infinite;
+          }
+        `
+      }} />
     </div>
   );
 }
