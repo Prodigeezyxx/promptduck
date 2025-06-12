@@ -6,7 +6,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { RefreshCw, Sparkles } from 'lucide-react';
 import { HeuristicType } from '@/types';
 import { HeuristicsDisplay } from './HeuristicsDisplay';
-import { memo } from 'react';
+import { TemplateReference } from './TemplateReference';
+import { usePromptStore } from '@/store/promptStore';
+import { memo, useState } from 'react';
 
 const OptimizedHeuristicsDisplay = memo(HeuristicsDisplay);
 
@@ -33,8 +35,41 @@ export function AIGeneratorInputPanel({
   onComplexityChange,
   onGenerate
 }: AIGeneratorInputPanelProps) {
+  const { currentPrompt, setCurrentPrompt } = usePromptStore();
+  const [showTemplateReference, setShowTemplateReference] = useState(false);
+
+  // Show template reference when a template is selected
+  const handleTemplateUseAsStartingPoint = () => {
+    if (currentPrompt) {
+      // Use template as starting point - pre-fill with guidance
+      onIntentChange(`Create a prompt similar to: ${currentPrompt.title}`);
+      onContextChange(`Reference template: ${currentPrompt.description}\n\nTemplate structure: ${currentPrompt.content}`);
+      setShowTemplateReference(false);
+      setCurrentPrompt(null);
+    }
+  };
+
+  const handleCloseTemplateReference = () => {
+    setShowTemplateReference(false);
+    setCurrentPrompt(null);
+  };
+
+  // Show template reference when currentPrompt is set
+  if (currentPrompt && !showTemplateReference) {
+    setShowTemplateReference(true);
+  }
+
   return (
     <div className="space-y-4 sm:space-y-6">
+      {/* Template Reference Panel */}
+      {showTemplateReference && currentPrompt && (
+        <TemplateReference
+          template={currentPrompt}
+          onClose={handleCloseTemplateReference}
+          onUseAsStartingPoint={handleTemplateUseAsStartingPoint}
+        />
+      )}
+
       <Card>
         <CardHeader className="pb-4 sm:pb-6">
           <CardTitle className="text-lg sm:text-xl">Intent & Context</CardTitle>

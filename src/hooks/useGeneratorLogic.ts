@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
@@ -20,12 +21,12 @@ export function useGeneratorLogic() {
   const [complexity, setComplexity] = useState<'simple' | 'intermediate' | 'advanced'>('intermediate');
   const [selectedHeuristics, setSelectedHeuristics] = useState<HeuristicType[]>([]);
 
-  // Pre-fill form when currentPrompt is set (from template click)
+  // Enhanced template handling - show context about the request instead of pre-filling
   useEffect(() => {
     if (currentPrompt) {
-      setIntent(currentPrompt.description || currentPrompt.title);
-      setContext(currentPrompt.content);
-      setSelectedHeuristics(currentPrompt.heuristics);
+      // Don't pre-fill the form, instead show template context
+      console.log('Template selected:', currentPrompt.title);
+      // TODO: Show template reference panel instead of pre-filling
       setCurrentPrompt(null);
     }
   }, [currentPrompt, setCurrentPrompt]);
@@ -35,7 +36,7 @@ export function useGeneratorLogic() {
     setIntent(value);
     if (value.trim()) {
       const intentAnalysis = IntentDetectionEngine.analyzeIntent(value, context);
-      setSelectedHeuristics(intentAnalysis.suggestedHeuristics);
+      setSelectedHeuristics(intentAnalysis.suggestedHeuristics as HeuristicType[]);
       
       // Auto-adjust complexity based on intent analysis
       setComplexity(intentAnalysis.complexity);
@@ -51,7 +52,7 @@ export function useGeneratorLogic() {
     setContext(value);
     if (intent.trim()) {
       const intentAnalysis = IntentDetectionEngine.analyzeIntent(intent, value);
-      setSelectedHeuristics(intentAnalysis.suggestedHeuristics);
+      setSelectedHeuristics(intentAnalysis.suggestedHeuristics as HeuristicType[]);
       setComplexity(intentAnalysis.complexity);
     }
   };
@@ -80,12 +81,12 @@ export function useGeneratorLogic() {
     try {
       // Get intelligent heuristics if not already set
       const heuristicsToUse = selectedHeuristics.length > 0 
-        ? selectedHeuristics 
+        ? selectedHeuristics.map(h => h as string)
         : selectHeuristics(intent, context);
 
-      // Initialize Gemini service with the internal API key
-      if (apiKey) {
-        geminiService.initialize(apiKey.gemini);
+      // Initialize service with the OpenAI API key
+      if (apiKey?.openai) {
+        geminiService.initialize(apiKey.openai);
       }
 
       // Ensure context is properly handled - convert to string or undefined
@@ -94,7 +95,7 @@ export function useGeneratorLogic() {
       const request: GenerationRequest = {
         intent: intent.trim(),
         heuristics: heuristicsToUse,
-        context: contextValue || undefined, // Ensure it's a string or undefined, not an object
+        context: contextValue || undefined,
         complexity
       };
 
@@ -131,7 +132,9 @@ export function useGeneratorLogic() {
       persona: 'strategist',
       heuristics: lastResult.heuristics,
       variables: lastResult.variables,
-      category: 'general'
+      category: 'general',
+      difficulty: 'intermediate',
+      estimatedTime: '15 minutes'
     });
 
     toast({ title: 'Saved!', description: 'Prompt added to your library.' });
@@ -152,7 +155,7 @@ export function useGeneratorLogic() {
     // Update heuristics based on the new context
     if (intent.trim()) {
       const autoHeuristics = selectHeuristics(intent, newContext);
-      setSelectedHeuristics(autoHeuristics);
+      setSelectedHeuristics(autoHeuristics as HeuristicType[]);
     }
     
     toast({ 

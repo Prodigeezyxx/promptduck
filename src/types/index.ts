@@ -50,6 +50,12 @@ export interface ApiKey {
   status: 'active' | 'expired' | 'invalid';
 }
 
+export interface Credit {
+  used: number;
+  limit: number;
+  resetTime: number;
+}
+
 export type HeuristicType =
   | 'universal_clarity'
   | 'format_optimization'
@@ -93,8 +99,12 @@ export interface Prompt {
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   estimatedTime: string;
   persona?: PersonaType;
-  heuristics?: HeuristicType[];
+  heuristics?: string[];
   variables?: Variable[];
+  created_at?: string;
+  updated_at?: string;
+  version?: number;
+  usage_count?: number;
 }
 
 export interface PromptAnalysisResult {
