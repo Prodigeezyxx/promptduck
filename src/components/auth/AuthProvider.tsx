@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { User, Session } from '@supabase/supabase-js';
 
@@ -19,9 +19,39 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
+  const [guestUser, setGuestUser] = useState<any>(null);
+
+  // Check for guest session on mount
+  useEffect(() => {
+    const guestSession = localStorage.getItem('promptduck_guest_session');
+    if (guestSession) {
+      try {
+        const guest = JSON.parse(guestSession);
+        setGuestUser(guest);
+      } catch (error) {
+        console.error('Failed to parse guest session:', error);
+        localStorage.removeItem('promptduck_guest_session');
+      }
+    }
+  }, []);
+
+  // Override auth state if guest user exists
+  const contextValue = {
+    ...auth,
+    user: guestUser || auth.user,
+    isSignedIn: !!guestUser || auth.isSignedIn,
+    signOut: async () => {
+      if (guestUser) {
+        localStorage.removeItem('promptduck_guest_session');
+        setGuestUser(null);
+        return { error: null };
+      }
+      return auth.signOut();
+    }
+  };
 
   return (
-    <AuthContext.Provider value={auth}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

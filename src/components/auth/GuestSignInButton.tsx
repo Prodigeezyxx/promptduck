@@ -29,7 +29,7 @@ export function GuestSignInButton() {
       
       toast({
         title: "Welcome!",
-        description: "You're now signed in as a guest. Some features may be limited.",
+        description: "You're now signed in as a guest. Enjoy exploring PromptDuck!",
       });
 
       // Navigate to the app

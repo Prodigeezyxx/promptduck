@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
 import { Loader2, Mail } from 'lucide-react';
 import { GoogleAuthButton } from './GoogleAuthButton';
 import { GuestSignInButton } from './GuestSignInButton';
@@ -80,7 +79,7 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
           <div className="space-y-2">
             <GuestSignInButton />
             <p className="text-xs text-center text-muted-foreground">
-              Try PromptDuck with limited features while we fix authentication issues
+              Try PromptDuck features for a limited time
             </p>
           </div>
 
