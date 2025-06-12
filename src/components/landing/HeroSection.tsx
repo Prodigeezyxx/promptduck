@@ -124,9 +124,22 @@ export function HeroSection() {
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             transition={{ delay: 0.6, duration: 0.6 }} 
-            className="pt-4 lg:pt-8 text-fluid-xs lg:text-fluid-sm text-gray-500 dark:text-gray-400"
+            className="pt-4 lg:pt-8 space-y-2"
           >
-            <p>20 free generations daily • No credit card required</p>
+            <p className="text-fluid-xs lg:text-fluid-sm text-gray-500 dark:text-gray-400">
+              20 free generations daily • No credit card required
+            </p>
+            {/* Privacy Policy notice for Google OAuth compliance */}
+            <p className="text-fluid-xs text-gray-500 dark:text-gray-400">
+              By using PromptDuck, you agree to our{' '}
+              <Link to="/privacy" className="text-brand-500 hover:text-brand-600 transition-colors underline">
+                Privacy Policy
+              </Link>
+              {' '}and{' '}
+              <Link to="/terms" className="text-brand-500 hover:text-brand-600 transition-colors underline">
+                Terms of Service
+              </Link>
+            </p>
           </motion.div>
         </motion.div>
 
