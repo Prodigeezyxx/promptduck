@@ -51,7 +51,7 @@ export function MessageBubble({
       <div className="flex items-start gap-3 mb-4">
         <div className="flex-shrink-0">
           {isTyping ? (
-            <ThinkingDuckAnimation size={32} />
+            <ThinkingDuckAnimation />
           ) : (
             <DuckIcon size={32} />
           )}
