@@ -16,6 +16,9 @@ export const useCreditStore = create<CreditState>()(
   persist(
     (set, get) => ({
       credits: {
+        used: 0,
+        limit: DAILY_CREDIT_LIMIT,
+        resetTime: Date.now() + 24 * 60 * 60 * 1000, // 24 hours from now
         daily_limit: DAILY_CREDIT_LIMIT,
         used_today: 0,
         last_reset: new Date().toDateString(),
@@ -32,6 +35,7 @@ export const useCreditStore = create<CreditState>()(
         set(state => ({
           credits: {
             ...state.credits,
+            used: state.credits.used + 1,
             used_today: state.credits.used_today + 1
           }
         }));
@@ -46,7 +50,8 @@ export const useCreditStore = create<CreditState>()(
             credits: {
               ...state.credits,
               used_today: 0,
-              last_reset: today
+              last_reset: today,
+              resetTime: Date.now() + 24 * 60 * 60 * 1000
             }
           }));
         }

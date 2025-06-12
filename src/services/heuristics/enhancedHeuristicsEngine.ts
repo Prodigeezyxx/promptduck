@@ -1,4 +1,3 @@
-
 import { HeuristicType } from '@/types';
 import { IntentType } from '../intent/intentDetection';
 
@@ -409,6 +408,96 @@ const HEURISTIC_RULES: Record<HeuristicType, HeuristicRule[]> = {
         return prompt;
       },
       triggers: ['creative', 'story', 'description', 'vivid'],
+      weight: 0.7,
+      priority: 2,
+      category: 'intent-specific'
+    }
+  ],
+
+  clarity: [
+    {
+      id: 'clarity-enhancement',
+      name: 'Enhanced Clarity',
+      description: 'Improve clarity and role definition for all prompts',
+      apply: (prompt, intent) => {
+        if (!prompt.includes('clear') && !prompt.includes('specific')) {
+          return `${prompt}\n\nBe clear and specific in your response.`;
+        }
+        return prompt;
+      },
+      triggers: ['clarity', 'clear', 'specific'],
+      weight: 0.8,
+      priority: 2,
+      category: 'universal'
+    }
+  ],
+
+  structure: [
+    {
+      id: 'structural-optimization',
+      name: 'Structural Optimization',
+      description: 'Optimize output structure and logical flow',
+      apply: (prompt, intent) => {
+        if (!prompt.includes('structure') && !prompt.includes('organize')) {
+          return `${prompt}\n\nOrganize your response with clear headers and logical progression.`;
+        }
+        return prompt;
+      },
+      triggers: ['structure', 'organize', 'flow'],
+      weight: 0.7,
+      priority: 2,
+      category: 'universal'
+    }
+  ],
+
+  context: [
+    {
+      id: 'contextual-integration',
+      name: 'Contextual Integration',
+      description: 'Integrate relevant context and background information',
+      apply: (prompt, intent, context) => {
+        if (context && !prompt.includes('context')) {
+          return `${prompt}\n\nProvide necessary background and situational context based on: ${context}`;
+        }
+        return prompt;
+      },
+      triggers: ['context', 'background', 'situation'],
+      weight: 0.9,
+      priority: 1,
+      category: 'contextual'
+    }
+  ],
+
+  validation: [
+    {
+      id: 'validation-framework',
+      name: 'Validation Framework',
+      description: 'Include verification and quality assurance measures',
+      apply: (prompt) => {
+        if (!prompt.includes('validate') && !prompt.includes('verify')) {
+          return `${prompt}\n\nAdd checkpoints and validation criteria throughout your process.`;
+        }
+        return prompt;
+      },
+      triggers: ['validate', 'verify', 'check', 'quality'],
+      weight: 0.8,
+      priority: 2,
+      category: 'intent-specific'
+    }
+  ],
+
+  creativity: [
+    {
+      id: 'structured-creativity',
+      name: 'Structured Creativity',
+      description: 'Apply creative approaches within systematic frameworks',
+      apply: (prompt, intent) => {
+        if (intent === 'creative' && !prompt.includes('creative')) {
+          return `${prompt}\n\nUse creative techniques while maintaining technical precision and systematic approach.`;
+        }
+        return prompt;
+      },
+      triggers: ['creative', 'innovative', 'artistic'],
       weight: 0.7,
       priority: 2,
       category: 'intent-specific'
