@@ -10,7 +10,7 @@ export function GuestAuth() {
     <Button 
       onClick={signInAsGuest}
       variant="outline"
-      className="w-full"
+      className="h-10 px-4 border-2 hover:bg-accent/50"
     >
       <UserCircle className="w-4 h-4 mr-2" />
       Continue as Guest

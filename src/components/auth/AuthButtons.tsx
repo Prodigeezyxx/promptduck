@@ -79,10 +79,10 @@ export function AuthButtons() {
   }
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center space-x-3">
       <Button 
         onClick={() => setShowSignInDialog(true)}
-        className="bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white border-0 shadow-lg text-sm px-4 py-2"
+        className="bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white border-0 shadow-lg text-sm px-6 py-2 h-10"
       >
         Sign In
       </Button>
