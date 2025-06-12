@@ -42,14 +42,40 @@ export function useAuth() {
   }, []);
 
   const signInWithGoogle = async () => {
-    const redirectUrl = `${window.location.origin}/`;
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: redirectUrl,
-      },
-    });
-    return { error };
+    try {
+      console.log('Initiating Google OAuth with Supabase...');
+      console.log('Current URL:', window.location.href);
+      
+      const redirectUrl = `${window.location.origin}/`;
+      console.log('Redirect URL:', redirectUrl);
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      });
+      
+      if (error) {
+        console.error('Supabase OAuth error:', {
+          message: error.message,
+          status: error.status,
+          code: error.code,
+          details: error
+        });
+      } else {
+        console.log('OAuth request initiated:', data);
+      }
+      
+      return { error };
+    } catch (error) {
+      console.error('Unexpected OAuth error:', error);
+      return { error };
+    }
   };
 
   const signInWithEmail = async (email: string, password: string) => {

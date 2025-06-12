@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { ApiKeySettings } from '@/components/settings/ApiKeySettings';
+import { AuthDiagnostics } from '@/components/auth/AuthDiagnostics';
 import { usePromptStore } from '@/store/promptStore';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
@@ -127,6 +128,9 @@ export default function SettingsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Authentication Diagnostics */}
+      <AuthDiagnostics />
 
       {/* UI Preferences */}
       <Card>
