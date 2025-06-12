@@ -12,13 +12,15 @@ interface CreditState {
   canUseCredit: () => boolean;
 }
 
+const GUEST_CREDIT_LIMIT = 5; // Limited credits for guests
+
 export const useCreditStore = create<CreditState>()(
   persist(
     (set, get) => ({
       credits: {
         used: 0,
         limit: DAILY_CREDIT_LIMIT,
-        resetTime: Date.now() + 24 * 60 * 60 * 1000, // 24 hours from now
+        resetTime: Date.now() + 24 * 60 * 60 * 1000,
         daily_limit: DAILY_CREDIT_LIMIT,
         used_today: 0,
         last_reset: new Date().toDateString(),
@@ -46,11 +48,15 @@ export const useCreditStore = create<CreditState>()(
         const state = get();
         
         if (state.credits.last_reset !== today) {
+          const isGuest = localStorage.getItem('promptduck-guest-mode') === 'true';
+          const dailyLimit = isGuest ? GUEST_CREDIT_LIMIT : DAILY_CREDIT_LIMIT;
+          
           set(state => ({
             credits: {
               ...state.credits,
               used_today: 0,
               last_reset: today,
+              daily_limit: dailyLimit,
               resetTime: Date.now() + 24 * 60 * 60 * 1000
             }
           }));
