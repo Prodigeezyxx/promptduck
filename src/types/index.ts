@@ -1,4 +1,3 @@
-
 export interface GenerationRequest {
   intent: string;
   context?: string | undefined;
@@ -54,6 +53,10 @@ export interface Credit {
   used: number;
   limit: number;
   resetTime: number;
+  daily_limit: number;
+  used_today: number;
+  last_reset: string;
+  premium: boolean;
 }
 
 export type HeuristicType =
@@ -105,6 +108,7 @@ export interface Prompt {
   updated_at?: string;
   version?: number;
   usage_count?: number;
+  parent_id?: string;
 }
 
 export interface PromptAnalysisResult {

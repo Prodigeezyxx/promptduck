@@ -1,4 +1,3 @@
-
 import { GenerationRequest, GenerationResult, HeuristicType } from '@/types';
 import { IntentDetectionEngine, IntentAnalysis } from '../intent/intentDetection';
 import { PromptTemplateEngine } from '../templates/promptTemplates';
@@ -102,12 +101,12 @@ export class PromptImprover {
     intentAnalysis: IntentAnalysis
   ): HeuristicType[] {
     if (this.config.preferUserHeuristics && request.heuristics.length > 0) {
-      return request.heuristics;
+      return request.heuristics as HeuristicType[];
     }
 
     // Combine suggested heuristics from intent analysis with any user-specified ones
-    const suggestedHeuristics = intentAnalysis.suggestedHeuristics;
-    const userHeuristics = request.heuristics || [];
+    const suggestedHeuristics = intentAnalysis.suggestedHeuristics as HeuristicType[];
+    const userHeuristics = request.heuristics as HeuristicType[] || [];
     
     // Merge and deduplicate
     const allHeuristics = [...new Set([...suggestedHeuristics, ...userHeuristics])];
