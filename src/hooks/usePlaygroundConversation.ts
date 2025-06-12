@@ -26,16 +26,16 @@ export function usePlaygroundConversation() {
 
   // Initialize service when API key is available
   useEffect(() => {
-    if (apiKey?.gemini) {
+    if (apiKey?.openai) {
       try {
-        geminiService.initialize(apiKey.gemini);
-        console.log('Gemini service initialized successfully');
+        geminiService.initialize(apiKey.openai);
+        console.log('OpenAI service initialized successfully');
       } catch (error) {
-        console.error('Failed to initialize Gemini service:', error);
+        console.error('Failed to initialize OpenAI service:', error);
         toast.error('Failed to initialize AI service');
       }
     }
-  }, [apiKey?.gemini]);
+  }, [apiKey?.openai]);
 
   // Check for pre-filled input from navigation state
   useEffect(() => {
@@ -84,8 +84,8 @@ export function usePlaygroundConversation() {
       return;
     }
 
-    if (!apiKey?.gemini) {
-      toast.error('Gemini API key not configured');
+    if (!apiKey?.openai) {
+      toast.error('OpenAI API key not configured');
       return;
     }
 
@@ -102,7 +102,7 @@ export function usePlaygroundConversation() {
 
     try {
       // Ensure service is initialized before making the call
-      geminiService.initialize(apiKey.gemini);
+      geminiService.initialize(apiKey.openai);
       
       const result = await geminiService.generateChatResponse(prompt.trim());
       
@@ -167,6 +167,6 @@ export function usePlaygroundConversation() {
     stopGeneration,
     clearConversation,
     copyMessage,
-    isValidKey: !!apiKey?.gemini
+    isValidKey: !!apiKey?.openai
   };
 }

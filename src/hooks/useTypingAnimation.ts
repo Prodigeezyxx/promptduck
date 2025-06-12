@@ -22,6 +22,11 @@ export function useTypingAnimation({ text, speed = 1, isActive }: UseTypingAnima
     setDisplayedText('');
     
     let currentIndex = 0;
+    
+    // Check if mobile device for 2x speed
+    const isMobile = window.innerWidth < 768;
+    const adjustedSpeed = isMobile ? speed / 2 : speed; // 2x faster on mobile
+    
     const timer = setInterval(() => {
       if (currentIndex < text.length) {
         setDisplayedText(text.slice(0, currentIndex + 1));
@@ -30,7 +35,7 @@ export function useTypingAnimation({ text, speed = 1, isActive }: UseTypingAnima
         setIsTyping(false);
         clearInterval(timer);
       }
-    }, speed);
+    }, adjustedSpeed);
 
     return () => clearInterval(timer);
   }, [text, speed, isActive]);

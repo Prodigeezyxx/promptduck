@@ -1,5 +1,5 @@
 
-import { GeminiService } from './gemini';
+import { OpenAIService } from './openai';
 
-export const geminiService = new GeminiService();
-export { GeminiService };
+export const geminiService = new OpenAIService();
+export { OpenAIService as GeminiService };
