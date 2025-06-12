@@ -6,7 +6,7 @@ export class OptimizedTextCleaner {
     [/#{1,6}\s*/g, ''],                 // headers
     [/`([^`]*)`/g, '$1'],               // inline code
     [/\[([^\]]*)\]\([^)]*\)/g, '$1']    // links
-  ];
+  ] as const;
 
   static fastClean(text: string): string {
     if (!text || text.length < 10) return text;
@@ -14,7 +14,8 @@ export class OptimizedTextCleaner {
     let cleaned = text;
     
     // Apply patterns in batch for speed
-    for (const [pattern, replacement] of this.MARKDOWN_PATTERNS) {
+    for (const patternData of this.MARKDOWN_PATTERNS) {
+      const [pattern, replacement] = patternData;
       cleaned = cleaned.replace(pattern, replacement);
     }
     
