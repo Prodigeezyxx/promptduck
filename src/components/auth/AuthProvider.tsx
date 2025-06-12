@@ -21,18 +21,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
   const [guestUser, setGuestUser] = useState<any>(null);
 
-  // Check for guest session on mount
+  // Check for guest session on mount and when auth state changes
   useEffect(() => {
-    const guestSession = localStorage.getItem('promptduck_guest_session');
-    if (guestSession) {
-      try {
-        const guest = JSON.parse(guestSession);
-        setGuestUser(guest);
-      } catch (error) {
-        console.error('Failed to parse guest session:', error);
-        localStorage.removeItem('promptduck_guest_session');
+    const checkGuestSession = () => {
+      const guestSession = localStorage.getItem('promptduck_guest_session');
+      if (guestSession) {
+        try {
+          const guest = JSON.parse(guestSession);
+          setGuestUser(guest);
+        } catch (error) {
+          console.error('Failed to parse guest session:', error);
+          localStorage.removeItem('promptduck_guest_session');
+          setGuestUser(null);
+        }
+      } else {
+        setGuestUser(null);
       }
-    }
+    };
+
+    checkGuestSession();
+    
+    // Listen for storage changes to sync across tabs
+    window.addEventListener('storage', checkGuestSession);
+    
+    return () => {
+      window.removeEventListener('storage', checkGuestSession);
+    };
   }, []);
 
   // Override auth state if guest user exists
