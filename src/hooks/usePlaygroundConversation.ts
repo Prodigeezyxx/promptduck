@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useApiKeyStore } from '@/store/apiKeyStore';
+import { useCreditStore } from '@/store/creditStore';
 import { geminiService } from '@/services/geminiService';
 import { useLocation } from 'react-router-dom';
 import { usePlaygroundHistory } from './usePlaygroundHistory';
@@ -21,6 +22,7 @@ export function usePlaygroundConversation() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentInput, setCurrentInput] = useState('');
   const { apiKey } = useApiKeyStore();
+  const { useCredit, canUseCredit, getRemainingCredits } = useCreditStore();
   const abortControllerRef = useRef<AbortController | null>(null);
   const location = useLocation();
   
@@ -101,6 +103,21 @@ export function usePlaygroundConversation() {
       toast.error('OpenAI API key not configured');
       return;
     }
+
+    // Check and consume credit
+    if (!canUseCredit()) {
+      toast.error(`No credits remaining. You have ${getRemainingCredits()} daily credits left.`);
+      return;
+    }
+
+    const creditUsed = useCredit();
+    if (!creditUsed) {
+      toast.error('Unable to use credit. Please try again.');
+      return;
+    }
+
+    const remainingCredits = getRemainingCredits();
+    toast.success(`Message sent! ${remainingCredits} credits remaining.`);
 
     addMessage(prompt, 'user');
     setCurrentInput('');
@@ -189,6 +206,9 @@ export function usePlaygroundConversation() {
     conversations,
     currentConversationId,
     loadConversationById,
-    deleteConversation
+    deleteConversation,
+    // Credit information
+    remainingCredits: getRemainingCredits(),
+    canUseCredit: canUseCredit()
   };
 }

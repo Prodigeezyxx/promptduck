@@ -11,7 +11,8 @@ import {
   Wand2, 
   PlayCircle, 
   Settings as SettingsIcon,
-  Home
+  Home,
+  Plus
 } from 'lucide-react';
 
 const navigation = [
@@ -34,6 +35,16 @@ export function Navigation() {
             <div>
               <h1 className="text-xl font-bold">PromptDuck</h1>
             </div>
+          </Link>
+        </div>
+
+        {/* New Prompt Button */}
+        <div className="px-4 py-3 border-b">
+          <Link to="/app/generator">
+            <Button className="w-full" size="sm">
+              <Plus className="w-4 h-4 mr-2" />
+              New Prompt
+            </Button>
           </Link>
         </div>
 

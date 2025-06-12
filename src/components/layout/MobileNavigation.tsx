@@ -13,7 +13,8 @@ import {
   Wand2, 
   PlayCircle, 
   Settings as SettingsIcon, 
-  Home
+  Home,
+  Plus
 } from 'lucide-react';
 
 const navigation = [
@@ -43,6 +44,17 @@ export function MobileNavigation({ open, onOpenChange }: MobileNavigationProps) 
         </DrawerHeader>
         
         <div className="p-4 space-y-2">
+          {/* New Prompt Button */}
+          <Link
+            to="/app/generator"
+            onClick={handleLinkClick}
+          >
+            <Button className="w-full mb-4" size="sm">
+              <Plus className="w-4 h-4 mr-2" />
+              New Prompt
+            </Button>
+          </Link>
+
           {navigation.map((item) => {
             const isActive = location.pathname === item.href;
             const Icon = item.icon;
