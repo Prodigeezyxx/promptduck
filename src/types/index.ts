@@ -1,3 +1,4 @@
+
 export interface GenerationRequest {
   intent: string;
   context?: string | undefined;
@@ -50,11 +51,51 @@ export interface ApiKey {
 }
 
 export type HeuristicType =
+  | 'universal_clarity'
+  | 'format_optimization'
+  | 'multi_role_collision'
+  | 'recursive_refinement'
+  | 'contradiction_stacking'
+  | 'time_distortion'
+  | 'context_anchoring'
+  | 'self_repairing'
+  | 'contextual_adaptation'
+  | 'quality_enhancement'
   | 'clarity'
   | 'structure'
   | 'context'
   | 'validation'
   | 'creativity';
+
+export type PromptCategory = 
+  | 'content_creation'
+  | 'product_thinking'
+  | 'learning_research'
+  | 'thought_leadership'
+  | 'personal_branding'
+  | 'course_workshop'
+  | 'general';
+
+export type PersonaType = 
+  | 'strategist'
+  | 'dreamer'
+  | 'builder'
+  | 'connector'
+  | 'creator';
+
+export interface Prompt {
+  id: string;
+  title: string;
+  description: string;
+  content: string;
+  category: PromptCategory;
+  tags: string[];
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  estimatedTime: string;
+  persona?: PersonaType;
+  heuristics?: HeuristicType[];
+  variables?: Variable[];
+}
 
 export interface PromptAnalysisResult {
   primaryIntent: string;
