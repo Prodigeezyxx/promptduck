@@ -25,9 +25,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkGuestSession = () => {
       const guestSession = localStorage.getItem('promptduck_guest_session');
+      console.log('Checking guest session:', guestSession ? 'found' : 'not found');
       if (guestSession) {
         try {
           const guest = JSON.parse(guestSession);
+          console.log('Setting guest user:', guest);
           setGuestUser(guest);
         } catch (error) {
           console.error('Failed to parse guest session:', error);
@@ -49,6 +51,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  // Log current state for debugging
+  useEffect(() => {
+    console.log('Auth Provider State:', {
+      guestUser: !!guestUser,
+      authUser: !!auth.user,
+      authLoading: auth.loading,
+      isSignedIn: !!guestUser || auth.isSignedIn
+    });
+  }, [guestUser, auth.user, auth.loading, auth.isSignedIn]);
+
   // Override auth state if guest user exists
   const contextValue = {
     ...auth,
@@ -56,6 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isSignedIn: !!guestUser || auth.isSignedIn,
     signOut: async () => {
       if (guestUser) {
+        console.log('Signing out guest user');
         localStorage.removeItem('promptduck_guest_session');
         setGuestUser(null);
         return { error: null };
