@@ -11,11 +11,13 @@ export const FEATURED_PROMPTS: Prompt[] = [
     persona: 'strategist',
     heuristics: ['multi_role_collision', 'context_anchoring', 'format_optimization'],
     tags: ['content strategy', 'storytelling', 'engagement', 'frameworks'],
+    difficulty: 'intermediate',
+    estimatedTime: '15 minutes',
     variables: [
-      { name: 'CONTENT_TYPE', type: 'text', required: true },
-      { name: 'TOPIC', type: 'text', required: true },
-      { name: 'FRAMEWORK', type: 'text', required: true },
-      { name: 'EMOTION', type: 'text', required: true }
+      { name: 'CONTENT_TYPE', type: 'text', required: true, description: 'Type of content to create (e.g., blog post, video, social media post)' },
+      { name: 'TOPIC', type: 'text', required: true, description: 'Main subject or theme for the content' },
+      { name: 'FRAMEWORK', type: 'text', required: true, description: 'Storytelling framework to apply (e.g., AIDA, Hero\'s Journey, Problem-Solution)' },
+      { name: 'EMOTION', type: 'text', required: true, description: 'Target emotion to evoke in readers (e.g., inspiration, urgency, curiosity)' }
     ],
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -31,10 +33,12 @@ export const FEATURED_PROMPTS: Prompt[] = [
     persona: 'dreamer',
     heuristics: ['time_distortion', 'contradiction_stacking', 'contextual_adaptation'],
     tags: ['product vision', 'innovation', 'trends', 'future thinking'],
+    difficulty: 'advanced',
+    estimatedTime: '20 minutes',
     variables: [
-      { name: 'INDUSTRY_1', type: 'text', required: true },
-      { name: 'INDUSTRY_2', type: 'text', required: true },
-      { name: 'PROBLEM', type: 'text', required: true }
+      { name: 'INDUSTRY_1', type: 'text', required: true, description: 'First industry or sector to combine' },
+      { name: 'INDUSTRY_2', type: 'text', required: true, description: 'Second industry or sector to combine' },
+      { name: 'PROBLEM', type: 'text', required: true, description: 'Specific problem the combined product should solve' }
     ],
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -50,8 +54,10 @@ export const FEATURED_PROMPTS: Prompt[] = [
     persona: 'builder',
     heuristics: ['recursive_refinement', 'format_optimization', 'quality_enhancement'],
     tags: ['learning systems', 'skill building', 'habits', 'practical'],
+    difficulty: 'intermediate',
+    estimatedTime: '25 minutes',
     variables: [
-      { name: 'SKILL', type: 'text', required: true }
+      { name: 'SKILL', type: 'text', required: true, description: 'The specific skill or competency to learn' }
     ],
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -67,10 +73,12 @@ export const FEATURED_PROMPTS: Prompt[] = [
     persona: 'connector',
     heuristics: ['contradiction_stacking', 'multi_role_collision', 'universal_clarity'],
     tags: ['contrarian thinking', 'thought leadership', 'perspectives', 'debate'],
+    difficulty: 'advanced',
+    estimatedTime: '30 minutes',
     variables: [
-      { name: 'COMMON_BELIEF', type: 'text', required: true },
-      { name: 'DOMAIN_1', type: 'text', required: true },
-      { name: 'DOMAIN_2', type: 'text', required: true }
+      { name: 'COMMON_BELIEF', type: 'text', required: true, description: 'Widely accepted belief or conventional wisdom to challenge' },
+      { name: 'DOMAIN_1', type: 'text', required: true, description: 'First domain or field to draw examples from' },
+      { name: 'DOMAIN_2', type: 'text', required: true, description: 'Second domain or field to draw examples from' }
     ],
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -86,9 +94,11 @@ export const FEATURED_PROMPTS: Prompt[] = [
     persona: 'creator',
     heuristics: ['context_anchoring', 'self_repairing', 'contextual_adaptation'],
     tags: ['personal branding', 'positioning', 'authenticity', 'narrative'],
+    difficulty: 'intermediate',
+    estimatedTime: '20 minutes',
     variables: [
-      { name: 'PROFESSION', type: 'text', required: true },
-      { name: 'UNIQUE_ANGLE', type: 'text', required: true }
+      { name: 'PROFESSION', type: 'text', required: true, description: 'Current profession or role' },
+      { name: 'UNIQUE_ANGLE', type: 'text', required: true, description: 'Unique positioning or specialty they want to be known for' }
     ],
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -104,9 +114,11 @@ export const FEATURED_PROMPTS: Prompt[] = [
     persona: 'strategist',
     heuristics: ['format_optimization', 'recursive_refinement', 'quality_enhancement'],
     tags: ['workshop design', 'learning experience', 'facilitation', 'transformation'],
+    difficulty: 'advanced',
+    estimatedTime: '35 minutes',
     variables: [
-      { name: 'TOPIC', type: 'text', required: true },
-      { name: 'AUDIENCE', type: 'text', required: true }
+      { name: 'TOPIC', type: 'text', required: true, description: 'Workshop topic or theme' },
+      { name: 'AUDIENCE', type: 'text', required: true, description: 'Target audience and their characteristics' }
     ],
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -122,14 +134,16 @@ export const FEATURED_PROMPTS: Prompt[] = [
     persona: 'dreamer',
     heuristics: ['multi_role_collision', 'contextual_adaptation', 'universal_clarity'],
     tags: ['multi-perspective', 'problem solving', 'synthesis', 'expertise'],
+    difficulty: 'advanced',
+    estimatedTime: '25 minutes',
     variables: [
-      { name: 'CHALLENGE', type: 'text', required: true },
-      { name: 'EXPERT_TYPE_1', type: 'text', required: true },
-      { name: 'ASPECT_1', type: 'text', required: true },
-      { name: 'EXPERT_TYPE_2', type: 'text', required: true },
-      { name: 'ASPECT_2', type: 'text', required: true },
-      { name: 'EXPERT_TYPE_3', type: 'text', required: true },
-      { name: 'ASPECT_3', type: 'text', required: true }
+      { name: 'CHALLENGE', type: 'text', required: true, description: 'The challenge or problem to analyze' },
+      { name: 'EXPERT_TYPE_1', type: 'text', required: true, description: 'First type of expert perspective' },
+      { name: 'ASPECT_1', type: 'text', required: true, description: 'What the first expert focuses on' },
+      { name: 'EXPERT_TYPE_2', type: 'text', required: true, description: 'Second type of expert perspective' },
+      { name: 'ASPECT_2', type: 'text', required: true, description: 'What the second expert prioritizes' },
+      { name: 'EXPERT_TYPE_3', type: 'text', required: true, description: 'Third type of expert perspective' },
+      { name: 'ASPECT_3', type: 'text', required: true, description: 'What the third expert considers' }
     ],
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -145,8 +159,10 @@ export const FEATURED_PROMPTS: Prompt[] = [
     persona: 'builder',
     heuristics: ['recursive_refinement', 'format_optimization', 'self_repairing'],
     tags: ['innovation', 'creativity', 'frameworks', 'systematic'],
+    difficulty: 'intermediate',
+    estimatedTime: '30 minutes',
     variables: [
-      { name: 'CREATIVE_GOAL', type: 'text', required: true }
+      { name: 'CREATIVE_GOAL', type: 'text', required: true, description: 'The creative objective or outcome the framework should achieve' }
     ],
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
