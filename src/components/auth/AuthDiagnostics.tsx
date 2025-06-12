@@ -5,14 +5,30 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle, CheckCircle, Info } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
+interface DiagnosticsResults {
+  currentUrl: string;
+  origin: string;
+  protocol: string;
+  host: string;
+  supabaseUrl: string;
+  redirectUrl: string;
+  timestamp: string;
+  userAgent: string;
+  cookiesEnabled: boolean;
+  localStorage: boolean;
+  supabaseConnection?: string;
+  sessionStatus?: string;
+  connectionError?: string;
+}
+
 export function AuthDiagnostics() {
-  const [diagnostics, setDiagnostics] = useState<any>(null);
+  const [diagnostics, setDiagnostics] = useState<DiagnosticsResults | null>(null);
   const [loading, setLoading] = useState(false);
 
   const runDiagnostics = async () => {
     setLoading(true);
     try {
-      const results = {
+      const results: DiagnosticsResults = {
         currentUrl: window.location.href,
         origin: window.location.origin,
         protocol: window.location.protocol,
@@ -30,7 +46,7 @@ export function AuthDiagnostics() {
         const { data, error } = await supabase.auth.getSession();
         results.supabaseConnection = error ? 'Error' : 'Success';
         results.sessionStatus = data.session ? 'Active' : 'None';
-      } catch (error) {
+      } catch (error: any) {
         results.supabaseConnection = 'Failed';
         results.connectionError = error.message;
       }

@@ -16,6 +16,8 @@ import PromptLibraryPage from "./pages/PromptLibraryPage";
 import AIGeneratorPage from "./pages/AIGeneratorPage";
 import PlaygroundPage from "./pages/PlaygroundPage";
 import SettingsPage from "./pages/SettingsPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsOfServicePage from "./pages/TermsOfServicePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,6 +55,10 @@ function AppContent() {
     <Routes>
       {/* Landing Page */}
       <Route path="/" element={<LandingPage />} />
+      
+      {/* Legal Pages */}
+      <Route path="/privacy" element={<PrivacyPolicyPage />} />
+      <Route path="/terms" element={<TermsOfServicePage />} />
       
       {/* Protected App Routes */}
       <Route path="/app" element={
