@@ -1,4 +1,3 @@
-
 import OpenAI from 'openai';
 import { GenerationRequest, GenerationResult } from '@/types';
 import { OPENAI_CONFIG } from './config';
@@ -6,6 +5,8 @@ import { OpenAIErrorHandler } from './errorHandler';
 import { OpenAIResponseParser } from './responseParser';
 import { OpenAIPromptBuilder } from './promptBuilder';
 import { OpenAIFallbackGenerator } from './fallbackGenerator';
+import { OptimizedPromptBuilder } from '../optimized/promptBuilder';
+import { OptimizedTextCleaner } from '../optimized/textCleaner';
 import { defaultPromptImprover } from '../core/promptImprover';
 
 export class OpenAIService {
@@ -14,7 +15,6 @@ export class OpenAIService {
   private currentApiKey: string = '';
 
   initialize(apiKey: string): void {
-    // Only reinitialize if API key changed
     if (this.currentApiKey !== apiKey) {
       this.openai = new OpenAI({
         apiKey: apiKey,
@@ -25,22 +25,25 @@ export class OpenAIService {
     this.isInitialized = true;
   }
 
-  /**
-   * Optimized chat method for playground interactions - direct response generation
-   */
   async generateChatResponse(prompt: string): Promise<string> {
     if (!this.isInitialized || !this.openai) {
       throw new Error('OpenAI service not initialized');
     }
 
     try {
-      const messages = OpenAIPromptBuilder.buildChatMessages(prompt);
+      // Use optimized dynamic prompt
+      const systemPrompt = OptimizedPromptBuilder.buildDynamicChatPrompt(prompt);
+      
+      const messages = [
+        { role: 'system' as const, content: systemPrompt },
+        { role: 'user' as const, content: prompt }
+      ];
       
       const completion = await this.openai.chat.completions.create({
-        model: OPENAI_CONFIG.models[0], // Use fastest model
+        model: OPENAI_CONFIG.models[0],
         messages: messages,
-        max_tokens: OPENAI_CONFIG.maxTokens, // Increased to prevent truncation
-        temperature: 0.9, // Higher for faster responses
+        max_tokens: 800, // Reduced for speed
+        temperature: 0.9,
         top_p: 0.8,
         frequency_penalty: 0,
         presence_penalty: 0
@@ -52,30 +55,10 @@ export class OpenAIService {
         throw new Error('Empty response from OpenAI model');
       }
 
-      // Apply text cleaning while maintaining speed
-      return this.cleanResponseForChat(text);
+      return OptimizedTextCleaner.fastClean(text);
     } catch (error) {
-      // Simplified error handling - fail fast
       throw new Error(`OpenAI chat generation failed: ${error.message}`);
     }
-  }
-
-  private cleanResponseForChat(text: string): string {
-    // Remove asterisks used for bold/italic
-    let cleaned = text.replace(/\*\*(.*?)\*\*/g, '$1'); // Remove **bold**
-    cleaned = cleaned.replace(/\*(.*?)\*/g, '$1'); // Remove *italic*
-    
-    // Clean up other markdown formatting
-    cleaned = cleaned.replace(/#{1,6}\s*/g, ''); // Remove headers
-    cleaned = cleaned.replace(/`{3}[\s\S]*?`{3}/g, ''); // Remove code blocks
-    cleaned = cleaned.replace(/`([^`]*)`/g, '$1'); // Remove inline code
-    cleaned = cleaned.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1'); // Remove links, keep text
-    
-    // Clean up extra whitespace
-    cleaned = cleaned.replace(/\n{3,}/g, '\n\n'); // Max 2 line breaks
-    cleaned = cleaned.trim();
-    
-    return cleaned;
   }
 
   async generatePrompt(request: GenerationRequest): Promise<GenerationResult> {
@@ -86,33 +69,34 @@ export class OpenAIService {
     const startTime = Date.now();
 
     try {
-      // Validate the request
       if (!request.intent?.trim()) {
         throw new Error('Intent is required and cannot be empty');
       }
 
-      // Use the new prompt improvement engine
-      const improvement = await defaultPromptImprover.improvePrompt(request);
-
-      // Use the enhanced prompt for generation
-      const enhancedRequest = {
-        ...request,
-        intent: improvement.enhancedPrompt,
-        heuristics: improvement.intentAnalysis.suggestedHeuristics,
-        context: typeof request.context === 'string' ? request.context : undefined
-      };
+      // Fast path optimization
+      const isSimpleRequest = request.intent.length < 100 && (!request.heuristics || request.heuristics.length <= 2);
+      
+      let enhancedRequest = request;
+      if (!isSimpleRequest) {
+        const improvement = await defaultPromptImprover.improvePrompt(request);
+        enhancedRequest = {
+          ...request,
+          intent: improvement.enhancedPrompt,
+          heuristics: improvement.intentAnalysis.suggestedHeuristics,
+          context: typeof request.context === 'string' ? request.context : undefined
+        };
+      }
 
       const messages = OpenAIPromptBuilder.buildSystemPrompt(enhancedRequest);
       
-      // Optimized generation: try fastest model first, fallback if needed
       try {
-        const fastestModel = OPENAI_CONFIG.models[0]; // gpt-4o-2024-11-20
+        const fastestModel = OPENAI_CONFIG.models[0];
         
         const completion = await this.openai.chat.completions.create({
           model: fastestModel,
           messages: messages,
-          max_tokens: OPENAI_CONFIG.maxTokens,
-          temperature: 0.6, // Slightly higher for faster generation
+          max_tokens: 1000, // Slightly reduced
+          temperature: 0.7, // Balanced for speed
           top_p: 0.9,
           frequency_penalty: 0,
           presence_penalty: 0
@@ -127,62 +111,39 @@ export class OpenAIService {
         const generationTime = Date.now() - startTime;
         const parsedResult = OpenAIResponseParser.parseResponse(text, enhancedRequest, generationTime);
         
-        // Add improvement metadata
-        parsedResult.metadata = {
-          ...parsedResult.metadata,
-          improvement_confidence: improvement.confidenceScore,
-          template_used: improvement.templateUsed,
-          intent_detected: improvement.intentAnalysis.primaryIntent,
-          heuristics_applied: improvement.heuristicsApplied
-        };
+        if (!isSimpleRequest) {
+          const improvement = await defaultPromptImprover.improvePrompt(request);
+          parsedResult.metadata = {
+            ...parsedResult.metadata,
+            improvement_confidence: improvement.confidenceScore,
+            template_used: improvement.templateUsed,
+            intent_detected: improvement.intentAnalysis.primaryIntent,
+            heuristics_applied: improvement.heuristicsApplied
+          };
+        }
         
         return parsedResult;
       } catch (fastModelError) {
-        // Fallback to full retry logic with all models if fastest fails
-        return await OpenAIErrorHandler.retryWithBackoff(async () => {
-          for (const modelName of OPENAI_CONFIG.models) {
-            try {
-              const completion = await this.openai!.chat.completions.create({
-                model: modelName,
-                messages: messages,
-                max_tokens: OPENAI_CONFIG.maxTokens,
-                temperature: 0.6,
-                top_p: 0.9,
-                frequency_penalty: 0,
-                presence_penalty: 0
-              });
+        // Single fallback instead of multiple retries
+        const fallbackModel = OPENAI_CONFIG.models[1] || OPENAI_CONFIG.models[0];
+        const completion = await this.openai.chat.completions.create({
+          model: fallbackModel,
+          messages: messages,
+          max_tokens: 1000,
+          temperature: 0.7,
+          top_p: 0.9
+        });
 
-              const text = completion.choices[0]?.message?.content;
+        const text = completion.choices[0]?.message?.content;
+        if (!text || text.trim().length === 0) {
+          throw new Error('All models failed');
+        }
 
-              if (!text || text.trim().length === 0) {
-                throw new Error(`Empty response from model ${modelName}`);
-              }
-
-              const generationTime = Date.now() - startTime;
-              const parsedResult = OpenAIResponseParser.parseResponse(text, enhancedRequest, generationTime);
-              
-              // Add improvement metadata
-              parsedResult.metadata = {
-                ...parsedResult.metadata,
-                improvement_confidence: improvement.confidenceScore,
-                template_used: improvement.templateUsed,
-                intent_detected: improvement.intentAnalysis.primaryIntent,
-                heuristics_applied: improvement.heuristicsApplied
-              };
-              
-              return parsedResult;
-            } catch (error) {
-              if (modelName === OPENAI_CONFIG.models[OPENAI_CONFIG.models.length - 1]) {
-                throw error;
-              }
-            }
-          }
-          throw new Error('All OpenAI models failed');
-        }, OPENAI_CONFIG.maxRetries);
+        const generationTime = Date.now() - startTime;
+        return OpenAIResponseParser.parseResponse(text, enhancedRequest, generationTime);
       }
 
     } catch (error) {
-      const generationTime = Date.now() - startTime;
       return OpenAIFallbackGenerator.generateFallbackPrompt(request);
     }
   }

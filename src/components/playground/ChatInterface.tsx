@@ -1,16 +1,19 @@
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, History, X } from 'lucide-react';
 import { ChatInput } from './ChatInput';
 import { usePlaygroundConversation } from '@/hooks/usePlaygroundConversation';
 import { useSmartPlaygroundSuggestions } from '@/hooks/useSmartPlaygroundSuggestions';
 import { EmptyState } from './EmptyState';
 import { MessagesList } from './MessagesList';
 import { ReasoningProgressBar } from './ReasoningProgressBar';
+import { ConversationHistory } from './ConversationHistory';
 
 export function ChatInterface() {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const [showHistory, setShowHistory] = useState(false);
+  
   const {
     messages,
     isLoading,
@@ -20,7 +23,11 @@ export function ChatInterface() {
     stopGeneration,
     clearConversation,
     copyMessage,
-    isValidKey
+    isValidKey,
+    conversations,
+    currentConversationId,
+    loadConversationById,
+    deleteConversation
   } = usePlaygroundConversation();
 
   const suggestions = useSmartPlaygroundSuggestions();
@@ -36,58 +43,91 @@ export function ChatInterface() {
     }
   };
 
-  return (
-    <div className="flex flex-col h-full dark:bg-gray-950">
-      {/* Reasoning Progress Bar */}
-      <ReasoningProgressBar isActive={isLoading} />
+  const handleNewConversation = () => {
+    clearConversation();
+    setShowHistory(false);
+  };
 
-      {/* Messages Area */}
-      <div 
-        ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto chat-scrollbar"
-        role="log"
-        aria-live="polite"
-        aria-label="Chat messages"
-      >
-        {messages.length === 0 ? (
-          <EmptyState 
-            suggestions={suggestions} 
-            onSuggestionClick={handleSuggestionClick} 
-          />
-        ) : (
-          <MessagesList
-            messages={messages}
-            copyMessage={copyMessage}
-            onRetryLastMessage={handleRetryLastMessage}
-          />
+  const handleLoadConversation = (id: string) => {
+    loadConversationById(id);
+    setShowHistory(false);
+  };
+
+  return (
+    <div className="flex h-full dark:bg-gray-950">
+      {/* Main Chat Area */}
+      <div className="flex-1 flex flex-col">
+        <ReasoningProgressBar isActive={isLoading} />
+
+        {/* Messages Area */}
+        <div 
+          ref={messagesContainerRef}
+          className="flex-1 overflow-y-auto chat-scrollbar"
+          role="log"
+          aria-live="polite"
+          aria-label="Chat messages"
+        >
+          {messages.length === 0 ? (
+            <EmptyState 
+              suggestions={suggestions} 
+              onSuggestionClick={handleSuggestionClick} 
+            />
+          ) : (
+            <MessagesList
+              messages={messages}
+              copyMessage={copyMessage}
+              onRetryLastMessage={handleRetryLastMessage}
+            />
+          )}
+        </div>
+
+        {/* Action Buttons */}
+        {messages.length > 0 && (
+          <div className="flex justify-center gap-2 py-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearConversation}
+              className="text-muted-foreground hover:text-foreground min-h-[48px] touch-target"
+              aria-label="Start new conversation"
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              New conversation
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowHistory(!showHistory)}
+              className="text-muted-foreground hover:text-foreground min-h-[48px] touch-target"
+              aria-label="Toggle conversation history"
+            >
+              {showHistory ? <X className="w-4 h-4 mr-2" /> : <History className="w-4 h-4 mr-2" />}
+              {showHistory ? 'Close' : 'History'}
+            </Button>
+          </div>
         )}
+
+        {/* Input Area */}
+        <ChatInput
+          value={currentInput}
+          onChange={setCurrentInput}
+          onSend={sendMessage}
+          onStop={stopGeneration}
+          disabled={false}
+          isLoading={isLoading}
+        />
       </div>
 
-      {/* Clear Conversation Button */}
-      {messages.length > 0 && (
-        <div className="flex justify-center py-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearConversation}
-            className="text-muted-foreground hover:text-foreground min-h-[48px] touch-target"
-            aria-label="Clear conversation"
-          >
-            <RotateCcw className="w-4 h-4 mr-2" />
-            Clear conversation
-          </Button>
-        </div>
+      {/* Conversation History Sidebar */}
+      {showHistory && (
+        <ConversationHistory
+          conversations={conversations}
+          currentConversationId={currentConversationId}
+          onLoadConversation={handleLoadConversation}
+          onDeleteConversation={deleteConversation}
+          onNewConversation={handleNewConversation}
+        />
       )}
-
-      {/* Input Area */}
-      <ChatInput
-        value={currentInput}
-        onChange={setCurrentInput}
-        onSend={sendMessage}
-        onStop={stopGeneration}
-        disabled={false}
-        isLoading={isLoading}
-      />
     </div>
   );
 }

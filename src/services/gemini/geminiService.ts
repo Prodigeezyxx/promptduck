@@ -3,8 +3,9 @@ import { GenerationRequest, GenerationResult } from '@/types';
 import { GEMINI_CONFIG } from './config';
 import { GeminiErrorHandler } from './errorHandler';
 import { GeminiResponseParser } from './responseParser';
-import { GeminiPromptBuilder } from './promptBuilder';
 import { GeminiFallbackGenerator } from './fallbackGenerator';
+import { OptimizedPromptBuilder } from '../optimized/promptBuilder';
+import { OptimizedTextCleaner } from '../optimized/textCleaner';
 import { defaultPromptImprover } from '../core/promptImprover';
 
 export class GeminiService {
@@ -14,34 +15,30 @@ export class GeminiService {
   private currentApiKey: string = '';
 
   initialize(apiKey: string): void {
-    // Only reinitialize if API key changed
     if (this.currentApiKey !== apiKey) {
       this.genAI = new GoogleGenerativeAI(apiKey);
       this.currentApiKey = apiKey;
-      this.cachedModel = null; // Reset cached model
+      this.cachedModel = null;
     }
     this.isInitialized = true;
   }
 
   private getOptimizedModel() {
     if (!this.cachedModel || !this.genAI) {
-      const fastestModel = GEMINI_CONFIG.models[0]; // gemini-2.0-flash-exp
+      const fastestModel = GEMINI_CONFIG.models[0];
       this.cachedModel = this.genAI!.getGenerativeModel({ 
         model: fastestModel,
         generationConfig: {
-          temperature: 0.9, // Higher for faster responses
+          temperature: 0.9,
           topP: 0.8,
           topK: 20,
-          maxOutputTokens: 1024, // Reduced from 4096
+          maxOutputTokens: 512, // Reduced for speed
         }
       });
     }
     return this.cachedModel;
   }
 
-  /**
-   * Optimized chat method for playground interactions - direct response generation
-   */
   async generateChatResponse(prompt: string): Promise<string> {
     if (!this.isInitialized || !this.genAI) {
       throw new Error('Gemini service not initialized');
@@ -50,21 +47,11 @@ export class GeminiService {
     try {
       const model = this.getOptimizedModel();
       
-      // Create a focused system prompt for direct response generation
-      const systemPrompt = `You are a helpful AI assistant designed to provide direct, comprehensive responses to user prompts. Your primary goal is to fulfill the user's request directly without asking clarifying questions unless absolutely necessary.
-
-Guidelines:
-- Generate direct, substantive responses to the user's prompt
-- Provide complete information rather than asking follow-up questions
-- Be informative and helpful while staying focused on the request
-- Only ask questions if the prompt is genuinely unclear or ambiguous
-- Prioritize giving useful content over conversation
-
-User prompt: ${prompt}
-
-Respond directly to this prompt:`;
+      // Use optimized dynamic prompt builder
+      const systemPrompt = OptimizedPromptBuilder.buildDynamicChatPrompt(prompt);
+      const fullPrompt = `${systemPrompt}\n\nUser: ${prompt}`;
       
-      const result = await model.generateContent(systemPrompt);
+      const result = await model.generateContent(fullPrompt);
       const response = await result.response;
       const text = response.text();
 
@@ -72,30 +59,11 @@ Respond directly to this prompt:`;
         throw new Error('Empty response from model');
       }
 
-      // Apply text cleaning while maintaining speed
-      return this.cleanResponseForChat(text);
+      // Use fast cleaning
+      return OptimizedTextCleaner.fastClean(text);
     } catch (error) {
-      // Simplified error handling - fail fast
       throw new Error(`Chat generation failed: ${error.message}`);
     }
-  }
-
-  private cleanResponseForChat(text: string): string {
-    // Remove asterisks used for bold/italic
-    let cleaned = text.replace(/\*\*(.*?)\*\*/g, '$1'); // Remove **bold**
-    cleaned = cleaned.replace(/\*(.*?)\*/g, '$1'); // Remove *italic*
-    
-    // Clean up other markdown formatting
-    cleaned = cleaned.replace(/#{1,6}\s*/g, ''); // Remove headers
-    cleaned = cleaned.replace(/`{3}[\s\S]*?`{3}/g, ''); // Remove code blocks
-    cleaned = cleaned.replace(/`([^`]*)`/g, '$1'); // Remove inline code
-    cleaned = cleaned.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1'); // Remove links, keep text
-    
-    // Clean up extra whitespace
-    cleaned = cleaned.replace(/\n{3,}/g, '\n\n'); // Max 2 line breaks
-    cleaned = cleaned.trim();
-    
-    return cleaned;
   }
 
   async generatePrompt(request: GenerationRequest): Promise<GenerationResult> {
@@ -106,46 +74,53 @@ Respond directly to this prompt:`;
     const startTime = Date.now();
 
     try {
-      // Validate the request
       if (!request.intent?.trim()) {
         throw new Error('Intent is required and cannot be empty');
       }
 
-      // Use the new prompt improvement engine
-      const improvement = await defaultPromptImprover.improvePrompt(request);
-
-      // Use the enhanced prompt for generation
-      const enhancedRequest = {
-        ...request,
-        intent: improvement.enhancedPrompt,
-        heuristics: improvement.intentAnalysis.suggestedHeuristics,
-        context: typeof request.context === 'string' ? request.context : undefined
-      };
-
-      const systemPrompt = GeminiPromptBuilder.buildSystemPrompt(enhancedRequest);
+      // Fast path - skip heavy improvement for simple requests
+      const isSimpleRequest = request.intent.length < 100 && (!request.heuristics || request.heuristics.length <= 2);
       
-      // Optimized generation: try fastest model first, fallback if needed
-      try {
-        const fastestModel = GEMINI_CONFIG.models[0]; // gemini-2.0-flash-exp
-        const model = this.genAI.getGenerativeModel({ 
-          model: fastestModel,
-          generationConfig: {
-            temperature: 0.6, // Slightly higher for faster generation
-          }
-        });
-        
-        const result = await model.generateContent(systemPrompt);
-        const response = await result.response;
-        const text = response.text();
+      let enhancedRequest = request;
+      if (!isSimpleRequest) {
+        const improvement = await defaultPromptImprover.improvePrompt(request);
+        enhancedRequest = {
+          ...request,
+          intent: improvement.enhancedPrompt,
+          heuristics: improvement.intentAnalysis.suggestedHeuristics,
+          context: typeof request.context === 'string' ? request.context : undefined
+        };
+      }
 
-        if (!text || text.trim().length === 0) {
-          throw new Error(`Empty response from model ${fastestModel}`);
+      // Use optimized prompt builder
+      const systemPrompt = OptimizedPromptBuilder.buildFastGenerationPrompt(
+        enhancedRequest.intent, 
+        enhancedRequest.heuristics
+      );
+      
+      const fastestModel = GEMINI_CONFIG.models[0];
+      const model = this.genAI.getGenerativeModel({ 
+        model: fastestModel,
+        generationConfig: {
+          temperature: 0.7, // Balanced for speed and quality
+          maxOutputTokens: 800, // Reduced for faster response
         }
+      });
+      
+      const result = await model.generateContent(systemPrompt);
+      const response = await result.response;
+      const text = response.text();
 
-        const generationTime = Date.now() - startTime;
-        const parsedResult = GeminiResponseParser.parseResponse(text, enhancedRequest, generationTime);
-        
-        // Add improvement metadata
+      if (!text || text.trim().length === 0) {
+        throw new Error(`Empty response from model ${fastestModel}`);
+      }
+
+      const generationTime = Date.now() - startTime;
+      const parsedResult = GeminiResponseParser.parseResponse(text, enhancedRequest, generationTime);
+      
+      // Add improvement metadata only if improvement was applied
+      if (!isSimpleRequest) {
+        const improvement = await defaultPromptImprover.improvePrompt(request);
         parsedResult.metadata = {
           ...parsedResult.metadata,
           improvement_confidence: improvement.confidenceScore,
@@ -153,44 +128,9 @@ Respond directly to this prompt:`;
           intent_detected: improvement.intentAnalysis.primaryIntent,
           heuristics_applied: improvement.heuristicsApplied
         };
-        
-        return parsedResult;
-      } catch (fastModelError) {
-        // Fallback to full retry logic with all models if fastest fails
-        return await GeminiErrorHandler.retryWithBackoff(async () => {
-          for (const modelName of GEMINI_CONFIG.models) {
-            try {
-              const model = this.genAI!.getGenerativeModel({ model: modelName });
-              const result = await model.generateContent(systemPrompt);
-              const response = await result.response;
-              const text = response.text();
-
-              if (!text || text.trim().length === 0) {
-                throw new Error(`Empty response from model ${modelName}`);
-              }
-
-              const generationTime = Date.now() - startTime;
-              const parsedResult = GeminiResponseParser.parseResponse(text, enhancedRequest, generationTime);
-              
-              // Add improvement metadata
-              parsedResult.metadata = {
-                ...parsedResult.metadata,
-                improvement_confidence: improvement.confidenceScore,
-                template_used: improvement.templateUsed,
-                intent_detected: improvement.intentAnalysis.primaryIntent,
-                heuristics_applied: improvement.heuristicsApplied
-              };
-              
-              return parsedResult;
-            } catch (error) {
-              if (modelName === GEMINI_CONFIG.models[GEMINI_CONFIG.models.length - 1]) {
-                throw error;
-              }
-            }
-          }
-          throw new Error('All models failed');
-        }, GEMINI_CONFIG.maxRetries);
       }
+      
+      return parsedResult;
 
     } catch (error) {
       const generationTime = Date.now() - startTime;

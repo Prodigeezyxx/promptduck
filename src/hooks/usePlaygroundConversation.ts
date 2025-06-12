@@ -1,8 +1,10 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useApiKeyStore } from '@/store/apiKeyStore';
 import { geminiService } from '@/services/geminiService';
 import { useLocation } from 'react-router-dom';
+import { usePlaygroundHistory } from './usePlaygroundHistory';
 
 interface Message {
   id: string;
@@ -12,7 +14,6 @@ interface Message {
   isTyping?: boolean;
 }
 
-// Counter to ensure unique IDs even for rapid successive calls
 let messageCounter = 0;
 
 export function usePlaygroundConversation() {
@@ -22,8 +23,16 @@ export function usePlaygroundConversation() {
   const { apiKey } = useApiKeyStore();
   const abortControllerRef = useRef<AbortController | null>(null);
   const location = useLocation();
+  
+  const {
+    conversations,
+    currentConversationId,
+    saveCurrentConversation,
+    loadConversation,
+    startNewConversation,
+    deleteConversation
+  } = usePlaygroundHistory();
 
-  // Initialize service when API key is available
   useEffect(() => {
     if (apiKey?.openai) {
       try {
@@ -36,14 +45,19 @@ export function usePlaygroundConversation() {
     }
   }, [apiKey?.openai]);
 
-  // Check for pre-filled input from navigation state
   useEffect(() => {
     if (location.state?.prefilledPrompt) {
       setCurrentInput(location.state.prefilledPrompt);
-      // Clear the state to prevent re-setting on subsequent renders
       window.history.replaceState({}, '', location.pathname);
     }
   }, [location]);
+
+  // Auto-save conversation when messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      saveCurrentConversation(messages);
+    }
+  }, [messages, saveCurrentConversation]);
 
   const generateUniqueId = () => {
     messageCounter += 1;
@@ -88,34 +102,26 @@ export function usePlaygroundConversation() {
       return;
     }
 
-    // Add user message
     addMessage(prompt, 'user');
     setCurrentInput('');
     setIsLoading(true);
 
-    // Create abort controller for this request
     abortControllerRef.current = new AbortController();
-
-    // Add AI message with typing indicator
     const aiMessageId = addMessage('', 'ai', true);
 
     try {
-      // Ensure service is initialized before making the call
       geminiService.initialize(apiKey.openai);
       
       const result = await geminiService.generateChatResponse(prompt.trim());
       
-      // Check if request was aborted
       if (abortControllerRef.current?.signal.aborted) {
         updateMessage(aiMessageId, 'Generation was stopped.', false);
         return;
       }
       
-      // Display the response
       updateMessage(aiMessageId, result, false);
       toast.success('Response generated successfully');
     } catch (error) {
-      // Don't show error if request was aborted
       if (abortControllerRef.current?.signal.aborted) {
         return;
       }
@@ -143,7 +149,19 @@ export function usePlaygroundConversation() {
   };
 
   const clearConversation = () => {
-    setMessages([]);
+    const clearedMessages = startNewConversation();
+    setMessages(clearedMessages);
+    setCurrentInput('');
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setIsLoading(false);
+  };
+
+  const loadConversationById = (conversationId: string) => {
+    const loadedMessages = loadConversation(conversationId);
+    setMessages(loadedMessages);
     setCurrentInput('');
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -166,6 +184,11 @@ export function usePlaygroundConversation() {
     stopGeneration,
     clearConversation,
     copyMessage,
-    isValidKey: !!apiKey?.openai
+    isValidKey: !!apiKey?.openai,
+    // History functionality
+    conversations,
+    currentConversationId,
+    loadConversationById,
+    deleteConversation
   };
 }
