@@ -10,11 +10,9 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<{ error: any }>;
   signInWithEmail: (email: string, password: string) => Promise<{ error: any }>;
   signUpWithEmail: (email: string, password: string) => Promise<{ error: any }>;
-  signInAsGuest: () => void;
   signOut: () => Promise<{ error: any }>;
   isSignedIn: boolean;
   isLoaded: boolean;
-  isGuest: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

@@ -7,7 +7,6 @@ interface AuthState {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  isGuest: boolean;
 }
 
 export function useAuth() {
@@ -15,22 +14,9 @@ export function useAuth() {
     user: null,
     session: null,
     loading: true,
-    isGuest: false,
   });
 
   useEffect(() => {
-    // Check for guest mode
-    const guestMode = localStorage.getItem('promptduck-guest-mode');
-    if (guestMode === 'true') {
-      setAuthState({
-        user: null,
-        session: null,
-        loading: false,
-        isGuest: true,
-      });
-      return;
-    }
-
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -39,7 +25,6 @@ export function useAuth() {
           user: session?.user ?? null,
           session: session,
           loading: false,
-          isGuest: false,
         });
       }
     );
@@ -50,7 +35,6 @@ export function useAuth() {
         user: session?.user ?? null,
         session: session,
         loading: false,
-        isGuest: false,
       });
     });
 
@@ -88,24 +72,12 @@ export function useAuth() {
     return { error };
   };
 
-  const signInAsGuest = () => {
-    localStorage.setItem('promptduck-guest-mode', 'true');
-    setAuthState({
-      user: null,
-      session: null,
-      loading: false,
-      isGuest: true,
-    });
-  };
-
   const signOut = async () => {
-    localStorage.removeItem('promptduck-guest-mode');
     const { error } = await supabase.auth.signOut();
     setAuthState({
       user: null,
       session: null,
       loading: false,
-      isGuest: false,
     });
     return { error };
   };
@@ -115,9 +87,8 @@ export function useAuth() {
     signInWithGoogle,
     signInWithEmail,
     signUpWithEmail,
-    signInAsGuest,
     signOut,
-    isSignedIn: !!authState.user || authState.isGuest,
+    isSignedIn: !!authState.user,
     isLoaded: !authState.loading,
   };
 }

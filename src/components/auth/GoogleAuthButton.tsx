@@ -15,13 +15,15 @@ export function GoogleAuthButton() {
     try {
       const { error } = await signInWithGoogle();
       if (error) {
+        console.error('Google sign-in error:', error);
         toast({
           title: "Google Sign-in Error",
-          description: error.message,
+          description: error.message || "Failed to sign in with Google. Please check your browser settings and try again.",
           variant: "destructive",
         });
       }
     } catch (error) {
+      console.error('Google sign-in error:', error);
       toast({
         title: "Error",
         description: "Failed to sign in with Google. Please try again.",
