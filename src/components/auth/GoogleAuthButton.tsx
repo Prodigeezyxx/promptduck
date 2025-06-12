@@ -13,20 +13,43 @@ export function GoogleAuthButton() {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
+      console.log('Attempting Google sign-in...');
+      console.log('Current origin:', window.location.origin);
+      
       const { error } = await signInWithGoogle();
+      
       if (error) {
-        console.error('Google sign-in error:', error);
+        console.error('Google sign-in error details:', {
+          message: error.message,
+          status: error.status,
+          code: error.code,
+          details: error
+        });
+        
+        // More specific error handling
+        let errorMessage = "Failed to sign in with Google. Please try again.";
+        
+        if (error.message?.includes('403')) {
+          errorMessage = "Google sign-in is not properly configured. Please check your Google Cloud Console settings.";
+        } else if (error.message?.includes('redirect')) {
+          errorMessage = "Redirect URL mismatch. Please check your authentication settings.";
+        } else if (error.message?.includes('unauthorized')) {
+          errorMessage = "This domain is not authorized for Google sign-in.";
+        }
+        
         toast({
           title: "Google Sign-in Error",
-          description: error.message || "Failed to sign in with Google. Please check your browser settings and try again.",
+          description: errorMessage,
           variant: "destructive",
         });
+      } else {
+        console.log('Google sign-in initiated successfully');
       }
     } catch (error) {
-      console.error('Google sign-in error:', error);
+      console.error('Unexpected Google sign-in error:', error);
       toast({
         title: "Error",
-        description: "Failed to sign in with Google. Please try again.",
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
     } finally {
