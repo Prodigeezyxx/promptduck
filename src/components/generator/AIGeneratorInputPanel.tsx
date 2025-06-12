@@ -5,12 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RefreshCw, Sparkles } from 'lucide-react';
 import { HeuristicType } from '@/types';
-import { HeuristicsDisplay } from './HeuristicsDisplay';
+import { CompactHeuristicsDisplay } from './CompactHeuristicsDisplay';
 import { TemplateReference } from './TemplateReference';
 import { usePromptStore } from '@/store/promptStore';
 import { memo, useState } from 'react';
 
-const OptimizedHeuristicsDisplay = memo(HeuristicsDisplay);
+const OptimizedHeuristicsDisplay = memo(CompactHeuristicsDisplay);
 
 interface AIGeneratorInputPanelProps {
   intent: string;
@@ -41,9 +41,9 @@ export function AIGeneratorInputPanel({
   // Show template reference when a template is selected
   const handleTemplateUseAsStartingPoint = () => {
     if (currentPrompt) {
-      // Use template as starting point - pre-fill with guidance
-      onIntentChange(`Create a prompt similar to: ${currentPrompt.title}`);
-      onContextChange(`Reference template: ${currentPrompt.description}\n\nTemplate structure: ${currentPrompt.content}`);
+      // Pre-fill the form with template details
+      onIntentChange(currentPrompt.title);
+      onContextChange(currentPrompt.description || '');
       setShowTemplateReference(false);
       setCurrentPrompt(null);
     }

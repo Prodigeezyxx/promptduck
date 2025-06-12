@@ -16,7 +16,7 @@ export function ReasoningProgressBar({ isActive }: ReasoningProgressBarProps) {
           <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
           <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
         </div>
-        <span>AI is thinking...</span>
+        <span>Duck is thinking...</span>
       </div>
     </div>
   );
