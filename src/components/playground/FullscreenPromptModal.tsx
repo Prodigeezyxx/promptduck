@@ -1,7 +1,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Copy, X } from 'lucide-react';
+import { Copy } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface FullscreenPromptModalProps {
@@ -19,7 +19,7 @@ export function FullscreenPromptModal({
 }: FullscreenPromptModalProps) {
   const handleCopy = () => {
     navigator.clipboard.writeText(content);
-    toast.success('Prompt copied to clipboard');
+    toast.success('Copied!');
   };
 
   return (
@@ -28,24 +28,15 @@ export function FullscreenPromptModal({
         <DialogHeader className="flex-shrink-0">
           <div className="flex items-center justify-between">
             <DialogTitle>{title}</DialogTitle>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCopy}
-                className="flex items-center gap-2"
-              >
-                <Copy className="w-4 h-4" />
-                Copy
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onOpenChange(false)}
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopy}
+              className="flex items-center gap-2"
+            >
+              <Copy className="w-4 h-4" />
+              Copy
+            </Button>
           </div>
         </DialogHeader>
         

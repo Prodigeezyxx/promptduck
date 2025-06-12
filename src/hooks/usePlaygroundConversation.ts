@@ -95,29 +95,29 @@ export function usePlaygroundConversation() {
 
   const sendMessage = async (prompt: string) => {
     if (!prompt.trim()) {
-      toast.error('Please enter a prompt to test');
+      toast.error('Enter a prompt');
       return;
     }
 
     if (!apiKey?.openai) {
-      toast.error('OpenAI API key not configured');
+      toast.error('API key missing');
       return;
     }
 
     // Check and consume credit
     if (!canUseCredit()) {
-      toast.error(`No credits remaining. You have ${getRemainingCredits()} daily credits left.`);
+      toast.error(`No credits. ${getRemainingCredits()} left.`);
       return;
     }
 
     const creditUsed = useCredit();
     if (!creditUsed) {
-      toast.error('Unable to use credit. Please try again.');
+      toast.error('Credit error');
       return;
     }
 
     const remainingCredits = getRemainingCredits();
-    toast.success(`Message sent! ${remainingCredits} credits remaining.`);
+    toast.success(`Sent! ${remainingCredits} left`);
 
     addMessage(prompt, 'user');
     setCurrentInput('');
@@ -137,7 +137,7 @@ export function usePlaygroundConversation() {
       }
       
       updateMessage(aiMessageId, result, false);
-      toast.success('Response generated successfully');
+      toast.success('Done!');
     } catch (error) {
       if (abortControllerRef.current?.signal.aborted) {
         return;
@@ -147,11 +147,11 @@ export function usePlaygroundConversation() {
       
       if (error instanceof Error) {
         if (error.message.includes('quota')) {
-          errorMessage = 'API quota exceeded. Please try again later.';
+          errorMessage = 'Quota exceeded';
         } else if (error.message.includes('network')) {
-          errorMessage = 'Network error. Please check your connection and try again.';
+          errorMessage = 'Network error';
         } else if (error.message.includes('not initialized')) {
-          errorMessage = 'Service not properly initialized. Please check your API key.';
+          errorMessage = 'Check API key';
         } else {
           errorMessage = error.message;
         }
@@ -189,7 +189,7 @@ export function usePlaygroundConversation() {
 
   const copyMessage = (content: string) => {
     navigator.clipboard.writeText(content);
-    toast.success('Message copied to clipboard');
+    toast.success('Copied!');
   };
 
   return {

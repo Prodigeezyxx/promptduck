@@ -9,6 +9,10 @@ import { RemixSuggestions } from './output/RemixSuggestions';
 import { OutputMetadata } from './output/OutputMetadata';
 import { EmptyState } from './output/EmptyState';
 import { LoadingState } from './output/LoadingState';
+import { FullscreenPromptModal } from '@/components/playground/FullscreenPromptModal';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Expand } from 'lucide-react';
 
 interface AIGeneratorOutputPanelProps {
   lastResult: GenerationResult | null;
@@ -25,6 +29,8 @@ export function AIGeneratorOutputPanel({
   onSavePrompt,
   onRemixSuggestion
 }: AIGeneratorOutputPanelProps) {
+  const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
+
   if (isGenerating) {
     return (
       <Card className="h-full border-dashed border-2 border-brand-200 dark:border-brand-800">
@@ -46,43 +52,64 @@ export function AIGeneratorOutputPanel({
   }
 
   return (
-    <Card className="h-full">
-      <CardHeader>
-        <CardTitle>
-          <OutputHeader result={lastResult} />
-        </CardTitle>
-      </CardHeader>
-      
-      <CardContent className="space-y-4">
-        {/* Optimized Prompt */}
-        <div>
-          <label className="text-sm font-medium mb-2 block">Optimized Prompt</label>
-          <Textarea
-            value={lastResult.optimized_prompt}
-            readOnly
-            className="min-h-[120px] text-sm leading-relaxed resize-none"
+    <>
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle>
+            <OutputHeader result={lastResult} />
+          </CardTitle>
+        </CardHeader>
+        
+        <CardContent className="space-y-4">
+          {/* Optimized Prompt with Expand Button */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm font-medium">Optimized Prompt</label>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsFullscreenOpen(true)}
+                className="h-8 px-2 text-xs"
+              >
+                <Expand className="w-3 h-3 mr-1" />
+                Expand
+              </Button>
+            </div>
+            <Textarea
+              value={lastResult.optimized_prompt}
+              readOnly
+              className="min-h-[120px] text-sm leading-relaxed resize-none"
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <OutputActions 
+            result={lastResult}
+            onCopyPrompt={onCopyPrompt}
+            onSavePrompt={onSavePrompt}
           />
-        </div>
 
-        {/* Action Buttons */}
-        <OutputActions 
-          result={lastResult}
-          onCopyPrompt={onCopyPrompt}
-          onSavePrompt={onSavePrompt}
-        />
+          {/* Heuristics Applied */}
+          <HeuristicsDisplay result={lastResult} />
 
-        {/* Heuristics Applied */}
-        <HeuristicsDisplay result={lastResult} />
+          {/* Remix Suggestions */}
+          <RemixSuggestions 
+            result={lastResult}
+            onRemixSuggestion={onRemixSuggestion}
+          />
 
-        {/* Remix Suggestions */}
-        <RemixSuggestions 
-          result={lastResult}
-          onRemixSuggestion={onRemixSuggestion}
-        />
+          {/* Metadata */}
+          <OutputMetadata result={lastResult} />
+        </CardContent>
+      </Card>
 
-        {/* Metadata */}
-        <OutputMetadata result={lastResult} />
-      </CardContent>
-    </Card>
+      {/* Fullscreen Modal */}
+      <FullscreenPromptModal
+        open={isFullscreenOpen}
+        onOpenChange={setIsFullscreenOpen}
+        content={lastResult.optimized_prompt}
+        title="Optimized Prompt"
+      />
+    </>
   );
 }

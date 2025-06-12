@@ -1,11 +1,9 @@
 
-import { Copy, RotateCcw, Expand } from 'lucide-react';
+import { Copy, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DuckIcon } from '@/components/icons/DuckIcon';
 import { ThinkingDuckAnimation } from './ThinkingDuckAnimation';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
-import { FullscreenPromptModal } from './FullscreenPromptModal';
 
 interface MessageBubbleProps {
   type: 'user' | 'ai';
@@ -24,16 +22,10 @@ export function MessageBubble({
   onRetry,
   isLastMessage = false 
 }: MessageBubbleProps) {
-  const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
-
   const handleCopy = () => {
     if (onCopy) {
       onCopy(content);
     }
-  };
-
-  const handleExpand = () => {
-    setIsFullscreenOpen(true);
   };
 
   if (type === 'user') {
@@ -47,81 +39,59 @@ export function MessageBubble({
   }
 
   return (
-    <>
-      <div className="flex items-start gap-3 mb-4">
-        <div className="flex-shrink-0">
-          {isTyping ? (
-            <ThinkingDuckAnimation />
+    <div className="flex items-start gap-3 mb-4">
+      <div className="flex-shrink-0">
+        {isTyping ? (
+          <ThinkingDuckAnimation />
+        ) : (
+          <DuckIcon size={32} />
+        )}
+      </div>
+      
+      <div className="flex-1 min-w-0">
+        <div className="bg-muted rounded-lg px-4 py-3">
+          {isTyping && !content ? (
+            <div className="flex items-center space-x-2 text-muted-foreground">
+              <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
+              <span className="text-sm">Thinking...</span>
+            </div>
           ) : (
-            <DuckIcon size={32} />
+            <p className="whitespace-pre-wrap text-sm leading-relaxed">{content}</p>
           )}
         </div>
         
-        <div className="flex-1 min-w-0">
-          <div className="bg-muted rounded-lg px-4 py-3">
-            {isTyping && !content ? (
-              <div className="flex items-center space-x-2 text-muted-foreground">
-                <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
-                <span className="text-sm">Thinking...</span>
-              </div>
-            ) : (
-              <p className="whitespace-pre-wrap text-sm leading-relaxed">{content}</p>
+        {!isTyping && content && (
+          <div className="flex items-center gap-2 mt-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleCopy}
+              className={cn(
+                "h-8 px-2 text-xs text-muted-foreground hover:text-foreground",
+                "opacity-0 group-hover:opacity-100 transition-opacity"
+              )}
+            >
+              <Copy className="w-3 h-3 mr-1" />
+              Copy
+            </Button>
+            
+            {isLastMessage && onRetry && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onRetry}
+                className={cn(
+                  "h-8 px-2 text-xs text-muted-foreground hover:text-foreground",
+                  "opacity-0 group-hover:opacity-100 transition-opacity"
+                )}
+              >
+                <RotateCcw className="w-3 h-3 mr-1" />
+                Retry
+              </Button>
             )}
           </div>
-          
-          {!isTyping && content && (
-            <div className="flex items-center gap-2 mt-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleCopy}
-                className={cn(
-                  "h-8 px-2 text-xs text-muted-foreground hover:text-foreground",
-                  "opacity-0 group-hover:opacity-100 transition-opacity"
-                )}
-              >
-                <Copy className="w-3 h-3 mr-1" />
-                Copy
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleExpand}
-                className={cn(
-                  "h-8 px-2 text-xs text-muted-foreground hover:text-foreground",
-                  "opacity-0 group-hover:opacity-100 transition-opacity"
-                )}
-              >
-                <Expand className="w-3 h-3 mr-1" />
-                Expand
-              </Button>
-              
-              {isLastMessage && onRetry && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onRetry}
-                  className={cn(
-                    "h-8 px-2 text-xs text-muted-foreground hover:text-foreground",
-                    "opacity-0 group-hover:opacity-100 transition-opacity"
-                  )}
-                >
-                  <RotateCcw className="w-3 h-3 mr-1" />
-                  Retry
-                </Button>
-              )}
-            </div>
-          )}
-        </div>
+        )}
       </div>
-
-      <FullscreenPromptModal
-        open={isFullscreenOpen}
-        onOpenChange={setIsFullscreenOpen}
-        content={content}
-        title="AI Response"
-      />
-    </>
+    </div>
   );
 }
