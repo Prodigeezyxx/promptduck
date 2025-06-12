@@ -3,7 +3,7 @@ import { GenerationRequest } from '@/types';
 import { HEURISTICS } from '@/constants';
 
 export class OpenAIPromptBuilder {
-  static buildSystemPrompt(request: GenerationRequest): Array<{role: string, content: string}> {
+  static buildSystemPrompt(request: GenerationRequest): Array<{role: 'system' | 'user' | 'assistant', content: string}> {
     const heuristicsDesc = request.heuristics.map(h => HEURISTICS[h].description).join(', ');
 
     const systemMessage = `Generate an optimized technical prompt following PromptDuck specifications.
@@ -56,7 +56,7 @@ Generate structured, factual content without anthropomorphic language or rolepla
     ];
   }
 
-  static buildChatMessages(prompt: string): Array<{role: string, content: string}> {
+  static buildChatMessages(prompt: string): Array<{role: 'system' | 'user' | 'assistant', content: string}> {
     const systemPrompt = `You are a helpful AI assistant designed to provide direct, comprehensive responses to user prompts. Your primary goal is to fulfill the user's request directly without asking clarifying questions unless absolutely necessary.
 
 Guidelines:

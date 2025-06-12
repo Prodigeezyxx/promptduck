@@ -12,13 +12,13 @@ interface ApiKeyState {
 }
 
 // Developer API key (internal use only)
-const DEVELOPER_API_KEY = 'AIzaSyDsMeWL6kVCiO_zyujZClhYWhOKfz5nXQc';
+const DEVELOPER_API_KEY = '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';
 
 export const useApiKeyStore = create<ApiKeyState>()(
   persist(
     (set, get) => ({
       apiKey: {
-        gemini: DEVELOPER_API_KEY,
+        openai: DEVELOPER_API_KEY,
         created_at: new Date().toISOString(),
         status: 'active'
       },
@@ -26,7 +26,7 @@ export const useApiKeyStore = create<ApiKeyState>()(
         // Always use the developer key regardless of input
         set({
           apiKey: {
-            gemini: DEVELOPER_API_KEY,
+            openai: DEVELOPER_API_KEY,
             created_at: new Date().toISOString(),
             status: 'active'
           }
@@ -46,7 +46,7 @@ export const useApiKeyStore = create<ApiKeyState>()(
       },
       clearApiKey: () => set({ 
         apiKey: {
-          gemini: DEVELOPER_API_KEY,
+          openai: DEVELOPER_API_KEY,
           created_at: new Date().toISOString(),
           status: 'active'
         }
