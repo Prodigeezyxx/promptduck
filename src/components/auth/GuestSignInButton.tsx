@@ -25,16 +25,23 @@ export function GuestSignInButton() {
         isGuest: true
       };
 
+      console.log('Creating guest session:', guestUser);
       localStorage.setItem('promptduck_guest_session', JSON.stringify(guestUser));
+      
+      // Force a small delay to ensure localStorage is set
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      console.log('Guest session created, navigating to app...');
       
       toast({
         title: "Welcome!",
         description: "You're now signed in as a guest. Enjoy exploring PromptDuck!",
       });
 
-      // Navigate to the app
-      navigate('/app/library');
+      // Use replace to prevent back navigation to auth state
+      navigate('/app/library', { replace: true });
     } catch (error) {
+      console.error('Guest sign-in error:', error);
       toast({
         title: "Error",
         description: "Failed to sign in as guest. Please try again.",

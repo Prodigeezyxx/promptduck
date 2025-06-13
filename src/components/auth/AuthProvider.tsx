@@ -20,25 +20,29 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
   const [guestUser, setGuestUser] = useState<any>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Check for guest session on mount and when auth state changes
+  // Check for guest session on mount
   useEffect(() => {
     const checkGuestSession = () => {
       const guestSession = localStorage.getItem('promptduck_guest_session');
-      console.log('Checking guest session:', guestSession ? 'found' : 'not found');
+      console.log('AuthProvider: Checking guest session:', guestSession ? 'found' : 'not found');
+      
       if (guestSession) {
         try {
           const guest = JSON.parse(guestSession);
-          console.log('Setting guest user:', guest);
+          console.log('AuthProvider: Setting guest user:', guest);
           setGuestUser(guest);
         } catch (error) {
-          console.error('Failed to parse guest session:', error);
+          console.error('AuthProvider: Failed to parse guest session:', error);
           localStorage.removeItem('promptduck_guest_session');
           setGuestUser(null);
         }
       } else {
         setGuestUser(null);
       }
+      
+      setIsInitialized(true);
     };
 
     checkGuestSession();
@@ -53,22 +57,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Log current state for debugging
   useEffect(() => {
-    console.log('Auth Provider State:', {
-      guestUser: !!guestUser,
-      authUser: !!auth.user,
-      authLoading: auth.loading,
-      isSignedIn: !!guestUser || auth.isSignedIn
-    });
-  }, [guestUser, auth.user, auth.loading, auth.isSignedIn]);
+    if (isInitialized) {
+      console.log('AuthProvider: State update:', {
+        guestUser: !!guestUser,
+        authUser: !!auth.user,
+        authLoading: auth.loading,
+        isSignedIn: !!guestUser || auth.isSignedIn,
+        isLoaded: isInitialized && auth.isLoaded
+      });
+    }
+  }, [guestUser, auth.user, auth.loading, auth.isSignedIn, isInitialized]);
 
   // Override auth state if guest user exists
   const contextValue = {
     ...auth,
     user: guestUser || auth.user,
     isSignedIn: !!guestUser || auth.isSignedIn,
+    isLoaded: isInitialized && auth.isLoaded,
     signOut: async () => {
       if (guestUser) {
-        console.log('Signing out guest user');
+        console.log('AuthProvider: Signing out guest user');
         localStorage.removeItem('promptduck_guest_session');
         setGuestUser(null);
         return { error: null };

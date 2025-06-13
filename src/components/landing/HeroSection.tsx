@@ -4,11 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { VariableProximity } from '@/components/VariableProximity';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import RainEffect from '@/components/effects/RainEffect';
 import { AnimatedPromptDisplay } from './AnimatedPromptDisplay';
 import { memo } from 'react';
 
-const OptimizedRainEffect = memo(RainEffect);
 const OptimizedAnimatedPromptDisplay = memo(AnimatedPromptDisplay);
 
 export function HeroSection() {
@@ -16,11 +14,6 @@ export function HeroSection() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
       {/* Background with new design system */}
       <div className="absolute inset-0 bg-background z-0" />
-      
-      {/* Rain effect background */}
-      <div className="absolute inset-0 z-10">
-        <OptimizedRainEffect />
-      </div>
 
       {/* Subtle overlay */}
       <div className="absolute inset-0 bg-background/10 z-15" />
