@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,7 +15,6 @@ import PromptLibraryPage from "./pages/PromptLibraryPage";
 import AIGeneratorPage from "./pages/AIGeneratorPage";
 import PlaygroundPage from "./pages/PlaygroundPage";
 import SettingsPage from "./pages/SettingsPage";
-import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/TermsOfServicePage";
 import NotFound from "./pages/NotFound";
 
@@ -57,7 +55,6 @@ function AppContent() {
       <Route path="/" element={<LandingPage />} />
       
       {/* Legal Pages */}
-      <Route path="/privacy" element={<PrivacyPolicyPage />} />
       <Route path="/terms" element={<TermsOfServicePage />} />
       
       {/* Protected App Routes */}

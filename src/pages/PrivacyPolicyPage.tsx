@@ -1,7 +1,5 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { DuckIcon } from '@/components/icons/DuckIcon';
 
 export default function PrivacyPolicyPage() {
@@ -122,12 +120,6 @@ export default function PrivacyPolicyPage() {
               </div>
             </CardContent>
           </Card>
-        </div>
-
-        <div className="mt-8 text-center">
-          <Link to="/" className="text-brand-500 hover:underline">
-            ← Back to Home
-          </Link>
         </div>
       </div>
     </div>
