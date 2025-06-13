@@ -10,10 +10,10 @@ export default function PrivacyPolicyPage() {
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2">
             <DuckIcon size={32} />
             <h1 className="text-xl font-bold gradient-text">PromptDuck</h1>
-          </Link>
+          </div>
         </div>
       </header>
 
@@ -57,7 +57,7 @@ export default function PrivacyPolicyPage() {
 
           <Card>
             <CardContent className="p-6">
-              <h2 className="text-2xl font-semibold mb-4">3. Data Usage</h2>
+              <h2 className="text-2xl font-semibent mb-4">3. Data Usage</h2>
               <div className="space-y-3">
                 <p><strong>Internal use:</strong> Account setup, service delivery, personalization, troubleshooting</p>
                 <p><strong>Analytics & improvement:</strong> Product enhancements, feature testing</p>
@@ -100,7 +100,18 @@ export default function PrivacyPolicyPage() {
 
           <Card>
             <CardContent className="p-6">
-              <h2 className="text-2xl font-semibold mb-4">6. Contact Information</h2>
+              <h2 className="text-2xl font-semibold mb-4">6. Google OAuth Integration</h2>
+              <div className="space-y-3">
+                <p><strong>Google Sign-In:</strong> When you choose to sign in with Google, we receive basic profile information including your name, email address, and profile picture from Google.</p>
+                <p><strong>Data Usage:</strong> This information is used solely for account creation and authentication purposes. We do not access any other Google services or data.</p>
+                <p><strong>Data Retention:</strong> Your Google profile information is stored securely and can be deleted upon account termination.</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6">
+              <h2 className="text-2xl font-semibold mb-4">7. Contact Information</h2>
               <div className="space-y-3">
                 <p>Questions or privacy requests? Contact us via <a href="mailto:dev@promptduck.dev" className="text-brand-500 hover:underline">dev@promptduck.dev</a> or write to:</p>
                 <address className="not-italic">
