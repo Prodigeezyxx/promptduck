@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +17,7 @@ import AIGeneratorPage from "./pages/AIGeneratorPage";
 import PlaygroundPage from "./pages/PlaygroundPage";
 import SettingsPage from "./pages/SettingsPage";
 import TermsOfServicePage from "./pages/TermsOfServicePage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,8 +56,9 @@ function AppContent() {
       {/* Landing Page - always accessible at root */}
       <Route path="/" element={<LandingPage />} />
       
-      {/* Legal Pages */}
+      {/* Legal Pages - publicly accessible */}
       <Route path="/terms" element={<TermsOfServicePage />} />
+      <Route path="/privacy" element={<PrivacyPolicyPage />} />
       
       {/* Protected App Routes */}
       <Route path="/app" element={
