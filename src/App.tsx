@@ -53,10 +53,8 @@ function AppContent() {
 
   return (
     <Routes>
-      {/* Landing Page - only accessible when not signed in */}
-      <Route path="/" element={
-        isSignedIn ? <Navigate to="/app/library" replace /> : <LandingPage />
-      } />
+      {/* Landing Page - always accessible at root */}
+      <Route path="/" element={<LandingPage />} />
       
       {/* Legal Pages */}
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
