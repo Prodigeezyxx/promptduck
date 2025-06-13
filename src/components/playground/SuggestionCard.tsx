@@ -29,23 +29,23 @@ export function SuggestionCard({ suggestion, onSuggestionClick }: SuggestionCard
 
   const getSourceColor = (source: string) => {
     switch (source) {
-      case 'recent': return 'text-brand-500 bg-brand-50 dark:bg-brand-900/20';
-      case 'remix': return 'text-purple-500 bg-purple-50 dark:bg-purple-900/20';
-      case 'library': return 'text-blue-500 bg-blue-50 dark:bg-blue-900/20';
-      case 'refined': return 'text-green-500 bg-green-50 dark:bg-green-900/20';
-      default: return 'text-gray-500 bg-gray-50 dark:bg-gray-900/20';
+      case 'recent': return 'text-accent bg-accent/10';
+      case 'remix': return 'text-purple-400 bg-purple-400/10';
+      case 'library': return 'text-blue-400 bg-blue-400/10';
+      case 'refined': return 'text-green-400 bg-green-400/10';
+      default: return 'text-secondaryText bg-surface';
     }
   };
 
   return (
     <button 
       key={suggestion.id}
-      className="suggestion-card text-left min-h-[48px] touch-target p-4 group"
+      className="surface-style text-left min-h-[48px] touch-target p-4 group hover:bg-input transition-colors rounded-lg"
       onClick={() => onSuggestionClick(suggestion.content)}
       aria-label={`Use suggestion: ${suggestion.title}`}
     >
       <div className="flex items-start justify-between mb-3">
-        <p className="font-medium text-left group-hover:text-brand-600 transition-colors">
+        <p className="font-medium text-left text-primaryText group-hover:text-accent transition-colors">
           {suggestion.title}
         </p>
         <div className={cn(
@@ -56,18 +56,18 @@ export function SuggestionCard({ suggestion, onSuggestionClick }: SuggestionCard
           <span className="capitalize">{suggestion.source}</span>
         </div>
       </div>
-      <p className="text-muted-foreground text-left text-sm mb-3">
+      <p className="text-secondaryText text-left text-sm mb-3">
         {suggestion.description}
       </p>
       {suggestion.metadata?.heuristics && (
         <div className="flex flex-wrap gap-2 mt-2">
           {suggestion.metadata.heuristics.slice(0, 2).map((heuristic) => (
-            <span key={heuristic} className="text-xs px-2.5 py-1 bg-accent dark:bg-gray-800 rounded-md">
+            <span key={heuristic} className="text-xs px-2.5 py-1 bg-input rounded-md text-secondaryText">
               {heuristic}
             </span>
           ))}
           {suggestion.metadata.heuristics.length > 2 && (
-            <span className="text-xs px-2.5 py-1 bg-accent dark:bg-gray-800 rounded-md">
+            <span className="text-xs px-2.5 py-1 bg-input rounded-md text-secondaryText">
               +{suggestion.metadata.heuristics.length - 2}
             </span>
           )}

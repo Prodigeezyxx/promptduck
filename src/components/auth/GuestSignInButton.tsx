@@ -51,7 +51,7 @@ export function GuestSignInButton() {
       variant="secondary"
       onClick={handleGuestSignIn}
       disabled={loading}
-      className="w-full h-11 bg-muted hover:bg-muted/80 transition-colors"
+      className="w-full h-11 bg-surface hover:bg-input transition-colors text-primaryText"
     >
       {loading ? (
         <Loader2 className="w-4 h-4 mr-2 animate-spin" />

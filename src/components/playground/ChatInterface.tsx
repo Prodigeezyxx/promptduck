@@ -54,7 +54,7 @@ export function ChatInterface() {
   };
 
   return (
-    <div className="flex h-full dark:bg-gray-950">
+    <div className="flex h-full bg-background">
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
         <ReasoningProgressBar isActive={isLoading} />
@@ -88,7 +88,7 @@ export function ChatInterface() {
               variant="ghost"
               size="sm"
               onClick={clearConversation}
-              className="text-muted-foreground hover:text-foreground min-h-[48px] touch-target"
+              className="text-secondaryText hover:text-primaryText min-h-[48px] touch-target"
               aria-label="Start new conversation"
             >
               <RotateCcw className="w-4 h-4 mr-2" />
@@ -98,7 +98,7 @@ export function ChatInterface() {
               variant="ghost"
               size="sm"
               onClick={() => setShowHistory(!showHistory)}
-              className="text-muted-foreground hover:text-foreground min-h-[48px] touch-target"
+              className="text-secondaryText hover:text-primaryText min-h-[48px] touch-target"
               aria-label="Toggle conversation history"
             >
               {showHistory ? <X className="w-4 h-4 mr-2" /> : <History className="w-4 h-4 mr-2" />}

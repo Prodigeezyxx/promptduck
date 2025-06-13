@@ -26,13 +26,13 @@ export function Navigation() {
 
   return (
     <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
-      <div className="flex flex-col flex-grow bg-background border-r">
+      <div className="flex flex-col flex-grow bg-background border-r border-[rgba(255,255,255,0.05)]">
         {/* Logo */}
-        <div className="flex items-center flex-shrink-0 px-6 py-4 border-b">
+        <div className="flex items-center flex-shrink-0 px-6 py-4 border-b border-[rgba(255,255,255,0.05)]">
           <Link to="/" className="flex items-center space-x-3">
             <DuckIcon size={32} />
             <div>
-              <h1 className="text-xl font-bold">PromptDuck</h1>
+              <h1 className="text-xl font-bold text-primaryText">PromptDuck</h1>
             </div>
           </Link>
         </div>
@@ -50,8 +50,8 @@ export function Navigation() {
                 className={cn(
                   "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors",
                   isActive 
-                    ? "bg-primary text-primary-foreground" 
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                    ? "bg-accent text-white" 
+                    : "text-secondaryText hover:text-primaryText hover:bg-surface"
                 )}
               >
                 <Icon className="w-5 h-5 mr-3" />
@@ -62,7 +62,7 @@ export function Navigation() {
         </nav>
 
         {/* Footer */}
-        <div className="flex-shrink-0 p-4 border-t space-y-4">
+        <div className="flex-shrink-0 p-4 border-t border-[rgba(255,255,255,0.05)] space-y-4">
           {/* Credit Display */}
           <CreditDisplay />
           

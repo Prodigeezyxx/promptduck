@@ -8,7 +8,7 @@ interface ThemeState {
   toggleTheme: () => void;
 }
 
-// Detect system preference for initial theme
+// Detect system preference for initial theme (default to dark for new design system)
 const getInitialTheme = (): 'light' | 'dark' => {
   if (typeof window !== 'undefined') {
     // Check for stored preference first
@@ -18,12 +18,10 @@ const getInitialTheme = (): 'light' | 'dark' => {
       return parsed.state?.theme || 'dark';
     }
     
-    // Fallback to system preference, defaulting to dark
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-      return 'light';
-    }
+    // Default to dark mode to showcase the new design system
+    return 'dark';
   }
-  return 'dark'; // Default to dark mode
+  return 'dark';
 };
 
 export const useThemeStore = create<ThemeState>()(

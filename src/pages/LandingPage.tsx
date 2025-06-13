@@ -14,7 +14,7 @@ export default function LandingPage() {
     // Store the user's current theme preference
     const userTheme = theme;
     
-    // Force dark mode for landing page
+    // Force dark mode for landing page (matches new design system)
     setTheme('dark');
     
     // Cleanup function to restore user's theme when leaving landing page
@@ -24,7 +24,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background text-primaryText">
       <LandingHeader />
       <main>
         <HeroSection />

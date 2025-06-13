@@ -5,44 +5,33 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 262.1 83.3% 57.8%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
-    --accent: 220 14.3% 95.9%;
-    --accent-foreground: 220.9 39.3% 11%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 262.1 83.3% 57.8%;
-    --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-
-    /* Brand Colors */
-    --brand-50: 240 100% 98%;
-    --brand-100: 240 91% 95%;
-    --brand-200: 239 84% 88%;
-    --brand-300: 238 75% 78%;
-    --brand-400: 236 72% 69%;
-    --brand-500: 234 89% 74%;
-    --brand-600: 231 98% 65%;
-    --brand-700: 229 100% 58%;
-    --brand-800: 228 100% 51%;
-    --brand-900: 227 100% 45%;
-    --brand-950: 229 100% 25%;
+    /* New bold design system variables */
+    --background: 255 255 255; /* Light mode background */
+    --surface: 248 249 250; /* Light mode surface */
+    --input: 241 243 244; /* Light mode input */
+    --primary-text: 26 26 26; /* Light mode primary text */
+    --secondary-text: 107 114 128; /* Light mode secondary text */
+    --accent: 126 132 249; /* Accent color */
+    --warning: 239 68 68; /* Light mode warning */
+    --success: 5 150 105; /* Light mode success */
+    --border: 0 0 0; /* Light mode border */
+    
+    /* Legacy CSS variables for compatibility */
+    --foreground: 26 26 26;
+    --card: 248 249 250;
+    --card-foreground: 26 26 26;
+    --popover: 248 249 250;
+    --popover-foreground: 26 26 26;
+    --primary: 126 132 249;
+    --primary-foreground: 255 255 255;
+    --secondary: 241 243 244;
+    --secondary-foreground: 26 26 26;
+    --muted: 241 243 244;
+    --muted-foreground: 107 114 128;
+    --destructive: 239 68 68;
+    --destructive-foreground: 255 255 255;
+    --ring: 126 132 249;
+    --radius: 0.75rem;
 
     /* Responsive font sizes */
     --text-xs: clamp(0.65rem, 0.5vw + 0.5rem, 0.75rem);
@@ -77,30 +66,32 @@
   }
 
   .dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 20% 98%;
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
-    --accent: 215 27.9% 16.9%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 263.4 70% 50.4%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    /* Dark mode - primary theme */
+    --background: 30 30 34; /* #1E1E22 */
+    --surface: 42 42 46; /* #2A2A2E */
+    --input: 47 47 51; /* #2F2F33 */
+    --primary-text: 229 229 229; /* #E5E5E5 */
+    --secondary-text: 136 136 136; /* #888888 */
+    --accent: 126 132 249; /* #7E84F9 */
+    --warning: 217 74 74; /* #D94A4A */
+    --success: 16 185 129; /* #10B981 */
+    --border: 255 255 255; /* For rgba(255,255,255,0.05) */
+    
+    /* Legacy variables for dark mode */
+    --foreground: 229 229 229;
+    --card: 42 42 46;
+    --card-foreground: 229 229 229;
+    --popover: 42 42 46;
+    --popover-foreground: 229 229 229;
+    --primary: 126 132 249;
+    --primary-foreground: 255 255 255;
+    --secondary: 47 47 51;
+    --secondary-foreground: 229 229 229;
+    --muted: 47 47 51;
+    --muted-foreground: 136 136 136;
+    --destructive: 217 74 74;
+    --destructive-foreground: 255 255 255;
+    --ring: 126 132 249;
   }
 
   * {
@@ -108,19 +99,29 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-primaryText font-sans antialiased;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 }
 
 @layer utilities {
+  /* New design system utilities */
+  .surface-style {
+    @apply bg-surface shadow-soft-inner border border-[rgba(255,255,255,0.05)] dark:border-[rgba(255,255,255,0.05)] light:border-[rgba(0,0,0,0.05)] light:shadow-soft-inner-light;
+  }
+
+  .input-style {
+    @apply bg-input text-primaryText placeholder-secondaryText border border-[rgba(255,255,255,0.05)] dark:border-[rgba(255,255,255,0.05)] light:border-[rgba(0,0,0,0.05)] focus:outline-none focus:ring-2 focus:ring-accent;
+  }
+
   .glass-morphism {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(42, 42, 46, 0.8);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .gradient-text {
-    background: linear-gradient(45deg, #6366f1, #8b5cf6, #06b6d4);
+    background: linear-gradient(45deg, #7E84F9, #8b5cf6, #06b6d4);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -166,7 +167,7 @@
   /* Chat interface utilities */
   .chat-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--muted-foreground)) transparent;
+    scrollbar-color: rgb(var(--secondary-text)) transparent;
   }
 
   .chat-scrollbar::-webkit-scrollbar {
@@ -178,13 +179,13 @@
   }
 
   .chat-scrollbar::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--muted-foreground));
+    background-color: rgb(var(--secondary-text));
     border-radius: 3px;
   }
 
   .chat-input-container {
-    background: hsl(var(--background));
-    border-top: 1px solid hsl(var(--border));
+    background: rgb(var(--background));
+    border-top: 1px solid rgba(255,255,255,0.05);
   }
 
   .chat-input-wrapper {
@@ -199,7 +200,7 @@
   }
 }
 
-/* Rain Effect - Enhanced for better light mode visibility */
+/* Enhanced Rain Effect for new design system */
 .rain-container::after {
   content: "";
   position: absolute;
@@ -210,7 +211,7 @@
     circle at 50% 50%,
     #0000 0,
     #0000 2px,
-    hsl(0 0 4%) 2px
+    rgb(var(--background)) 2px
   );
   background-size: 8px 8px;
 }
@@ -224,7 +225,7 @@
   overflow: hidden;
   z-index: 10;
   pointer-events: none;
-  --c: hsl(var(--brand-700)); /* Darker color for light mode visibility */
+  --c: rgb(var(--accent)); /* Use new accent color */
   background-color: transparent;
   background-image: radial-gradient(4px 100px at 0px 235px, var(--c), #0000),
     radial-gradient(4px 100px at 300px 235px, var(--c), #0000),
@@ -300,7 +301,7 @@
     300px 210px,
     300px 210px;
   animation: rainFall 150s linear infinite;
-  opacity: 0.35; /* Increased opacity for better visibility */
+  opacity: 0.4;
 }
 
 @keyframes rainFall {
@@ -385,30 +386,15 @@
   }
 }
 
-/* Dark mode adjustments */
-.dark .rain-container {
-  --c: hsl(var(--brand-400));
-  opacity: 0.25; /* Slightly increased for dark mode */
-}
-
-/* Mobile responsiveness */
+/* Mobile responsiveness for rain effect */
 @media (max-width: 768px) {
   .rain-container {
-    opacity: 0.2;
-  }
-  
-  .dark .rain-container {
-    opacity: 0.15;
+    opacity: 0.3;
   }
 }
 
-/* Enhanced responsive breakpoints */
 @media (max-width: 480px) {
   .rain-container {
-    opacity: 0.15;
-  }
-  
-  .dark .rain-container {
-    opacity: 0.1;
+    opacity: 0.2;
   }
 }

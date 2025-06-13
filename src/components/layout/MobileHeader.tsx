@@ -16,14 +16,14 @@ interface MobileHeaderProps {
 
 export function MobileHeader({ onMenuToggle }: MobileHeaderProps) {
   return (
-    <header className="lg:hidden bg-card border-b border-border">
+    <header className="lg:hidden bg-surface border-b border-[rgba(255,255,255,0.05)]">
       <div className="flex items-center justify-between p-3 sm:p-4">
         <div className="flex items-center space-x-2 min-w-0 flex-1">
           <Button
             variant="ghost"
             size="sm"
             onClick={onMenuToggle}
-            className="w-9 h-9 px-0 flex-shrink-0"
+            className="w-9 h-9 px-0 flex-shrink-0 hover:bg-surface text-secondaryText hover:text-primaryText"
             aria-label="Toggle menu"
           >
             <Menu className="h-4 w-4" />

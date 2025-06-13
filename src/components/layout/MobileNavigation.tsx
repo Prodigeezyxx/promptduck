@@ -37,9 +37,9 @@ export function MobileNavigation({ open, onOpenChange }: MobileNavigationProps) 
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="h-[80vh]">
-        <DrawerHeader>
-          <DrawerTitle>Navigation</DrawerTitle>
+      <DrawerContent className="h-[80vh] bg-surface border-t border-[rgba(255,255,255,0.05)]">
+        <DrawerHeader className="border-b border-[rgba(255,255,255,0.05)]">
+          <DrawerTitle className="text-primaryText">Navigation</DrawerTitle>
         </DrawerHeader>
         
         <div className="p-4 space-y-2">
@@ -55,8 +55,8 @@ export function MobileNavigation({ open, onOpenChange }: MobileNavigationProps) 
                 className={cn(
                   "flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-colors touch-target",
                   isActive 
-                    ? "bg-primary text-primary-foreground" 
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                    ? "bg-accent text-white" 
+                    : "text-secondaryText hover:text-primaryText hover:bg-input"
                 )}
               >
                 <Icon className="w-5 h-5" />
@@ -65,7 +65,7 @@ export function MobileNavigation({ open, onOpenChange }: MobileNavigationProps) 
             );
           })}
           
-          <div className="pt-4 border-t border-border">
+          <div className="pt-4 border-t border-[rgba(255,255,255,0.05)]">
             <Link
               to="/"
               onClick={handleLinkClick}

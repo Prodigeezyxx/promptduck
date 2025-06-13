@@ -4,23 +4,23 @@ import { Link } from 'react-router-dom';
 
 export function LandingFooter() {
   return (
-    <footer className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <footer className="border-t border-[rgba(255,255,255,0.05)] bg-surface/95 backdrop-blur">
       <div className="container mx-auto px-4 py-8">
         {/* Privacy Policy Banner - More prominent for Google OAuth compliance */}
-        <div className="mb-6 p-4 bg-muted/50 rounded-lg border">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm text-muted-foreground">
+        <div className="mb-6 p-4 surface-style rounded-lg">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm text-secondaryText">
             <span>By using PromptDuck, you agree to our</span>
             <div className="flex items-center gap-2">
               <Link 
                 to="/privacy" 
-                className="text-brand-500 hover:text-brand-600 transition-colors font-medium underline"
+                className="text-accent hover:text-accent/80 transition-colors font-medium underline"
               >
                 Privacy Policy
               </Link>
               <span>and</span>
               <Link 
                 to="/terms" 
-                className="text-brand-500 hover:text-brand-600 transition-colors font-medium underline"
+                className="text-accent hover:text-accent/80 transition-colors font-medium underline"
               >
                 Terms of Service
               </Link>
@@ -34,19 +34,19 @@ export function LandingFooter() {
             <span className="text-lg font-bold gradient-text">PromptDuck</span>
           </div>
           
-          <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition-colors">
+          <div className="flex items-center gap-6 text-sm text-secondaryText">
+            <a href="#" className="hover:text-primaryText transition-colors">
               Documentation
             </a>
           </div>
           
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-secondaryText">
             with ❤️ from{' '}
             <a 
               href="https://x.com/prodigeezy_" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="hover:text-foreground transition-colors font-medium"
+              className="hover:text-primaryText transition-colors font-medium"
             >
               prodigeezy
             </a>

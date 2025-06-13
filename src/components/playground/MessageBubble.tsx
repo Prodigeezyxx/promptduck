@@ -31,7 +31,7 @@ export function MessageBubble({
   if (type === 'user') {
     return (
       <div className="flex justify-end mb-4">
-        <div className="max-w-[80%] bg-primary text-primary-foreground rounded-lg px-4 py-2">
+        <div className="max-w-[80%] bg-accent text-white rounded-lg px-4 py-2">
           <p className="whitespace-pre-wrap">{content}</p>
         </div>
       </div>
@@ -49,14 +49,14 @@ export function MessageBubble({
       </div>
       
       <div className="flex-1 min-w-0">
-        <div className="bg-muted rounded-lg px-4 py-3">
+        <div className="surface-style rounded-lg px-4 py-3">
           {isTyping && !content ? (
-            <div className="flex items-center space-x-2 text-muted-foreground">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
+            <div className="flex items-center space-x-2 text-secondaryText">
+              <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
               <span className="text-sm">Thinking...</span>
             </div>
           ) : (
-            <p className="whitespace-pre-wrap text-sm leading-relaxed">{content}</p>
+            <p className="whitespace-pre-wrap text-sm leading-relaxed text-primaryText">{content}</p>
           )}
         </div>
         
@@ -67,7 +67,7 @@ export function MessageBubble({
               size="sm"
               onClick={handleCopy}
               className={cn(
-                "h-8 px-2 text-xs text-muted-foreground hover:text-foreground",
+                "h-8 px-2 text-xs text-secondaryText hover:text-primaryText",
                 "opacity-0 group-hover:opacity-100 transition-opacity"
               )}
             >
@@ -81,7 +81,7 @@ export function MessageBubble({
                 size="sm"
                 onClick={onRetry}
                 className={cn(
-                  "h-8 px-2 text-xs text-muted-foreground hover:text-foreground",
+                  "h-8 px-2 text-xs text-secondaryText hover:text-primaryText",
                   "opacity-0 group-hover:opacity-100 transition-opacity"
                 )}
               >

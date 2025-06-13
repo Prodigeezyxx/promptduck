@@ -59,7 +59,7 @@ export function ChatInput({
   return (
     <div className="chat-input-container">
       <div className="w-full max-w-none mx-auto p-fluid-md">
-        <div className="chat-input-wrapper flex items-end gap-2 p-fluid-sm border border-input rounded-xl bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+        <div className="chat-input-wrapper flex items-end gap-2 p-fluid-sm surface-style rounded-xl focus-within:ring-2 focus-within:ring-accent">
           {/* Textarea */}
           <Textarea
             ref={textareaRef}
@@ -69,8 +69,8 @@ export function ChatInput({
             placeholder={placeholder}
             disabled={disabled || isLoading}
             className={cn(
-              "flex-1 resize-none border-0 bg-transparent px-0 py-3 text-fluid-base",
-              "focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground",
+              "flex-1 resize-none border-0 bg-transparent px-0 py-3 text-fluid-base text-primaryText",
+              "focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-secondaryText",
               "min-h-[40px] max-h-[150px] sm:max-h-[200px]"
             )}
             rows={1}
@@ -85,10 +85,10 @@ export function ChatInput({
             className={cn(
               "h-10 w-10 rounded-xl flex-shrink-0 touch-target",
               isLoading
-                ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                ? "bg-warning hover:bg-warning/90 text-white"
                 : value.trim() && !disabled
-                ? "bg-brand-500 hover:bg-brand-600 text-white" 
-                : "bg-muted text-muted-foreground dark:bg-gray-800"
+                ? "bg-accent hover:bg-accent/90 text-white" 
+                : "bg-input text-secondaryText"
             )}
             aria-label={isLoading ? "Stop generation" : "Send message"}
           >
@@ -100,7 +100,7 @@ export function ChatInput({
           </Button>
         </div>
         
-        <p className="text-fluid-xs text-muted-foreground mt-2 text-center">
+        <p className="text-fluid-xs text-secondaryText mt-2 text-center">
           PromptDuck can make mistakes. Consider checking important information.
         </p>
       </div>

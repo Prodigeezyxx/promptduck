@@ -20,50 +20,89 @@ export default {
 		},
 		extend: {
 			colors: {
-				border: 'hsl(var(--border))',
-				input: 'hsl(var(--input))',
-				ring: 'hsl(var(--ring))',
-				background: 'hsl(var(--background))',
-				foreground: 'hsl(var(--foreground))',
-				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+				// New bold design system colors
+				background: {
+					DEFAULT: '#1E1E22',
+					light: '#FFFFFF'
 				},
-				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
+				surface: {
+					DEFAULT: '#2A2A2E',
+					light: '#F8F9FA'
 				},
-				destructive: {
-					DEFAULT: 'hsl(var(--destructive))',
-					foreground: 'hsl(var(--destructive-foreground))'
+				input: {
+					DEFAULT: '#2F2F33',
+					light: '#F1F3F4'
 				},
-				muted: {
-					DEFAULT: 'hsl(var(--muted))',
-					foreground: 'hsl(var(--muted-foreground))'
+				primaryText: {
+					DEFAULT: '#E5E5E5',
+					light: '#1A1A1A'
+				},
+				secondaryText: {
+					DEFAULT: '#888888',
+					light: '#6B7280'
 				},
 				accent: {
-					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
+					DEFAULT: '#7E84F9',
+					50: '#f0f1ff',
+					100: '#e0e3ff',
+					200: '#c7cffe',
+					300: '#a5b0fc',
+					400: '#818cf8',
+					500: '#7E84F9',
+					600: '#6366f1',
+					700: '#4f46e5',
+					800: '#4338ca',
+					900: '#3730a3',
+					950: '#1e1b4b',
+				},
+				warning: {
+					DEFAULT: '#D94A4A',
+					light: '#EF4444'
+				},
+				success: {
+					DEFAULT: '#10B981',
+					light: '#059669'
+				},
+				// Legacy support for existing components (mapped to new system)
+				border: 'rgba(255,255,255,0.05)',
+				ring: '#7E84F9',
+				foreground: '#E5E5E5',
+				primary: {
+					DEFAULT: '#7E84F9',
+					foreground: '#FFFFFF'
+				},
+				secondary: {
+					DEFAULT: '#2A2A2E',
+					foreground: '#E5E5E5'
+				},
+				destructive: {
+					DEFAULT: '#D94A4A',
+					foreground: '#FFFFFF'
+				},
+				muted: {
+					DEFAULT: '#2F2F33',
+					foreground: '#888888'
 				},
 				popover: {
-					DEFAULT: 'hsl(var(--popover))',
-					foreground: 'hsl(var(--popover-foreground))'
+					DEFAULT: '#2A2A2E',
+					foreground: '#E5E5E5'
 				},
 				card: {
-					DEFAULT: 'hsl(var(--card))',
-					foreground: 'hsl(var(--card-foreground))'
+					DEFAULT: '#2A2A2E',
+					foreground: '#E5E5E5'
 				},
+				// Brand colors for compatibility
 				brand: {
-					50: '#f0f4ff',
-					100: '#e0e7ff',
-					200: '#c7d2fe',
-					300: '#a5b4fc',
+					50: '#f0f1ff',
+					100: '#e0e3ff',
+					200: '#c7cffe',
+					300: '#a5b0fc',
 					400: '#818cf8',
-					500: '#6366f1',
-					600: '#4f46e5',
-					700: '#4338ca',
-					800: '#3730a3',
-					900: '#312e81',
+					500: '#7E84F9',
+					600: '#6366f1',
+					700: '#4f46e5',
+					800: '#4338ca',
+					900: '#3730a3',
 					950: '#1e1b4b',
 				},
 			},
@@ -71,6 +110,13 @@ export default {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			boxShadow: {
+				'soft-inner': 'inset 0 0 0 1px rgba(255,255,255,0.05)',
+				'soft-inner-light': 'inset 0 0 0 1px rgba(0,0,0,0.05)',
+				'elevation-1': '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
+				'elevation-2': '0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)',
+				'elevation-3': '0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23)',
 			},
 			keyframes: {
 				'accordion-down': {
@@ -119,10 +165,18 @@ export default {
 				},
 				'glow': {
 					'0%, 100%': {
-						boxShadow: '0 0 20px rgba(99, 102, 241, 0.3)'
+						boxShadow: '0 0 20px rgba(126, 132, 249, 0.3)'
 					},
 					'50%': {
-						boxShadow: '0 0 40px rgba(99, 102, 241, 0.6)'
+						boxShadow: '0 0 40px rgba(126, 132, 249, 0.6)'
+					}
+				},
+				'pulse-accent': {
+					'0%, 100%': {
+						opacity: '1'
+					},
+					'50%': {
+						opacity: '0.5'
 					}
 				}
 			},
@@ -133,6 +187,7 @@ export default {
 				'slide-up': 'slide-up 0.4s ease-out',
 				'float': 'float 3s ease-in-out infinite',
 				'glow': 'glow 2s ease-in-out infinite',
+				'pulse-accent': 'pulse-accent 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
 			},
 			fontFamily: {
 				sans: ['Inter', 'system-ui', 'sans-serif'],
