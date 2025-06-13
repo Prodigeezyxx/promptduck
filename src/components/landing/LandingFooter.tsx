@@ -1,4 +1,3 @@
-
 import { DuckIcon } from '@/components/icons/DuckIcon';
 import { Link } from 'react-router-dom';
 
@@ -11,14 +10,12 @@ export function LandingFooter() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-sm text-secondaryText">
             <span>By using PromptDuck, you agree to our</span>
             <div className="flex items-center gap-2">
-              <a 
-                href="https://promptduck.lovable.app/privacy" 
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link 
+                to="/privacy"
                 className="text-accent hover:text-accent/80 transition-colors font-medium underline"
               >
                 Privacy Policy
-              </a>
+              </Link>
               <span>and</span>
               <Link 
                 to="/terms" 
