@@ -7,26 +7,26 @@ import { memo } from 'react';
 const features = [
   {
     icon: Brain,
-    title: 'Cognitive Heuristics',
-    description: 'Multi-role collision, contradiction stacking, and recursive refinement for deeper thinking.',
+    title: 'Smart Thinking Tools',
+    description: 'Advanced techniques that help you think deeper and solve problems more effectively.',
     color: 'text-blue-500'
   },
   {
     icon: Layers,
-    title: 'Archetypal Personas',
-    description: 'Strategist, Dreamer, Builder, Connector, and Creator personas shape your prompts.',
+    title: 'Choose Your Prompt Style',
+    description: 'Pick from different writing styles to match your goal and get better results.',
     color: 'text-purple-500'
   },
   {
     icon: Zap,
-    title: 'AI Generation',
-    description: 'Unique AI engine with PromptDuck specification for optimized outputs.',
+    title: 'Smart AI That Delivers',
+    description: 'Our optimized AI engine gives you the best responses every time.',
     color: 'text-yellow-500'
   },
   {
     icon: Target,
-    title: 'Context Anchoring',
-    description: 'Metaphorical and symbolic anchors create coherent, memorable prompt structures.',
+    title: 'Keeps Prompts On Track',
+    description: 'Clear structure that makes your prompts easy to understand and remember.',
     color: 'text-red-500'
   }
 ];
