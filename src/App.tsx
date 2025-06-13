@@ -1,6 +1,6 @@
 
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
@@ -53,8 +53,10 @@ function AppContent() {
 
   return (
     <Routes>
-      {/* Landing Page */}
-      <Route path="/" element={<LandingPage />} />
+      {/* Landing Page - only accessible when not signed in */}
+      <Route path="/" element={
+        isSignedIn ? <Navigate to="/app/library" replace /> : <LandingPage />
+      } />
       
       {/* Legal Pages */}
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
