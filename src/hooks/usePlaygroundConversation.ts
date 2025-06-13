@@ -1,9 +1,9 @@
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useApiKeyStore } from '@/store/apiKeyStore';
 import { useCreditStore } from '@/store/creditStore';
-import { geminiService } from '@/services/geminiService';
+import { openaiService } from '@/services/openaiService';
 import { useLocation } from 'react-router-dom';
 import { usePlaygroundHistory } from './usePlaygroundHistory';
 
@@ -35,10 +35,16 @@ export function usePlaygroundConversation() {
     deleteConversation
   } = usePlaygroundHistory();
 
+  // Use useCallback to prevent unnecessary re-renders
+  const memoizedSaveConversation = useCallback(
+    (msgs: Message[]) => saveCurrentConversation(msgs),
+    [saveCurrentConversation]
+  );
+
   useEffect(() => {
     if (apiKey?.openai) {
       try {
-        geminiService.initialize(apiKey.openai);
+        openaiService.initialize(apiKey.openai);
         console.log('OpenAI service initialized successfully');
       } catch (error) {
         console.error('Failed to initialize OpenAI service:', error);
@@ -54,12 +60,12 @@ export function usePlaygroundConversation() {
     }
   }, [location]);
 
-  // Auto-save conversation when messages change
+  // Auto-save conversation when messages change - with proper dependency array
   useEffect(() => {
     if (messages.length > 0) {
-      saveCurrentConversation(messages);
+      memoizedSaveConversation(messages);
     }
-  }, [messages, saveCurrentConversation]);
+  }, [messages, memoizedSaveConversation]);
 
   const generateUniqueId = () => {
     messageCounter += 1;
@@ -127,9 +133,9 @@ export function usePlaygroundConversation() {
     const aiMessageId = addMessage('', 'ai', true);
 
     try {
-      geminiService.initialize(apiKey.openai);
+      openaiService.initialize(apiKey.openai);
       
-      const result = await geminiService.generateChatResponse(prompt.trim());
+      const result = await openaiService.generateChatResponse(prompt.trim());
       
       if (abortControllerRef.current?.signal.aborted) {
         updateMessage(aiMessageId, 'Generation was stopped.', false);

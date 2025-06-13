@@ -1,3 +1,4 @@
+
 import OpenAI from 'openai';
 import { GenerationRequest, GenerationResult } from '@/types';
 import { OPENAI_CONFIG } from './config';
@@ -42,7 +43,7 @@ export class OpenAIService {
       const completion = await this.openai.chat.completions.create({
         model: OPENAI_CONFIG.models[0],
         messages: messages,
-        max_tokens: 800, // Reduced for speed
+        max_tokens: 2048, // Increased from 800 to prevent truncation
         temperature: 0.9,
         top_p: 0.8,
         frequency_penalty: 0,
@@ -95,8 +96,8 @@ export class OpenAIService {
         const completion = await this.openai.chat.completions.create({
           model: fastestModel,
           messages: messages,
-          max_tokens: 1000, // Slightly reduced
-          temperature: 0.7, // Balanced for speed
+          max_tokens: 2048, // Increased for better responses
+          temperature: 0.7, // Balanced for speed and quality
           top_p: 0.9,
           frequency_penalty: 0,
           presence_penalty: 0
@@ -129,7 +130,7 @@ export class OpenAIService {
         const completion = await this.openai.chat.completions.create({
           model: fallbackModel,
           messages: messages,
-          max_tokens: 1000,
+          max_tokens: 2048, // Consistent token limit
           temperature: 0.7,
           top_p: 0.9
         });

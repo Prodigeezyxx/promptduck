@@ -1,4 +1,5 @@
-import { geminiService } from './geminiService';
+
+import { openaiService } from './openaiService';
 import { selectHeuristics } from '@/utils/heuristicSelector';
 import { HeuristicType } from '@/types';
 import { promptAnalysisService, PromptAnalysis, PromptIteration } from './promptAnalysisService';
@@ -143,7 +144,7 @@ Provide a concise and helpful answer.`;
 
     try {
       const selectedHeuristics = selectHeuristics(prompt, question);
-      const result = await geminiService.generatePrompt({
+      const result = await openaiService.generatePrompt({
         intent: prompt,
         heuristics: selectedHeuristics,
         complexity: 'intermediate'
@@ -192,7 +193,7 @@ Provide an improved version of the prompt.`;
 
     try {
       const selectedHeuristics = selectHeuristics(prompt, refinement);
-      const result = await geminiService.generatePrompt({
+      const result = await openaiService.generatePrompt({
         intent: prompt,
         heuristics: selectedHeuristics,
         complexity: 'advanced'
@@ -238,7 +239,7 @@ Provide an improved version of the prompt.`;
 
     try {
       const selectedHeuristics = selectHeuristics(promptText, '');
-      const result = await geminiService.generatePrompt({
+      const result = await openaiService.generatePrompt({
         intent: promptText,
         heuristics: selectedHeuristics,
         complexity: 'intermediate'
@@ -284,7 +285,7 @@ Apply the suggestion and return an improved version of the prompt.`;
 
     try {
       const selectedHeuristics = selectHeuristics(refinementPrompt, this.currentPrompt);
-      const result = await geminiService.generatePrompt({
+      const result = await openaiService.generatePrompt({
         intent: refinementPrompt,
         heuristics: selectedHeuristics,
         complexity: 'intermediate'

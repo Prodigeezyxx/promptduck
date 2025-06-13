@@ -6,8 +6,8 @@ export const OPENAI_CONFIG = {
     'gpt-4-turbo', // Fallback option
     'gpt-3.5-turbo' // Final fallback
   ],
-  maxRetries: 1, // Fast failure like Gemini
-  maxTokens: 4096, // Increased from 1024 to prevent truncation
+  maxRetries: 1, // Fast failure for better UX
+  maxTokens: 4096, // Increased to prevent truncation
   fallbackPrompt: {
     complexity_score: 7,
     creativity_score: 6,
