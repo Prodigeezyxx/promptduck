@@ -1,6 +1,4 @@
 
-import { Button } from '@/components/ui/button';
-import { LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 
@@ -27,14 +25,6 @@ export function ClearSessionButton() {
     navigate('/');
   };
 
-  return (
-    <Button
-      variant="outline"
-      onClick={handleClearSession}
-      className="flex items-center gap-2"
-    >
-      <LogOut className="w-4 h-4" />
-      Back to Landing
-    </Button>
-  );
+  // Return null to render nothing
+  return null;
 }
