@@ -1,6 +1,5 @@
-
-import { GenerationResult } from '@/types';
-import { geminiService } from './geminiService';
+import { openaiService } from './openaiService';
+import { GenerationRequest } from '@/types';
 
 export interface PromptAnalysis {
   quality_score: number;
@@ -17,117 +16,64 @@ export interface PromptIteration {
   response: string;
   analysis: PromptAnalysis;
   timestamp: string;
-  parent_id?: string;
+  parentId?: string;
 }
 
-export class PromptAnalysisService {
-  async analyzePromptAndResponse(
-    prompt: string, 
-    response: string, 
-    intent: string
-  ): Promise<PromptAnalysis> {
-    if (!geminiService) {
-      throw new Error('Gemini service not initialized');
-    }
+class PromptAnalysisService {
+  async analyzePromptAndResponse(prompt: string, response: string, intent: string = ''): Promise<PromptAnalysis> {
+    const analysisPrompt = `You are an expert prompt analyst. Analyze the following prompt and its generated response, and provide feedback on its quality, strengths, and weaknesses. Also, provide concrete suggestions for improvement and a refined version of the prompt.
 
-    const analysisPrompt = `Analyze this prompt-response pair for quality and improvement opportunities:
+Prompt: ${prompt}
 
-ORIGINAL INTENT: ${intent}
+Generated Response: ${response}
 
-PROMPT USED:
-${prompt}
+Analysis should be thorough and constructive. Focus on specific areas such as clarity, relevance, coherence, and potential biases. Provide a quality score from 1 to 10.
 
-AI RESPONSE RECEIVED:
-${response}
+${intent ? `The intent of the prompt is: ${intent}.` : 'The intent of the prompt is not specified.'}
 
-Analyze this interaction and provide improvement suggestions. Return ONLY valid JSON:
+OUTPUT FORMAT: Return ONLY valid JSON with no markdown formatting.
+
+Required JSON structure:
 {
-  "quality_score": 8,
-  "strengths": ["clear instructions", "specific context"],
-  "weaknesses": ["too verbose", "lacks constraints"],
-  "improvement_suggestions": [
-    "Add word count limit to control response length",
-    "Include specific output format requirements",
-    "Add examples for better clarity"
-  ],
-  "refined_prompt": "improved version of the original prompt",
-  "analysis_reasoning": "Brief explanation of the analysis and suggested improvements"
-}`;
+  "quality_score": 7,
+  "strengths": ["Clear instructions", "Well-structured"],
+  "weaknesses": ["Lacks specific details", "Potential for bias"],
+  "improvement_suggestions": ["Add more context", "Specify desired tone"],
+  "refined_prompt": "Refined version of the prompt",
+  "analysis_reasoning": "Detailed explanation of the analysis"
+}
+`;
 
     try {
-      const result = await geminiService.generatePrompt({
+      const result = await openaiService.generatePrompt({
         intent: analysisPrompt,
-        heuristics: ['recursive_refinement', 'contradiction_stacking'],
         complexity: 'advanced'
-      });
-
-      return this.parseAnalysisResponse(result.optimized_prompt, prompt);
+      } as GenerationRequest);
+      return JSON.parse(result.optimized_prompt) as PromptAnalysis;
     } catch (error) {
-      console.error('Analysis failed:', error);
-      return this.generateFallbackAnalysis(prompt, response);
-    }
-  }
-
-  private parseAnalysisResponse(text: string, originalPrompt: string): PromptAnalysis {
-    try {
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
-        return this.generateFallbackAnalysis(originalPrompt, '');
-      }
-
-      const parsed = JSON.parse(jsonMatch[0]);
-      
+      console.error('Failed to analyze prompt:', error);
       return {
-        quality_score: parsed.quality_score || 7,
-        strengths: Array.isArray(parsed.strengths) ? parsed.strengths : ['Well-structured prompt'],
-        weaknesses: Array.isArray(parsed.weaknesses) ? parsed.weaknesses : ['Could be more specific'],
-        improvement_suggestions: Array.isArray(parsed.improvement_suggestions) 
-          ? parsed.improvement_suggestions 
-          : ['Add more specific constraints', 'Include examples', 'Specify output format'],
-        refined_prompt: parsed.refined_prompt || originalPrompt,
-        analysis_reasoning: parsed.analysis_reasoning || 'Analysis completed successfully'
+        quality_score: 5,
+        strengths: [],
+        weaknesses: [],
+        improvement_suggestions: [],
+        refined_prompt: 'N/A',
+        analysis_reasoning: 'Failed to generate analysis.'
       };
-    } catch (error) {
-      console.error('Failed to parse analysis:', error);
-      return this.generateFallbackAnalysis(originalPrompt, '');
     }
   }
 
-  private generateFallbackAnalysis(prompt: string, response: string): PromptAnalysis {
+  createIteration(prompt: string, response: string, analysis: PromptAnalysis, parentId?: string): PromptIteration {
     return {
-      quality_score: 6,
-      strengths: ['Contains clear intent'],
-      weaknesses: ['Could be more specific', 'Lacks constraints'],
-      improvement_suggestions: [
-        'Add specific output format requirements',
-        'Include word count or length constraints',
-        'Add examples to clarify expectations',
-        'Specify tone and style preferences'
-      ],
-      refined_prompt: prompt,
-      analysis_reasoning: 'Basic analysis completed - consider adding more specific requirements to improve results'
-    };
-  }
-
-  generateIterationId(): string {
-    return `iter_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }
-
-  createIteration(
-    prompt: string, 
-    response: string, 
-    analysis: PromptAnalysis, 
-    parentId?: string
-  ): PromptIteration {
-    return {
-      id: this.generateIterationId(),
-      prompt,
-      response,
-      analysis,
+      id: `iteration_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      prompt: prompt,
+      response: response,
+      analysis: analysis,
       timestamp: new Date().toISOString(),
-      parent_id: parentId
+      parentId: parentId
     };
   }
 }
 
 export const promptAnalysisService = new PromptAnalysisService();
+export { PromptAnalysisService };

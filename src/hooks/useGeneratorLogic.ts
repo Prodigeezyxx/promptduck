@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
 import { useApiKeyStore } from '@/store/apiKeyStore';
 import { usePromptStore } from '@/store/promptStore';
-import { geminiService } from '@/services/geminiService';
+import { openaiService } from '@/services/openaiService';
 import { IntentDetectionEngine } from '@/services/intent/intentDetection';
 import { selectHeuristics } from '@/utils/heuristicSelector';
 import { HeuristicType, GenerationRequest, GenerationResult } from '@/types';
@@ -86,7 +85,7 @@ export function useGeneratorLogic() {
 
       // Initialize service with the OpenAI API key
       if (apiKey?.openai) {
-        geminiService.initialize(apiKey.openai);
+        openaiService.initialize(apiKey.openai);
       }
 
       // Ensure context is properly handled - convert to string or undefined
@@ -101,7 +100,7 @@ export function useGeneratorLogic() {
 
       console.log('Generation request object:', JSON.stringify(request, null, 2));
 
-      const result = await geminiService.generatePrompt(request);
+      const result = await openaiService.generatePrompt(request);
       console.log('Generation result received:', result);
       
       setLastResult(result);
