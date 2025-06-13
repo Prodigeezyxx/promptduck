@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - PromptDuck</title>
+    <meta name="description" content="PromptDuck Privacy Policy - Learn how we collect, use, and protect your personal information.">
+    <meta name="robots" content="index, follow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .duck-icon {
+            width: 2rem;
+            height: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .page-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        .shield-icon {
+            width: 2rem;
+            height: 2rem;
+            color: #667eea;
+        }
+        
+        .last-updated {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(10px);
+        }
+        
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        
+        .card p {
+            margin-bottom: 0.75rem;
+            color: #374151;
+        }
+        
+        .card p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .card ul {
+            margin: 0.75rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        .card li {
+            margin-bottom: 0.25rem;
+            color: #374151;
+        }
+        
+        strong {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        a {
+            color: #667eea;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+        }
+        
+        a:hover {
+            color: #5a67d8;
+        }
+        
+        address {
+            font-style: normal;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header {
+                padding: 1.5rem;
+                margin-bottom: 2rem;
+            }
+            
+            .page-title {
+                font-size: 1.75rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .card h2 {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <div class="duck-icon">🦆</div>
+                <h1 class="brand-name">PromptDuck</h1>
+            </div>
+            <div class="page-title">
+                <svg class="shield-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                </svg>
+                Privacy Policy
+            </div>
+            <p class="last-updated">Last updated: <span id="current-date"></span></p>
+        </div>
+
+        <div class="content">
+            <div class="card">
+                <h2>1. Introduction</h2>
+                <p><strong>Purpose:</strong> This Privacy Policy explains how PromptDuck ("we," "us") collects, uses, stores, and protects information about you when you use our services.</p>
+                <p><strong>Data collected:</strong> Personal information (e.g., name, email), usage data (e.g., IP addresses, session logs), cookies, and analytics.</p>
+            </div>
+
+            <div class="card">
+                <h2>2. Data Collection Details</h2>
+                <p><strong>Methods:</strong></p>
+                <ul>
+                    <li>User input (account creation, support forms)</li>
+                    <li>Cookies and tracking tools (analytics, performance)</li>
+                    <li>Automatic collection (device type, browser info, location)</li>
+                </ul>
+                <p><strong>Purpose:</strong> Improve user experience, analytics, support, feature customization, marketing.</p>
+            </div>
+
+            <div class="card">
+                <h2>3. Data Usage</h2>
+                <p><strong>Internal use:</strong> Account setup, service delivery, personalization, troubleshooting</p>
+                <p><strong>Analytics & improvement:</strong> Product enhancements, feature testing</p>
+                <p><strong>Third-party sharing:</strong></p>
+                <ul>
+                    <li>With service providers (e.g., cloud hosting, analytics) under confidentiality</li>
+                    <li>When legally required (compliance, legal requests)</li>
+                    <li>With your explicit consent (e.g., marketing third parties)</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>4. Data Security</h2>
+                <p><strong>Encryption:</strong> Data encrypted at rest and in transit (TLS/SSL)</p>
+                <p><strong>Access controls:</strong> Role-based access; regular audits</p>
+                <p><strong>Infrastructure security:</strong> Regular testing, vulnerability scans, patching</p>
+            </div>
+
+            <div class="card">
+                <h2>5. User Rights</h2>
+                <p>You may:</p>
+                <ul>
+                    <li>Access and export your personal data</li>
+                    <li>Correct inaccurate information</li>
+                    <li>Request deletion or restrict processing</li>
+                    <li>Object to marketing, withdraw consent</li>
+                    <li>Lodge complaints with authorities (e.g., ICO, CNIL, etc.)</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>6. Google OAuth Integration</h2>
+                <p><strong>Google Sign-In:</strong> When you choose to sign in with Google, we receive basic profile information including your name, email address, and profile picture from Google.</p>
+                <p><strong>Data Usage:</strong> This information is used solely for account creation and authentication purposes. We do not access any other Google services or data.</p>
+                <p><strong>Data Retention:</strong> Your Google profile information is stored securely and can be deleted upon account termination.</p>
+            </div>
+
+            <div class="card">
+                <h2>7. Contact Information</h2>
+                <p>Questions or privacy requests? Contact us via <a href="mailto:dev@promptduck.dev">dev@promptduck.dev</a> or write to:</p>
+                <address>
+                    PromptDuck<br>
+                    5a Endymion Road<br>
+                    London
+                </address>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set current date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString();
+    </script>
+</body>
+</html>
