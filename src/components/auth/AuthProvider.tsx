@@ -22,30 +22,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [guestUser, setGuestUser] = useState<any>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Check for guest session on mount
+  // Check for guest session immediately and synchronously
   useEffect(() => {
     const checkGuestSession = () => {
-      const guestSession = localStorage.getItem('promptduck_guest_session');
-      console.log('AuthProvider: Checking guest session:', guestSession ? 'found' : 'not found');
-      
-      if (guestSession) {
-        try {
+      try {
+        const guestSession = localStorage.getItem('promptduck_guest_session');
+        console.log('AuthProvider: Checking guest session:', guestSession ? 'found' : 'not found');
+        
+        if (guestSession) {
           const guest = JSON.parse(guestSession);
           console.log('AuthProvider: Setting guest user:', guest);
           setGuestUser(guest);
-        } catch (error) {
-          console.error('AuthProvider: Failed to parse guest session:', error);
-          localStorage.removeItem('promptduck_guest_session');
+        } else {
           setGuestUser(null);
         }
-      } else {
+      } catch (error) {
+        console.error('AuthProvider: Failed to parse guest session:', error);
+        localStorage.removeItem('promptduck_guest_session');
         setGuestUser(null);
       }
-      
-      setIsInitialized(true);
     };
 
+    // Check immediately
     checkGuestSession();
+    setIsInitialized(true);
     
     // Listen for storage changes to sync across tabs
     window.addEventListener('storage', checkGuestSession);
