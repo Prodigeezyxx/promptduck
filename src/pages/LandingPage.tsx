@@ -11,6 +11,24 @@ export default function LandingPage() {
   const { theme, setTheme } = useThemeStore();
 
   useEffect(() => {
+    // Clear any inactive guest sessions when landing on the home page
+    const guestSession = localStorage.getItem('promptduck_guest_session');
+    if (guestSession) {
+      try {
+        const guest = JSON.parse(guestSession);
+        // If user is on landing page and has a non-active guest session, clear it
+        if (!guest.isActive || !guest.isPersistent) {
+          localStorage.removeItem('promptduck_guest_session');
+          window.dispatchEvent(new StorageEvent('storage', {
+            key: 'promptduck_guest_session',
+            newValue: null
+          }));
+        }
+      } catch (error) {
+        localStorage.removeItem('promptduck_guest_session');
+      }
+    }
+
     // Store the user's current theme preference
     const userTheme = theme;
     

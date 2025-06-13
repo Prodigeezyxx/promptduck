@@ -22,14 +22,19 @@ export function GuestSignInButton() {
           avatar_url: null
         },
         created_at: new Date().toISOString(),
-        isGuest: true
+        isGuest: true,
+        isActive: true, // Mark as explicitly active
+        isPersistent: false // Mark as non-persistent (will be cleared on page unload)
       };
 
       console.log('Creating guest session:', guestUser);
       localStorage.setItem('promptduck_guest_session', JSON.stringify(guestUser));
       
       // Trigger storage event to update AuthProvider
-      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new StorageEvent('storage', {
+        key: 'promptduck_guest_session',
+        newValue: JSON.stringify(guestUser)
+      }));
       
       // Force a small delay to ensure localStorage is set and context updates
       await new Promise(resolve => setTimeout(resolve, 200));

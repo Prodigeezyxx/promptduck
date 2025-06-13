@@ -22,7 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [guestUser, setGuestUser] = useState<any>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Check for guest session immediately and synchronously
+  // Check for guest session only if explicitly created
   useEffect(() => {
     const checkGuestSession = () => {
       try {
@@ -31,8 +31,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         if (guestSession) {
           const guest = JSON.parse(guestSession);
-          console.log('AuthProvider: Setting guest user:', guest);
-          setGuestUser(guest);
+          // Only use guest session if it was created in the last 24 hours and is explicitly marked as active
+          const sessionAge = Date.now() - new Date(guest.created_at).getTime();
+          const twentyFourHours = 24 * 60 * 60 * 1000;
+          
+          if (sessionAge < twentyFourHours && guest.isActive) {
+            console.log('AuthProvider: Setting active guest user:', guest);
+            setGuestUser(guest);
+          } else {
+            console.log('AuthProvider: Removing expired or inactive guest session');
+            localStorage.removeItem('promptduck_guest_session');
+            setGuestUser(null);
+          }
         } else {
           setGuestUser(null);
         }
@@ -48,10 +58,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsInitialized(true);
     
     // Listen for storage changes to sync across tabs
-    window.addEventListener('storage', checkGuestSession);
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'promptduck_guest_session') {
+        checkGuestSession();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Clean up guest sessions when the page is unloaded (user navigates away or closes browser)
+    const handleBeforeUnload = () => {
+      const guestSession = localStorage.getItem('promptduck_guest_session');
+      if (guestSession) {
+        try {
+          const guest = JSON.parse(guestSession);
+          if (guest.isGuest && !guest.isPersistent) {
+            localStorage.removeItem('promptduck_guest_session');
+          }
+        } catch (error) {
+          localStorage.removeItem('promptduck_guest_session');
+        }
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
     
     return () => {
-      window.removeEventListener('storage', checkGuestSession);
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
 

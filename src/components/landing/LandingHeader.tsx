@@ -2,11 +2,12 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { AuthButtons } from '@/components/auth/AuthButtons';
+import { ClearSessionButton } from '@/components/auth/ClearSessionButton';
 import { DuckIcon } from '@/components/icons/DuckIcon';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 
 export function LandingHeader() {
-  const { isSignedIn } = useAuthContext();
+  const { isSignedIn, user } = useAuthContext();
 
   return (
     <header className="fixed top-0 w-full z-50 backdrop-blur-xl bg-gray-900/80 dark:bg-black/80 border-b border-gray-700/50 dark:border-gray-800/50">
@@ -26,6 +27,8 @@ export function LandingHeader() {
                   Launch App
                 </Button>
               </Link>
+              {/* Show clear session button for guest users */}
+              {user?.isGuest && <ClearSessionButton />}
               <AuthButtons />
             </div>
           ) : (
