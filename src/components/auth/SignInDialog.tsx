@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,8 +20,16 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signInWithEmail, signUpWithEmail } = useAuthContext();
+  const { signInWithEmail, signUpWithEmail, isSignedIn } = useAuthContext();
   const { toast } = useToast();
+
+  // Close dialog when user successfully signs in
+  useEffect(() => {
+    if (isSignedIn && open) {
+      console.log('User signed in, closing dialog');
+      onOpenChange(false);
+    }
+  }, [isSignedIn, open, onOpenChange]);
 
   const handleEmailAuth = async (isSignUp: boolean) => {
     if (!email || !password) {
@@ -92,7 +100,7 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
             </div>
           </div>
 
-          {/* Google Auth with Maintenance Message */}
+          {/* Google Auth */}
           <GoogleAuthButton />
 
           <div className="relative">
