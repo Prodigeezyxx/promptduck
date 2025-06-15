@@ -13,14 +13,37 @@ export function GoogleAuthButton() {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      console.log('Google sign-in button clicked');
+      console.log('=== Google OAuth Debug Info ===');
+      console.log('Current URL:', window.location.href);
+      console.log('Origin:', window.location.origin);
+      console.log('Host:', window.location.host);
+      console.log('Protocol:', window.location.protocol);
+      
       const { error } = await signInWithGoogle();
       
       if (error) {
-        console.error('Google OAuth error:', error);
+        console.error('Google OAuth error details:', {
+          message: error.message,
+          status: error.status,
+          code: error.code,
+          name: error.name,
+          stack: error.stack
+        });
+        
+        let errorMessage = "Failed to initiate Google sign-in. Please try again.";
+        
+        // Provide more specific error messages
+        if (error.message?.includes('redirect_uri_mismatch')) {
+          errorMessage = "OAuth configuration error. Please check your redirect URLs in Google Cloud Console.";
+        } else if (error.message?.includes('origin_mismatch')) {
+          errorMessage = "Domain configuration error. Please check your authorized domains.";
+        } else if (error.message?.includes('invalid_client')) {
+          errorMessage = "OAuth client configuration error. Please check your client ID.";
+        }
+        
         toast({
           title: "Google Sign-in Error",
-          description: error.message || "Failed to initiate Google sign-in. Please try again.",
+          description: errorMessage,
           variant: "destructive",
         });
       } else {

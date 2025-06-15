@@ -23,7 +23,19 @@ export function useAuth() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
-        console.log('Full auth event:', { event, session, user: session?.user });
+        console.log('Full auth event details:', { 
+          event, 
+          session: session ? {
+            access_token: session.access_token ? 'present' : 'missing',
+            refresh_token: session.refresh_token ? 'present' : 'missing',
+            expires_at: session.expires_at,
+            user: session.user ? {
+              id: session.user.id,
+              email: session.user.email,
+              provider: session.user.app_metadata?.provider
+            } : null
+          } : null
+        });
         
         setAuthState({
           user: session?.user ?? null,
@@ -33,7 +45,12 @@ export function useAuth() {
 
         // Handle OAuth callback success
         if (event === 'SIGNED_IN' && session) {
-          console.log('OAuth sign-in successful:', session.user.email);
+          console.log('OAuth sign-in successful for:', session.user.email);
+        }
+        
+        // Handle OAuth errors
+        if (event === 'SIGNED_OUT') {
+          console.log('User signed out');
         }
       }
     );
@@ -45,9 +62,17 @@ export function useAuth() {
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
-          console.error('Error getting initial session:', error);
+          console.error('Error getting initial session:', {
+            message: error.message,
+            status: error.status,
+            details: error
+          });
         } else {
-          console.log('Initial session:', session?.user?.email || 'No session');
+          console.log('Initial session check:', session ? {
+            user_email: session.user?.email,
+            expires_at: session.expires_at,
+            provider: session.user?.app_metadata?.provider
+          } : 'No session');
         }
         
         setAuthState({
@@ -75,12 +100,18 @@ export function useAuth() {
 
   const signInWithGoogle = async () => {
     try {
-      console.log('Initiating Google OAuth with Supabase...');
-      console.log('Current URL:', window.location.href);
-      console.log('Origin:', window.location.origin);
+      console.log('=== Initiating Google OAuth ===');
+      console.log('Current environment details:', {
+        href: window.location.href,
+        origin: window.location.origin,
+        host: window.location.host,
+        protocol: window.location.protocol,
+        pathname: window.location.pathname
+      });
       
+      // Use the current origin for redirect
       const redirectUrl = `${window.location.origin}/`;
-      console.log('Redirect URL:', redirectUrl);
+      console.log('OAuth redirect URL:', redirectUrl);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -94,15 +125,19 @@ export function useAuth() {
       });
       
       if (error) {
-        console.error('Supabase OAuth error:', {
+        console.error('Supabase OAuth error details:', {
           message: error.message,
           status: error.status,
           code: error.code,
+          name: error.name,
           details: error
         });
         return { error };
       } else {
-        console.log('OAuth request initiated successfully:', data);
+        console.log('OAuth request initiated successfully:', {
+          url: data.url,
+          provider: data.provider
+        });
         return { error: null };
       }
     } catch (error) {
