@@ -1,6 +1,5 @@
 
 import { ReactNode } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 interface FormSectionProps {
@@ -21,32 +20,28 @@ export function FormSection({
   totalSteps 
 }: FormSectionProps) {
   return (
-    <Card className={cn("relative", className)}>
-      <CardHeader className="pb-4">
-        <div className="flex items-center gap-3">
+    <div className={cn("space-y-6", className)}>
+      <div className="space-y-2">
+        <h2 className="text-xl font-semibold text-primaryText flex items-center gap-3">
           {step && totalSteps && (
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-500 text-white text-sm font-medium">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-brand-500 to-purple-600 text-white text-sm font-medium">
               {step}
             </div>
           )}
-          <div className="flex-1">
-            <CardTitle className="text-lg flex items-center gap-2">
-              {title}
-              {step && totalSteps && (
-                <span className="text-sm text-muted-foreground font-normal">
-                  ({step} of {totalSteps})
-                </span>
-              )}
-            </CardTitle>
-            {description && (
-              <p className="text-sm text-muted-foreground mt-1">{description}</p>
-            )}
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
+          {title}
+          {step && totalSteps && (
+            <span className="text-sm text-secondaryText font-normal">
+              ({step} of {totalSteps})
+            </span>
+          )}
+        </h2>
+        {description && (
+          <p className="text-secondaryText">{description}</p>
+        )}
+      </div>
+      <div className="space-y-4">
         {children}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
