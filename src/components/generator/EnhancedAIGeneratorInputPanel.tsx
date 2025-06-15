@@ -4,8 +4,6 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { HeuristicType } from '@/types';
 import { CompactHeuristicsDisplay } from './CompactHeuristicsDisplay';
 import { TemplateReference } from './TemplateReference';
-import { FormSection } from './forms/FormSection';
-import { ProgressIndicator } from './forms/ProgressIndicator';
 import { StepNavigation } from './forms/StepNavigation';
 import { IntentStep } from './forms/IntentStep';
 import { ContextStep } from './forms/ContextStep';
@@ -25,12 +23,6 @@ interface EnhancedAIGeneratorInputPanelProps {
   onComplexityChange: (value: 'simple' | 'intermediate' | 'advanced') => void;
   onGenerate: () => void;
 }
-
-const STEPS = [
-  { id: 'intent', title: 'Define Intent', description: 'What do you want to achieve?' },
-  { id: 'context', title: 'Add Context', description: 'Provide additional details' },
-  { id: 'generate', title: 'Generate', description: 'Create your optimized prompt' }
-];
 
 export function EnhancedAIGeneratorInputPanel({
   intent,
@@ -91,18 +83,11 @@ export function EnhancedAIGeneratorInputPanel({
     onGenerate();
   };
 
-  const getStepProgress = () => {
-    if (completedSteps.includes(1) && completedSteps.includes(2)) return 100;
-    if (completedSteps.includes(1)) return 66;
-    if (intent.trim().length > 5) return 33;
-    return 0;
-  };
-
   const canProceed = currentStep === 1 ? intent.trim().length >= 10 : true;
 
   return (
     <TooltipProvider>
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Template Reference Panel */}
         {currentPrompt && (
           <TemplateReference
@@ -116,19 +101,6 @@ export function EnhancedAIGeneratorInputPanel({
           />
         )}
 
-        {/* Progress Indicator */}
-        <FormSection 
-          title="Prompt Creation Progress"
-          description={`${Math.round(getStepProgress())}% Complete`}
-          className="bg-gradient-to-r from-brand-50 to-purple-50 border-brand-200"
-        >
-          <ProgressIndicator 
-            steps={STEPS} 
-            currentStep={currentStep}
-            className="mb-4"
-          />
-        </FormSection>
-
         {/* Step Content */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -137,6 +109,7 @@ export function EnhancedAIGeneratorInputPanel({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
+            className="bg-surface rounded-lg p-6"
           >
             {currentStep === 1 && (
               <IntentStep
@@ -153,7 +126,9 @@ export function EnhancedAIGeneratorInputPanel({
               <ContextStep
                 context={context}
                 placeholder={contextPlaceholder}
+                complexity={complexity}
                 onContextChange={onContextChange}
+                onComplexityChange={onComplexityChange}
               />
             )}
 

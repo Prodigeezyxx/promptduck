@@ -17,13 +17,13 @@ export function CharacterCounter({ current, max, className }: CharacterCounterPr
   return (
     <div className={cn("flex items-center justify-between text-xs", className)}>
       <div className={cn(
-        "text-muted-foreground",
+        "text-secondaryText",
         isNearLimit && "text-warning",
         isOverLimit && "text-destructive"
       )}>
         {current}/{max} characters
       </div>
-      <div className="w-16 h-1 bg-muted rounded-full overflow-hidden">
+      <div className="w-16 h-1 bg-input rounded-full overflow-hidden">
         <div 
           className={cn(
             "h-full transition-all duration-300",
