@@ -229,7 +229,7 @@ export function EnhancedAIGeneratorInputPanel({
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <STEPS[currentStep - 1].icon className="w-5 h-5 text-brand-500" />
+                  {React.createElement(STEPS[currentStep - 1].icon, { className: "w-5 h-5 text-brand-500" })}
                   <span>{STEPS[currentStep - 1].title}</span>
                   <Tooltip>
                     <TooltipTrigger>
