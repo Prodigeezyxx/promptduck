@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -87,77 +86,80 @@ export function GeneratorHistoryDrawer({
           
           <ScrollArea className="h-[60vh]">
             <div className="space-y-2">
-              {history.map((result, index) => (
-                <div key={index} className="border rounded-lg p-3 bg-card">
-                  <Collapsible 
-                    open={expandedItems.has(index)}
-                    onOpenChange={() => toggleExpanded(index)}
-                  >
-                    <CollapsibleTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-between p-2 h-auto text-left hover:bg-muted/50"
-                      >
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">
-                            {result.preview_title}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {result.heuristics.length} heuristics • {result.metadata.estimated_tokens} tokens
-                          </p>
-                        </div>
-                        {expandedItems.has(index) ? (
-                          <ChevronDown className="w-4 h-4" />
-                        ) : (
-                          <ChevronRight className="w-4 h-4" />
-                        )}
-                      </Button>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="px-2 pb-2">
-                      <div className="space-y-3">
-                        <div className="flex flex-wrap gap-1">
-                          {result.tags.slice(0, 5).map((tag) => (
-                            <Badge key={tag} variant="secondary" className="text-xs">
-                              {tag}
-                            </Badge>
-                          ))}
-                          {result.tags.length > 5 && (
-                            <Badge variant="outline" className="text-xs">
-                              +{result.tags.length - 5} more
-                            </Badge>
+              {history
+                .filter(
+                  (result): result is GenerationResult =>
+                    !!result && typeof result === "object" && 'preview_title' in result
+                )
+                .map((result, index) => (
+                  <div key={index} className="border rounded-lg p-3 bg-card">
+                    <Collapsible 
+                      open={expandedItems.has(index)}
+                      onOpenChange={() => toggleExpanded(index)}
+                    >
+                      <CollapsibleTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-between p-2 h-auto text-left hover:bg-muted/50"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">
+                              {result.preview_title}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {result.heuristics.length} heuristics • {result.metadata.estimated_tokens} tokens
+                            </p>
+                          </div>
+                          {expandedItems.has(index) ? (
+                            <ChevronDown className="w-4 h-4" />
+                          ) : (
+                            <ChevronRight className="w-4 h-4" />
                           )}
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="px-2 pb-2">
+                        <div className="space-y-3">
+                          <div className="flex flex-wrap gap-1">
+                            {result.tags && result.tags.slice(0, 5).map((tag) => (
+                              <Badge key={tag} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                            {result.tags && result.tags.length > 5 && (
+                              <Badge variant="outline" className="text-xs">
+                                +{result.tags.length - 5} more
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="bg-muted/30 p-3 rounded text-xs leading-relaxed max-h-32 overflow-y-auto">
+                            {result.optimized_prompt && result.optimized_prompt.length > 200 
+                              ? `${result.optimized_prompt.substring(0, 200)}...` 
+                              : result.optimized_prompt
+                            }
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-xs h-8 px-3 flex-1"
+                              onClick={() => handleSelectResult(result)}
+                            >
+                              Load
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-xs h-8 px-3"
+                              onClick={(e) => handleCopyPrompt(result.optimized_prompt, e)}
+                            >
+                              <Copy className="w-3 h-3" />
+                            </Button>
+                          </div>
                         </div>
-                        
-                        <div className="bg-muted/30 p-3 rounded text-xs leading-relaxed max-h-32 overflow-y-auto">
-                          {result.optimized_prompt.length > 200 
-                            ? `${result.optimized_prompt.substring(0, 200)}...` 
-                            : result.optimized_prompt
-                          }
-                        </div>
-                        
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-xs h-8 px-3 flex-1"
-                            onClick={() => handleSelectResult(result)}
-                          >
-                            Load
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-xs h-8 px-3"
-                            onClick={(e) => handleCopyPrompt(result.optimized_prompt, e)}
-                          >
-                            <Copy className="w-3 h-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CollapsibleContent>
-                  </Collapsible>
-                </div>
-              ))}
+                      </CollapsibleContent>
+                    </Collapsible>
+                  </div>
+                ))}
             </div>
           </ScrollArea>
         </div>
