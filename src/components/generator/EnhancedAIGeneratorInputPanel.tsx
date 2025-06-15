@@ -8,6 +8,7 @@ import { StepNavigation } from './forms/StepNavigation';
 import { IntentStep } from './forms/IntentStep';
 import { ContextStep } from './forms/ContextStep';
 import { GenerateStep } from './forms/GenerateStep';
+import { ProgressIndicator } from './forms/ProgressIndicator';
 import { useSmartPlaceholder } from '@/hooks/useSmartPlaceholder';
 import { usePromptStore } from '@/store/promptStore';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -23,6 +24,12 @@ interface EnhancedAIGeneratorInputPanelProps {
   onComplexityChange: (value: 'simple' | 'intermediate' | 'advanced') => void;
   onGenerate: () => void;
 }
+
+const STEPS = [
+  { id: 'intent', title: 'Define Intent', description: 'What to achieve' },
+  { id: 'context', title: 'Add Context', description: 'Additional details' },
+  { id: 'generate', title: 'Generate', description: 'Create prompt' }
+];
 
 export function EnhancedAIGeneratorInputPanel({
   intent,
@@ -101,6 +108,13 @@ export function EnhancedAIGeneratorInputPanel({
           />
         )}
 
+        {/* Progress Indicator */}
+        <ProgressIndicator
+          steps={STEPS}
+          currentStep={currentStep}
+          className="mb-8"
+        />
+
         {/* Step Content */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -109,7 +123,6 @@ export function EnhancedAIGeneratorInputPanel({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
-            className="bg-surface rounded-lg p-6"
           >
             {currentStep === 1 && (
               <IntentStep
