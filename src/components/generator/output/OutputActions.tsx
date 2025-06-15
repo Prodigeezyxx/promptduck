@@ -50,21 +50,8 @@ export function OutputActions({ result, onCopyPrompt, onSavePrompt }: OutputActi
 
   return (
     <div className="flex gap-2 flex-wrap">
-      <Button
-        onClick={handleTestInPlayground}
-        className="bg-brand-500 hover:bg-brand-600 text-white flex-1 sm:flex-none"
-      >
-        <PlayCircle className="w-4 h-4 mr-2" />
-        Test in Playground
-      </Button>
-      <Button onClick={onCopyPrompt} variant="outline" size="sm">
-        <Copy className="w-4 h-4 mr-2" />
-        Copy
-      </Button>
-      <Button onClick={onSavePrompt} variant="outline" size="sm">
-        <Save className="w-4 h-4 mr-2" />
-        Save
-      </Button>
+      {/* Remove Test in Playground button in this context for cleaner output action */}
+      {/* Copy and Save buttons are handled in parent */}
       <Button onClick={handleDownloadJSON} variant="outline" size="sm">
         <Download className="w-4 h-4 mr-2" />
         Download JSON

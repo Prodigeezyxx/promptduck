@@ -1,7 +1,5 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -178,64 +176,31 @@ export function EnhancedAIGeneratorOutputPanel({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="h-full">
-          <CardHeader className="bg-gradient-to-r from-green-50 to-blue-50 border-b">
+        <Card className="h-full bg-background text-primary border border-border shadow-none">
+          <CardHeader className="border-b bg-background">
             <CardTitle className="flex items-center space-x-2">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2 }}
-              >
-                <CheckCircle className="w-6 h-6 text-green-500" />
-              </motion.div>
-              <div>
-                <OutputHeader result={lastResult} />
-                <Badge className="bg-green-100 text-green-800 mt-1">
-                  ✨ Optimized & Ready
-                </Badge>
-              </div>
+              <CheckCircle className="w-6 h-6 text-green-500" />
+              <span className="font-semibold text-lg text-neutral-200" style={{fontWeight: 500, letterSpacing: '-0.01em'}}>
+                {/* Harmonize title - not too bold, dark mode aware */}
+                {lastResult.preview_title}
+              </span>
+              <Badge className="bg-green-800/20 text-green-400 ml-2 font-normal" variant="secondary">
+                Optimized
+              </Badge>
             </CardTitle>
           </CardHeader>
           
           <CardContent className="space-y-6 p-6">
-            {/* Quality Score */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <TrendingUp className="w-5 h-5 text-blue-500" />
-                  <span className="font-medium text-blue-900">Quality Assessment</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Badge className="bg-blue-100 text-blue-800">
-                    Score: {lastResult.heuristics?.length || 0}/10
-                  </Badge>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <AlertCircle className="w-4 h-4 text-blue-500" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Based on applied heuristics and optimization techniques</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </div>
-            </motion.div>
-
             {/* Optimized Prompt */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.25 }}
             >
               <div className="flex items-center justify-between mb-3">
-                <label className="text-sm font-semibold text-gray-900">Your Optimized Prompt</label>
+                <label className="text-sm font-semibold text-neutral-300">Your Optimized Prompt</label>
                 <div className="flex items-center space-x-2">
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs border border-primary/10 text-neutral-400 bg-transparent">
                     {lastResult.optimized_prompt.length} characters
                   </Badge>
                   <Tooltip>
@@ -256,18 +221,25 @@ export function EnhancedAIGeneratorOutputPanel({
                   </Tooltip>
                 </div>
               </div>
-              <Textarea
-                value={lastResult.optimized_prompt}
-                readOnly
-                className="min-h-[140px] text-sm leading-relaxed resize-none font-mono bg-gray-50 border-gray-200"
-              />
+              {/* Output as clean formatted text instead of textarea */}
+              <div
+                className="min-h-[130px] px-4 py-3 rounded-lg bg-[#16181c] text-sm leading-relaxed text-gray-100 shadow-sm border border-border font-sans whitespace-pre-wrap"
+                style={{
+                  fontSize: "0.98rem",
+                  lineHeight: 1.7,
+                  letterSpacing: '-0.01em',
+                  wordBreak: "break-word"
+                }}
+              >
+                {lastResult.optimized_prompt}
+              </div>
             </motion.div>
 
-            {/* Enhanced Action Buttons */}
+            {/* Enhanced Action Buttons (includes JSON Download) */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.32 }}
               className="flex flex-wrap gap-3"
             >
               <Button
@@ -309,13 +281,19 @@ export function EnhancedAIGeneratorOutputPanel({
                   </>
                 )}
               </Button>
+              {/* JSON Download Button */}
+              <OutputActions 
+                result={lastResult}
+                onCopyPrompt={handleCopy}
+                onSavePrompt={handleSave}
+              />
             </motion.div>
 
             {/* Heuristics Applied */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
+              transition={{ delay: 0.43 }}
             >
               <HeuristicsDisplay result={lastResult} />
             </motion.div>
@@ -324,7 +302,7 @@ export function EnhancedAIGeneratorOutputPanel({
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
+              transition={{ delay: 0.5 }}
             >
               <RemixSuggestions 
                 result={lastResult}
@@ -336,7 +314,7 @@ export function EnhancedAIGeneratorOutputPanel({
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
+              transition={{ delay: 0.6 }}
             >
               <OutputMetadata result={lastResult} />
             </motion.div>
