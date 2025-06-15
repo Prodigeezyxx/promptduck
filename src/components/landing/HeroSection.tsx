@@ -5,11 +5,26 @@ import { Link } from 'react-router-dom';
 import { VariableProximity } from '@/components/VariableProximity';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { AnimatedPromptDisplay } from './AnimatedPromptDisplay';
-import { memo } from 'react';
+import { memo, useState } from 'react';
+import { SignInDialog } from '@/components/auth/SignInDialog';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 
 const OptimizedAnimatedPromptDisplay = memo(AnimatedPromptDisplay);
 
 export function HeroSection() {
+  const [showSignInDialog, setShowSignInDialog] = useState(false);
+  const { isSignedIn } = useAuthContext();
+
+  const handleStartCreating = () => {
+    if (isSignedIn) {
+      // If already signed in, go directly to app
+      window.location.href = '/app/library';
+    } else {
+      // If not signed in, show auth dialog
+      setShowSignInDialog(true);
+    }
+  };
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
       {/* Background with new design system */}
@@ -94,15 +109,14 @@ export function HeroSection() {
             transition={{ delay: 0.4, duration: 0.6 }} 
             className="flex flex-col sm:flex-row gap-3 lg:gap-4 justify-center items-center pt-4 lg:pt-8"
           >
-            <Link to="/app/library">
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-accent to-accent/90 hover:from-accent/90 hover:to-accent text-white p-fluid-md text-fluid-base lg:text-fluid-lg group border-0 shadow-elevation-2 w-full sm:w-auto touch-target"
-              >
-                Start Creating
-                <ArrowRight className="ml-2 h-4 w-4 lg:h-5 lg:w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
+            <Button 
+              size="lg" 
+              onClick={handleStartCreating}
+              className="bg-gradient-to-r from-accent to-accent/90 hover:from-accent/90 hover:to-accent text-white p-fluid-md text-fluid-base lg:text-fluid-lg group border-0 shadow-elevation-2 w-full sm:w-auto touch-target"
+            >
+              Start Creating
+              <ArrowRight className="ml-2 h-4 w-4 lg:h-5 lg:w-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
             
             <Button 
               variant="outline" 
@@ -146,6 +160,9 @@ export function HeroSection() {
           <OptimizedAnimatedPromptDisplay />
         </motion.div>
       </div>
+
+      {/* Sign In Dialog */}
+      <SignInDialog open={showSignInDialog} onOpenChange={setShowSignInDialog} />
     </section>
   );
 }
