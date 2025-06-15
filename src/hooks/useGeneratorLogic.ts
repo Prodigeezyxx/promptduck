@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
@@ -187,5 +186,6 @@ export function useGeneratorLogic() {
     handleCopyPrompt,
     handleRemixSuggestion,
     handleSelectHistoryResult,
+    setLastResult, // Export this for outer usage
   };
 }

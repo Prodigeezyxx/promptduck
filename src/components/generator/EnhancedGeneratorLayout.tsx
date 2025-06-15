@@ -22,6 +22,7 @@ interface EnhancedGeneratorLayoutProps {
   onCopyPrompt: () => void;
   onSavePrompt: () => void;
   onRemixSuggestion: (suggestion: string) => void;
+  onStartNewPrompt: () => void; // <-- Add prop
 }
 
 export function EnhancedGeneratorLayout({
@@ -38,6 +39,7 @@ export function EnhancedGeneratorLayout({
   onCopyPrompt,
   onSavePrompt,
   onRemixSuggestion,
+  onStartNewPrompt, // <-- Add prop
 }: EnhancedGeneratorLayoutProps) {
   const isMobile = useIsMobile();
   
@@ -60,7 +62,8 @@ export function EnhancedGeneratorLayout({
     onCopyPrompt,
     onSavePrompt,
     onRemixSuggestion,
-  }), [lastResult, isGenerating, onCopyPrompt, onSavePrompt, onRemixSuggestion]);
+    onStartNewPrompt, // <-- Pass along new prop
+  }), [lastResult, isGenerating, onCopyPrompt, onSavePrompt, onRemixSuggestion, onStartNewPrompt]);
 
   if (isMobile) {
     return (
@@ -87,3 +90,4 @@ export function EnhancedGeneratorLayout({
     </div>
   );
 }
+

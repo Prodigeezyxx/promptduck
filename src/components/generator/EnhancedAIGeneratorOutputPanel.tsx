@@ -19,7 +19,8 @@ import {
   Clock, 
   Target,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Plus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -29,6 +30,7 @@ interface EnhancedAIGeneratorOutputPanelProps {
   onCopyPrompt: () => void;
   onSavePrompt: () => void;
   onRemixSuggestion: (suggestion: string) => void;
+  onStartNewPrompt: () => void;
 }
 
 function EnhancedLoadingState() {
@@ -131,7 +133,8 @@ export function EnhancedAIGeneratorOutputPanel({
   isGenerating = false,
   onCopyPrompt,
   onSavePrompt,
-  onRemixSuggestion
+  onRemixSuggestion,
+  onStartNewPrompt
 }: EnhancedAIGeneratorOutputPanelProps) {
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -288,7 +291,7 @@ export function EnhancedAIGeneratorOutputPanel({
               />
             </motion.div>
 
-            {/* Remix Suggestions as visually distinct row (replacing heuristics display) */}
+            {/* Remix Suggestions as visually distinct row */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -313,6 +316,23 @@ export function EnhancedAIGeneratorOutputPanel({
                   </div>
                 </div>
               )}
+            </motion.div>
+
+            {/* New: Start New Prompt Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              className="pt-2 flex items-center justify-center"
+            >
+              <Button 
+                onClick={onStartNewPrompt}
+                className="bg-brand-900/70 hover:bg-brand-800 text-white font-semibold shadow-sm min-w-[170px] rounded-lg transition space-x-2"
+                size="lg"
+              >
+                <Plus className="w-5 h-5 mr-2" />
+                Start New Prompt
+              </Button>
             </motion.div>
 
             {/* Metadata */}

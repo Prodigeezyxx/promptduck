@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ApiKeyRequired } from '@/components/ApiKeyRequired';
 import { GeneratorPageHeader } from '@/components/generator/GeneratorPageHeader';
@@ -6,6 +5,7 @@ import { EnhancedGeneratorLayout } from '@/components/generator/EnhancedGenerato
 import { GeneratorHistoryDrawer } from '@/components/generator/GeneratorHistoryDrawer';
 import { useGeneratorLogic } from '@/hooks/useGeneratorLogic';
 import { motion } from 'framer-motion';
+import { useCallback } from 'react';
 
 export default function AIGeneratorPage() {
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -28,7 +28,17 @@ export default function AIGeneratorPage() {
     handleCopyPrompt,
     handleRemixSuggestion,
     handleSelectHistoryResult,
+    // Use setLastResult from logic if needed
+    setLastResult,
   } = useGeneratorLogic();
+
+  // Add start new prompt handler
+  const handleStartNewPrompt = useCallback(() => {
+    handleIntentChange('');
+    handleContextChange('');
+    setComplexity('intermediate');
+    setLastResult(null);
+  }, [handleIntentChange, handleContextChange, setComplexity, setLastResult]);
 
   if (!apiKey) {
     return <ApiKeyRequired />;
@@ -57,6 +67,7 @@ export default function AIGeneratorPage() {
         onCopyPrompt={handleCopyPrompt}
         onSavePrompt={handleSavePrompt}
         onRemixSuggestion={handleRemixSuggestion}
+        onStartNewPrompt={handleStartNewPrompt} // <-- Pass to layout
       />
 
       {/* History Drawer */}
