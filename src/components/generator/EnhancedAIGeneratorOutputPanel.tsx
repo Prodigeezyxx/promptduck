@@ -181,7 +181,6 @@ export function EnhancedAIGeneratorOutputPanel({
             <CardTitle className="flex items-center space-x-2">
               <CheckCircle className="w-6 h-6 text-green-500" />
               <span className="font-semibold text-lg text-neutral-200" style={{fontWeight: 500, letterSpacing: '-0.01em'}}>
-                {/* Harmonize title - not too bold, dark mode aware */}
                 {lastResult.preview_title}
               </span>
               <Badge className="bg-green-800/20 text-green-400 ml-2 font-normal" variant="secondary">
@@ -221,7 +220,7 @@ export function EnhancedAIGeneratorOutputPanel({
                   </Tooltip>
                 </div>
               </div>
-              {/* Output as clean formatted text instead of textarea */}
+              {/* Output as clean, formatted text */}
               <div
                 className="min-h-[130px] px-4 py-3 rounded-lg bg-[#16181c] text-sm leading-relaxed text-gray-100 shadow-sm border border-border font-sans whitespace-pre-wrap"
                 style={{
@@ -289,25 +288,31 @@ export function EnhancedAIGeneratorOutputPanel({
               />
             </motion.div>
 
-            {/* Heuristics Applied */}
+            {/* Remix Suggestions as visually distinct row (replacing heuristics display) */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.43 }}
             >
-              <HeuristicsDisplay result={lastResult} />
-            </motion.div>
-
-            {/* Remix Suggestions */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-            >
-              <RemixSuggestions 
-                result={lastResult}
-                onRemixSuggestion={onRemixSuggestion}
-              />
+              {lastResult.remix_suggestions && lastResult.remix_suggestions.length > 0 && (
+                <div>
+                  <label className="text-sm font-semibold mb-2 block text-indigo-400">
+                    Remix Suggestions ({lastResult.remix_suggestions.length})
+                  </label>
+                  <div className="flex flex-wrap gap-3 mt-1 mb-1">
+                    {lastResult.remix_suggestions.map((remix, idx) => (
+                      <span
+                        key={idx}
+                        className="px-5 py-2 bg-indigo-400/60 text-indigo-100 rounded-2xl text-sm cursor-pointer hover:bg-indigo-500/70 transition font-medium"
+                        style={{minWidth: '120px', textAlign: 'center'}}
+                        onClick={() => onRemixSuggestion(remix)}
+                      >
+                        {remix}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </motion.div>
 
             {/* Metadata */}
