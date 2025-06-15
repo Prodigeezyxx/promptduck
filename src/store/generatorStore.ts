@@ -10,6 +10,7 @@ interface GeneratorState {
   setGenerating: (generating: boolean) => void;
   setLastRequest: (request: GenerationRequest) => void;
   setLastResult: (result: GenerationResult) => void;
+  setHistory: (history: GenerationResult[]) => void;
   addToHistory: (result: GenerationResult) => void;
   clearHistory: () => void;
 }
@@ -25,6 +26,7 @@ export const useGeneratorStore = create<GeneratorState>((set, get) => ({
     set({ lastResult: result });
     get().addToHistory(result);
   },
+  setHistory: (history) => set({ history }),
   addToHistory: (result) => {
     set(state => ({
       history: [result, ...state.history].slice(0, 50) // Keep last 50 generations

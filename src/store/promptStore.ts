@@ -8,6 +8,7 @@ interface PromptState {
   currentPrompt: Prompt | null;
   featuredPromptStats: Record<string, { views: number; clicks: number }>;
   setCurrentPrompt: (prompt: Prompt | null) => void;
+  setPrompts: (prompts: Prompt[]) => void;
   addPrompt: (prompt: Omit<Prompt, 'id' | 'created_at' | 'updated_at' | 'version' | 'usage_count'>) => void;
   updatePrompt: (id: string, updates: Partial<Prompt>) => void;
   deletePrompt: (id: string) => void;
@@ -29,6 +30,7 @@ export const usePromptStore = create<PromptState>()(
       currentPrompt: null,
       featuredPromptStats: {},
       setCurrentPrompt: (prompt) => set({ currentPrompt: prompt }),
+      setPrompts: (prompts) => set({ prompts }),
       addPrompt: (promptData) => {
         const newPrompt: Prompt = {
           ...promptData,

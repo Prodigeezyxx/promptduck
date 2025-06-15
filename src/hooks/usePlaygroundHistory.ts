@@ -1,5 +1,7 @@
 
 import { useState, useEffect } from 'react';
+import { useAuthContext } from '@/components/auth/AuthProvider';
+import { useSupabaseConversations } from './useSupabaseConversations';
 
 interface ConversationHistory {
   id: string;
@@ -9,27 +11,34 @@ interface ConversationHistory {
 }
 
 export function usePlaygroundHistory() {
-  const [conversations, setConversations] = useState<ConversationHistory[]>([]);
+  const { user } = useAuthContext();
+  const { conversations, saveConversation, deleteConversation } = useSupabaseConversations();
+  const [localConversations, setLocalConversations] = useState<ConversationHistory[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
 
+  // Load localStorage conversations for unauthenticated users
   useEffect(() => {
-    const stored = localStorage.getItem('promptduck-playground-history');
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        setConversations(parsed.map((conv: any) => ({
-          ...conv,
-          timestamp: new Date(conv.timestamp)
-        })));
-      } catch (error) {
-        console.error('Failed to load conversation history:', error);
+    if (!user) {
+      const stored = localStorage.getItem('promptduck-playground-history');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setLocalConversations(parsed.map((conv: any) => ({
+            ...conv,
+            timestamp: new Date(conv.timestamp)
+          })));
+        } catch (error) {
+          console.error('Failed to load conversation history:', error);
+        }
       }
     }
-  }, []);
+  }, [user]);
 
-  const saveConversations = (convs: ConversationHistory[]) => {
+  const activeConversations = user ? conversations : localConversations;
+
+  const saveLocalConversations = (convs: ConversationHistory[]) => {
     localStorage.setItem('promptduck-playground-history', JSON.stringify(convs));
-    setConversations(convs);
+    setLocalConversations(convs);
   };
 
   const saveCurrentConversation = (messages: any[]) => {
@@ -37,23 +46,30 @@ export function usePlaygroundHistory() {
 
     const conversationId = currentConversationId || `conv_${Date.now()}`;
     const title = messages[0]?.content?.slice(0, 50) + '...' || 'Untitled Conversation';
-    
-    const conversation: ConversationHistory = {
-      id: conversationId,
-      title,
-      messages,
-      timestamp: new Date()
-    };
 
-    const updated = conversations.filter(c => c.id !== conversationId);
-    updated.unshift(conversation);
+    if (user) {
+      // Save to Supabase for authenticated users
+      saveConversation(conversationId, messages, title);
+    } else {
+      // Save to localStorage for unauthenticated users
+      const conversation: ConversationHistory = {
+        id: conversationId,
+        title,
+        messages,
+        timestamp: new Date()
+      };
+
+      const updated = localConversations.filter(c => c.id !== conversationId);
+      updated.unshift(conversation);
+      
+      saveLocalConversations(updated.slice(0, 50)); // Keep last 50 conversations
+    }
     
-    saveConversations(updated.slice(0, 50)); // Keep last 50 conversations
     setCurrentConversationId(conversationId);
   };
 
   const loadConversation = (conversationId: string): any[] => {
-    const conversation = conversations.find(c => c.id === conversationId);
+    const conversation = activeConversations.find(c => c.id === conversationId);
     if (conversation) {
       setCurrentConversationId(conversationId);
       return conversation.messages;
@@ -66,20 +82,27 @@ export function usePlaygroundHistory() {
     return [];
   };
 
-  const deleteConversation = (conversationId: string) => {
-    const updated = conversations.filter(c => c.id !== conversationId);
-    saveConversations(updated);
+  const handleDeleteConversation = (conversationId: string) => {
+    if (user) {
+      // Delete from Supabase for authenticated users
+      deleteConversation(conversationId);
+    } else {
+      // Delete from localStorage for unauthenticated users
+      const updated = localConversations.filter(c => c.id !== conversationId);
+      saveLocalConversations(updated);
+    }
+    
     if (currentConversationId === conversationId) {
       setCurrentConversationId(null);
     }
   };
 
   return {
-    conversations,
+    conversations: activeConversations,
     currentConversationId,
     saveCurrentConversation,
     loadConversation,
     startNewConversation,
-    deleteConversation
+    deleteConversation: handleDeleteConversation
   };
 }

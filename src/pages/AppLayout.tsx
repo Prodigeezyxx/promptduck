@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navigation } from '@/components/layout/Navigation';
@@ -6,11 +5,15 @@ import { MobileHeader } from '@/components/layout/MobileHeader';
 import { MobileNavigation } from '@/components/layout/MobileNavigation';
 import { useUiStore } from '@/store/uiStore';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useDataMigration } from '@/hooks/useDataMigration';
 
 export default function AppLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { sidebarVisible } = useUiStore();
   const isMobile = useIsMobile();
+
+  // Add data migration hook
+  useDataMigration();
 
   return (
     <div className="min-h-screen flex w-full">
