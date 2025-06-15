@@ -16,46 +16,55 @@ interface ProgressIndicatorProps {
 
 export function ProgressIndicator({ steps, currentStep, className }: ProgressIndicatorProps) {
   return (
-    <nav className={cn("flex items-center justify-center space-x-8 mt-2 mb-6", className)}>
-      {steps.map((step, idx) => {
-        const stepNum = idx + 1;
-        const isActive = stepNum === currentStep;
-        const isCompleted = stepNum < currentStep;
+    <div className={cn("w-full", className)}>
+      <div className="flex items-center justify-between">
+        {steps.map((step, index) => {
+          const stepNumber = index + 1;
+          const isCompleted = stepNumber < currentStep;
+          const isCurrent = stepNumber === currentStep;
+          const isUpcoming = stepNumber > currentStep;
 
-        return (
-          <div key={step.id} className="flex flex-col items-center">
-            <div
-              className={cn(
-                "w-12 h-12 rounded-full flex items-center justify-center border-2 mb-2 transition-colors bg-surface",
-                isActive
-                  ? "border-brand-500 bg-brand-900/50"
-                  : isCompleted
-                  ? "border-brand-500 bg-brand-500 text-white"
-                  : "border-muted-foreground text-muted-foreground"
-              )}
-            >
-              {isCompleted ? (
-                <CheckCircle className="w-6 h-6" />
-              ) : isActive ? (
-                <Clock className="w-6 h-6 text-brand-400" />
-              ) : (
-                <Circle className="w-6 h-6" />
+          return (
+            <div key={step.id} className="flex items-center flex-1">
+              <div className="flex flex-col items-center">
+                <div className={cn(
+                  "flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all duration-300",
+                  isCompleted && "bg-brand-500 border-brand-500 text-white",
+                  isCurrent && "border-brand-500 text-brand-500 bg-brand-50 dark:bg-brand-950",
+                  isUpcoming && "border-muted text-muted-foreground"
+                )}>
+                  {isCompleted ? (
+                    <CheckCircle className="w-4 h-4" />
+                  ) : isCurrent ? (
+                    <Clock className="w-4 h-4" />
+                  ) : (
+                    <Circle className="w-4 h-4" />
+                  )}
+                </div>
+                <div className="text-center mt-2">
+                  <div className={cn(
+                    "text-sm font-medium",
+                    (isCompleted || isCurrent) ? "text-foreground" : "text-muted-foreground"
+                  )}>
+                    {step.title}
+                  </div>
+                  {step.description && (
+                    <div className="text-xs text-muted-foreground mt-1 max-w-24">
+                      {step.description}
+                    </div>
+                  )}
+                </div>
+              </div>
+              {index < steps.length - 1 && (
+                <div className={cn(
+                  "flex-1 h-0.5 mx-4 transition-colors duration-300",
+                  stepNumber < currentStep ? "bg-brand-500" : "bg-muted"
+                )} />
               )}
             </div>
-            <span
-              className={cn(
-                "text-sm font-medium text-center",
-                isActive || isCompleted ? "text-brand-500" : "text-muted-foreground"
-              )}
-            >
-              {step.title}
-            </span>
-            {step.description && (
-              <span className="text-xs text-muted-foreground text-center">{step.description}</span>
-            )}
-          </div>
-        );
-      })}
-    </nav>
+          );
+        })}
+      </div>
+    </div>
   );
 }
