@@ -67,7 +67,7 @@ export function OutputActions({ result, onCopyPrompt, onSavePrompt }: OutputActi
       </Button>
       <Button onClick={handleDownloadJSON} variant="outline" size="sm">
         <Download className="w-4 h-4 mr-2" />
-        JSON
+        Download JSON
       </Button>
     </div>
   );
