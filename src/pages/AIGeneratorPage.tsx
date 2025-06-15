@@ -2,9 +2,10 @@
 import { useState } from 'react';
 import { ApiKeyRequired } from '@/components/ApiKeyRequired';
 import { GeneratorPageHeader } from '@/components/generator/GeneratorPageHeader';
-import { GeneratorLayout } from '@/components/generator/GeneratorLayout';
+import { EnhancedGeneratorLayout } from '@/components/generator/EnhancedGeneratorLayout';
 import { GeneratorHistoryDrawer } from '@/components/generator/GeneratorHistoryDrawer';
 import { useGeneratorLogic } from '@/hooks/useGeneratorLogic';
+import { motion } from 'framer-motion';
 
 export default function AIGeneratorPage() {
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -34,10 +35,15 @@ export default function AIGeneratorPage() {
   }
 
   return (
-    <div className="p-4 lg:p-6 max-w-full mx-auto">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="p-4 lg:p-6 max-w-full mx-auto"
+    >
       <GeneratorPageHeader onHistoryOpen={() => setHistoryOpen(true)} />
 
-      <GeneratorLayout
+      <EnhancedGeneratorLayout
         intent={intent}
         context={context}
         complexity={complexity}
@@ -59,6 +65,6 @@ export default function AIGeneratorPage() {
         onOpenChange={setHistoryOpen}
         onSelectResult={handleSelectHistoryResult}
       />
-    </div>
+    </motion.div>
   );
 }
