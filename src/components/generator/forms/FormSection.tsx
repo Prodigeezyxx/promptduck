@@ -1,7 +1,6 @@
 
-import { ReactNode } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
+import { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 interface FormSectionProps {
   title: string;
@@ -12,41 +11,43 @@ interface FormSectionProps {
   totalSteps?: number;
 }
 
-export function FormSection({ 
-  title, 
-  description, 
-  children, 
+export function FormSection({
+  title,
+  description,
+  children,
   className,
   step,
-  totalSteps 
+  totalSteps,
 }: FormSectionProps) {
+  // Main modern card container with larger padding and softer surface styling
   return (
-    <Card className={cn("relative", className)}>
-      <CardHeader className="pb-4">
-        <div className="flex items-center gap-3">
-          {step && totalSteps && (
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-500 text-white text-sm font-medium">
-              {step}
-            </div>
-          )}
-          <div className="flex-1">
-            <CardTitle className="text-lg flex items-center gap-2">
-              {title}
-              {step && totalSteps && (
-                <span className="text-sm text-muted-foreground font-normal">
-                  ({step} of {totalSteps})
-                </span>
-              )}
-            </CardTitle>
-            {description && (
-              <p className="text-sm text-muted-foreground mt-1">{description}</p>
+    <section
+      className={cn(
+        "rounded-2xl bg-surface shadow-elevation-2 p-6 sm:p-8 space-y-6 transition-colors",
+        className
+      )}
+    >
+      <div className="flex items-center gap-4">
+        {step && totalSteps && (
+          <span className="flex items-center justify-center w-10 h-10 rounded-full bg-brand-500 text-white text-base font-bold mr-2 shadow-md">
+            {step}
+          </span>
+        )}
+        <div>
+          <h2 className="text-lg sm:text-xl font-semibold text-white flex items-center gap-3">
+            {title}
+            {step && totalSteps && (
+              <span className="text-base text-muted-foreground font-normal ml-2">
+                ({step} of {totalSteps})
+              </span>
             )}
-          </div>
+          </h2>
+          {description && (
+            <div className="mt-1 text-sm text-muted-foreground">{description}</div>
+          )}
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {children}
-      </CardContent>
-    </Card>
+      </div>
+      <div className="space-y-4">{children}</div>
+    </section>
   );
 }

@@ -15,19 +15,18 @@ export function CharacterCounter({ current, max, className }: CharacterCounterPr
   const isOverLimit = current > max;
 
   return (
-    <div className={cn("flex items-center justify-between text-xs", className)}>
+    <div className={cn("flex items-center justify-between text-xs text-muted-foreground", className)}>
       <div className={cn(
-        "text-muted-foreground",
-        isNearLimit && "text-warning",
-        isOverLimit && "text-destructive"
+        "transition-colors",
+        isOverLimit ? "text-destructive" : isNearLimit ? "text-warning" : "text-muted-foreground"
       )}>
         {current}/{max} characters
       </div>
-      <div className="w-16 h-1 bg-muted rounded-full overflow-hidden">
+      <div className="w-20 h-1 bg-muted rounded-full overflow-hidden">
         <div 
           className={cn(
             "h-full transition-all duration-300",
-            percentage <= 80 ? "bg-brand-500" : percentage <= 100 ? "bg-warning" : "bg-destructive"
+            isOverLimit ? "bg-destructive" : isNearLimit ? "bg-warning" : "bg-brand-500"
           )}
           style={{ width: `${Math.min(percentage, 100)}%` }}
         />
