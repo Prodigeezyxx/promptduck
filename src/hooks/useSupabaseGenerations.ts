@@ -57,6 +57,17 @@ export function useSupabaseGenerations() {
     if (!user) return;
 
     try {
+      // Convert variables array to JSON-compatible format
+      const metadata = {
+        tags: result.tags,
+        variables: result.variables.map(v => ({
+          name: v.name,
+          type: v.type,
+          required: v.required,
+          description: v.description
+        }))
+      };
+
       const { error } = await supabase
         .from('user_generations')
         .insert({
@@ -66,10 +77,7 @@ export function useSupabaseGenerations() {
           complexity: 'intermediate',
           heuristics: result.heuristics || [],
           result: JSON.stringify(result),
-          metadata: {
-            tags: result.tags,
-            variables: result.variables
-          }
+          metadata
         });
 
       if (error) throw error;
@@ -99,11 +107,16 @@ export function useSupabaseGenerations() {
     }
   };
 
+  const setHistory = (history: GenerationResult[]) => {
+    setGenerations(history);
+  };
+
   return {
     generations,
     loading,
     saveGeneration,
     clearGenerations,
-    refreshGenerations: loadGenerations
+    refreshGenerations: loadGenerations,
+    setHistory
   };
 }

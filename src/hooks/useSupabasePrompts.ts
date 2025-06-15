@@ -44,7 +44,7 @@ export function useSupabasePrompts() {
         created_at: item.created_at,
         updated_at: item.updated_at,
         heuristics: [],
-        variables: {},
+        variables: [], // Initialize as empty array instead of object
         difficulty: 'intermediate',
         estimatedTime: '15 minutes'
       }));
@@ -93,7 +93,7 @@ export function useSupabasePrompts() {
         created_at: data.created_at,
         updated_at: data.updated_at,
         heuristics: prompt.heuristics || [],
-        variables: prompt.variables || {},
+        variables: prompt.variables || [], // Ensure it's always an array
         difficulty: prompt.difficulty || 'intermediate',
         estimatedTime: prompt.estimatedTime || '15 minutes'
       };

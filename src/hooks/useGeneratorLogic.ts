@@ -39,9 +39,9 @@ export function useGeneratorLogic() {
 
   useEffect(() => {
     if (user && generations.length > 0) {
-      setHistory(generations);
+      setSupabaseHistory(generations);
     }
-  }, [user, generations, setHistory]);
+  }, [user, generations, setSupabaseHistory]);
 
   // Clear template reference when used
   useEffect(() => {
