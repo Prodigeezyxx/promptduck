@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
@@ -6,7 +7,7 @@ import { usePromptStore } from '@/store/promptStore';
 import { openaiService } from '@/services/openaiService';
 import { IntentDetectionEngine } from '@/services/intent/intentDetection';
 import { selectHeuristics } from '@/utils/heuristicSelector';
-import { HeuristicType, GenerationRequest, GenerationResult } from '@/types';
+import { GenerationRequest, GenerationResult } from '@/types';
 import { toast } from '@/hooks/use-toast';
 
 export function useGeneratorLogic() {
@@ -17,43 +18,24 @@ export function useGeneratorLogic() {
 
   const [intent, setIntent] = useState('');
   const [context, setContext] = useState('');
-  const [complexity, setComplexity] = useState<'simple' | 'intermediate' | 'advanced'>('intermediate');
-  const [selectedHeuristics, setSelectedHeuristics] = useState<HeuristicType[]>([]);
+  
+  // Use smart defaults - always intermediate complexity
+  const complexity = 'intermediate' as const;
 
-  // Enhanced template handling - show context about the request instead of pre-filling
+  // Clear template reference when used
   useEffect(() => {
     if (currentPrompt) {
-      // Don't pre-fill the form, instead show template context
       console.log('Template selected:', currentPrompt.title);
-      // TODO: Show template reference panel instead of pre-filling
       setCurrentPrompt(null);
     }
   }, [currentPrompt, setCurrentPrompt]);
 
-  // Enhanced intent change handler with smart heuristic selection
   const handleIntentChange = (value: string) => {
     setIntent(value);
-    if (value.trim()) {
-      const intentAnalysis = IntentDetectionEngine.analyzeIntent(value, context);
-      setSelectedHeuristics(intentAnalysis.suggestedHeuristics as HeuristicType[]);
-      
-      // Auto-adjust complexity based on intent analysis
-      setComplexity(intentAnalysis.complexity);
-      
-      // Show intent detection feedback
-      if (intentAnalysis.confidence > 0.7) {
-        console.log(`Detected intent: ${intentAnalysis.primaryIntent} (${Math.round(intentAnalysis.confidence * 100)}% confidence)`);
-      }
-    }
   };
 
   const handleContextChange = (value: string) => {
     setContext(value);
-    if (intent.trim()) {
-      const intentAnalysis = IntentDetectionEngine.analyzeIntent(intent, value);
-      setSelectedHeuristics(intentAnalysis.suggestedHeuristics as HeuristicType[]);
-      setComplexity(intentAnalysis.complexity);
-    }
   };
 
   const handleGenerate = async () => {
@@ -78,17 +60,14 @@ export function useGeneratorLogic() {
     setGenerating(true);
     
     try {
-      // Get intelligent heuristics if not already set
-      const heuristicsToUse = selectedHeuristics.length > 0 
-        ? selectedHeuristics.map(h => h as string)
-        : selectHeuristics(intent, context);
+      // Get intelligent heuristics based on intent and context
+      const heuristicsToUse = selectHeuristics(intent, context);
 
       // Initialize service with the OpenAI API key
       if (apiKey?.openai) {
         openaiService.initialize(apiKey.openai);
       }
 
-      // Ensure context is properly handled - convert to string or undefined
       const contextValue = context?.trim();
       
       const request: GenerationRequest = {
@@ -147,15 +126,8 @@ export function useGeneratorLogic() {
   };
 
   const handleRemixSuggestion = (suggestion: string) => {
-    // Apply the remix suggestion to the current context/intent
     const newContext = context ? `${context}. ${suggestion}` : suggestion;
     setContext(newContext);
-    
-    // Update heuristics based on the new context
-    if (intent.trim()) {
-      const autoHeuristics = selectHeuristics(intent, newContext);
-      setSelectedHeuristics(autoHeuristics as HeuristicType[]);
-    }
     
     toast({ 
       title: 'Remix applied!', 
@@ -173,19 +145,17 @@ export function useGeneratorLogic() {
     intent,
     context,
     complexity,
-    selectedHeuristics,
     isGenerating,
     lastResult,
     apiKey,
     // Handlers
     handleIntentChange,
     handleContextChange,
-    setComplexity,
     handleGenerate,
     handleSavePrompt,
     handleCopyPrompt,
     handleRemixSuggestion,
     handleSelectHistoryResult,
-    setLastResult, // Export this for outer usage
+    setLastResult,
   };
 }

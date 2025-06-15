@@ -1,7 +1,8 @@
+
 import { useState } from 'react';
 import { ApiKeyRequired } from '@/components/ApiKeyRequired';
 import { GeneratorPageHeader } from '@/components/generator/GeneratorPageHeader';
-import { EnhancedGeneratorLayout } from '@/components/generator/EnhancedGeneratorLayout';
+import { StreamlinedGeneratorLayout } from '@/components/generator/StreamlinedGeneratorLayout';
 import { GeneratorHistoryDrawer } from '@/components/generator/GeneratorHistoryDrawer';
 import { useGeneratorLogic } from '@/hooks/useGeneratorLogic';
 import { motion } from 'framer-motion';
@@ -14,31 +15,25 @@ export default function AIGeneratorPage() {
     // State
     intent,
     context,
-    complexity,
-    selectedHeuristics,
     isGenerating,
     lastResult,
     apiKey,
     // Handlers
     handleIntentChange,
     handleContextChange,
-    setComplexity,
     handleGenerate,
     handleSavePrompt,
     handleCopyPrompt,
     handleRemixSuggestion,
     handleSelectHistoryResult,
-    // Use setLastResult from logic if needed
     setLastResult,
   } = useGeneratorLogic();
 
-  // Add start new prompt handler
   const handleStartNewPrompt = useCallback(() => {
     handleIntentChange('');
     handleContextChange('');
-    setComplexity('intermediate');
     setLastResult(null);
-  }, [handleIntentChange, handleContextChange, setComplexity, setLastResult]);
+  }, [handleIntentChange, handleContextChange, setLastResult]);
 
   if (!apiKey) {
     return <ApiKeyRequired />;
@@ -53,24 +48,20 @@ export default function AIGeneratorPage() {
     >
       <GeneratorPageHeader onHistoryOpen={() => setHistoryOpen(true)} />
 
-      <EnhancedGeneratorLayout
+      <StreamlinedGeneratorLayout
         intent={intent}
         context={context}
-        complexity={complexity}
-        selectedHeuristics={selectedHeuristics}
         isGenerating={isGenerating}
         lastResult={lastResult}
         onIntentChange={handleIntentChange}
         onContextChange={handleContextChange}
-        onComplexityChange={setComplexity}
         onGenerate={handleGenerate}
         onCopyPrompt={handleCopyPrompt}
         onSavePrompt={handleSavePrompt}
         onRemixSuggestion={handleRemixSuggestion}
-        onStartNewPrompt={handleStartNewPrompt} // <-- Pass to layout
+        onStartNewPrompt={handleStartNewPrompt}
       />
 
-      {/* History Drawer */}
       <GeneratorHistoryDrawer
         open={historyOpen}
         onOpenChange={setHistoryOpen}
