@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
@@ -94,10 +93,8 @@ export function useGeneratorLogic() {
       // Get intelligent heuristics based on intent and context
       const heuristicsToUse = selectHeuristics(intent, context);
 
-      // Initialize service with the OpenAI API key
-      if (apiKey?.openai) {
-        openaiService.initialize(apiKey.openai);
-      }
+      // Initialize service - no API key needed since it's server-side
+      openaiService.initialize();
 
       const contextValue = context?.trim();
       

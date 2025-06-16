@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useApiKeyStore } from '@/store/apiKeyStore';
@@ -42,16 +41,10 @@ export function usePlaygroundConversation() {
   );
 
   useEffect(() => {
-    if (apiKey?.openai) {
-      try {
-        openaiService.initialize(apiKey.openai);
-        console.log('OpenAI service initialized successfully');
-      } catch (error) {
-        console.error('Failed to initialize OpenAI service:', error);
-        toast.error('Failed to initialize AI service');
-      }
-    }
-  }, [apiKey?.openai]);
+    // Initialize the service - no API key needed since it's server-side
+    openaiService.initialize();
+    console.log('OpenAI service initialized for server-side usage');
+  }, []);
 
   useEffect(() => {
     if (location.state?.prefilledPrompt) {
@@ -105,11 +98,6 @@ export function usePlaygroundConversation() {
       return;
     }
 
-    if (!apiKey?.openai) {
-      toast.error('API key missing');
-      return;
-    }
-
     // Check and consume credit
     if (!canUseCredit()) {
       toast.error(`No credits. ${getRemainingCredits()} left.`);
@@ -133,8 +121,6 @@ export function usePlaygroundConversation() {
     const aiMessageId = addMessage('', 'ai', true);
 
     try {
-      openaiService.initialize(apiKey.openai);
-      
       const result = await openaiService.generateChatResponse(prompt.trim());
       
       if (abortControllerRef.current?.signal.aborted) {
@@ -156,8 +142,6 @@ export function usePlaygroundConversation() {
           errorMessage = 'Quota exceeded';
         } else if (error.message.includes('network')) {
           errorMessage = 'Network error';
-        } else if (error.message.includes('not initialized')) {
-          errorMessage = 'Check API key';
         } else {
           errorMessage = error.message;
         }
@@ -207,7 +191,7 @@ export function usePlaygroundConversation() {
     stopGeneration,
     clearConversation,
     copyMessage,
-    isValidKey: !!apiKey?.openai,
+    isValidKey: true, // Always true since server-side managed
     // History functionality
     conversations,
     currentConversationId,
