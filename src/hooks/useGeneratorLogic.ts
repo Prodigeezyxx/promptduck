@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
@@ -16,7 +17,6 @@ export function useGeneratorLogic() {
   const { user } = useAuthContext();
   const { isGenerating, lastResult, history, setGenerating, setLastResult, setHistory } = useGeneratorStore();
   const { useCredit, canUseCredit, getRemainingCredits } = useCreditStore();
-  const { apiKey } = useApiKeyStore();
   const { addPrompt, currentPrompt, setCurrentPrompt, setPrompts } = usePromptStore();
   
   // Supabase hooks
@@ -204,7 +204,7 @@ export function useGeneratorLogic() {
     isGenerating,
     lastResult,
     history: user ? generations : history,
-    apiKey,
+    isValidKey: true, // Always valid since API key is server-side
     templateReference,
     // Handlers
     handleIntentChange,
