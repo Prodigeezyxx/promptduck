@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { useApiKeyStore } from '@/store/apiKeyStore';
@@ -42,16 +41,15 @@ export function usePlaygroundConversation() {
   );
 
   useEffect(() => {
-    if (apiKey?.openai) {
-      try {
-        openaiService.initialize(apiKey.openai);
-        console.log('OpenAI service initialized successfully');
-      } catch (error) {
-        console.error('Failed to initialize OpenAI service:', error);
-        toast.error('Failed to initialize AI service');
-      }
+    // Service is always initialized since API key is server-side now
+    try {
+      openaiService.initialize();
+      console.log('OpenAI service initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize OpenAI service:', error);
+      toast.error('Failed to initialize AI service');
     }
-  }, [apiKey?.openai]);
+  }, []);
 
   useEffect(() => {
     if (location.state?.prefilledPrompt) {
@@ -105,11 +103,6 @@ export function usePlaygroundConversation() {
       return;
     }
 
-    if (!apiKey?.openai) {
-      toast.error('API key missing');
-      return;
-    }
-
     // Check and consume credit
     if (!canUseCredit()) {
       toast.error(`No credits. ${getRemainingCredits()} left.`);
@@ -133,7 +126,8 @@ export function usePlaygroundConversation() {
     const aiMessageId = addMessage('', 'ai', true);
 
     try {
-      openaiService.initialize(apiKey.openai);
+      // Service is always initialized since API key is server-side now
+      openaiService.initialize();
       
       const result = await openaiService.generateChatResponse(prompt.trim());
       
@@ -207,7 +201,7 @@ export function usePlaygroundConversation() {
     stopGeneration,
     clearConversation,
     copyMessage,
-    isValidKey: !!apiKey?.openai,
+    isValidKey: true, // Always valid since API key is server-side
     // History functionality
     conversations,
     currentConversationId,
