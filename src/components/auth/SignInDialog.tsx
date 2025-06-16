@@ -9,6 +9,7 @@ import { Loader2, Mail } from 'lucide-react';
 import { GoogleAuthButton } from './GoogleAuthButton';
 import { useAuthContext } from './AuthProvider';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface SignInDialogProps {
   open: boolean;
@@ -21,16 +22,17 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
   const [loading, setLoading] = useState(false);
   const { signInWithEmail, signUpWithEmail, isSignedIn } = useAuthContext();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Close dialog when user successfully signs in and redirect to generator
   useEffect(() => {
     if (isSignedIn && open) {
       console.log('User signed in, closing dialog and redirecting to generator');
       onOpenChange(false);
-      // Navigate to generator page after successful sign in
-      window.location.href = '/app/generator';
+      // Use React Router navigation instead of window.location.href
+      navigate('/app/generator');
     }
-  }, [isSignedIn, open, onOpenChange]);
+  }, [isSignedIn, open, onOpenChange, navigate]);
 
   const handleEmailAuth = async (isSignUp: boolean) => {
     if (!email || !password) {

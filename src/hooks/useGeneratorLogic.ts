@@ -26,6 +26,7 @@ export function useGeneratorLogic() {
 
   const [intent, setIntent] = useState('');
   const [context, setContext] = useState('');
+  const [templateReference, setTemplateReference] = useState<any>(null);
   
   // Use smart defaults - always intermediate complexity
   const complexity = 'intermediate' as const;
@@ -43,13 +44,22 @@ export function useGeneratorLogic() {
     }
   }, [user, generations, setSupabaseHistory]);
 
-  // Clear template reference when used
+  // Handle template pre-filling when currentPrompt is set
   useEffect(() => {
     if (currentPrompt) {
-      console.log('Template selected:', currentPrompt.title);
-      setCurrentPrompt(null);
+      console.log('Template selected for pre-filling:', currentPrompt.title);
+      
+      // Pre-fill the form with template data
+      setIntent(currentPrompt.title || '');
+      setContext(currentPrompt.description || '');
+      setTemplateReference(currentPrompt);
+      
+      toast({ 
+        title: 'Template loaded!', 
+        description: `${currentPrompt.title} has been loaded as your starting point.` 
+      });
     }
-  }, [currentPrompt, setCurrentPrompt]);
+  }, [currentPrompt]);
 
   const handleIntentChange = (value: string) => {
     setIntent(value);
@@ -176,6 +186,19 @@ export function useGeneratorLogic() {
     toast({ title: 'Loaded!', description: 'Historical result loaded.' });
   };
 
+  const handleClearTemplate = () => {
+    setTemplateReference(null);
+    setCurrentPrompt(null);
+  };
+
+  const handleStartNewPrompt = () => {
+    setIntent('');
+    setContext('');
+    setTemplateReference(null);
+    setCurrentPrompt(null);
+    setLastResult(null);
+  };
+
   return {
     // State
     intent,
@@ -185,6 +208,7 @@ export function useGeneratorLogic() {
     lastResult,
     history: user ? generations : history,
     apiKey,
+    templateReference,
     // Handlers
     handleIntentChange,
     handleContextChange,
@@ -193,6 +217,8 @@ export function useGeneratorLogic() {
     handleCopyPrompt,
     handleRemixSuggestion,
     handleSelectHistoryResult,
+    handleClearTemplate,
+    handleStartNewPrompt,
     setLastResult,
   };
 }

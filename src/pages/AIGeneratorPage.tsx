@@ -6,7 +6,6 @@ import { StreamlinedGeneratorLayout } from '@/components/generator/StreamlinedGe
 import { GeneratorHistoryDrawer } from '@/components/generator/GeneratorHistoryDrawer';
 import { useGeneratorLogic } from '@/hooks/useGeneratorLogic';
 import { motion } from 'framer-motion';
-import { useCallback } from 'react';
 
 export default function AIGeneratorPage() {
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -18,6 +17,7 @@ export default function AIGeneratorPage() {
     isGenerating,
     lastResult,
     apiKey,
+    templateReference,
     // Handlers
     handleIntentChange,
     handleContextChange,
@@ -26,14 +26,9 @@ export default function AIGeneratorPage() {
     handleCopyPrompt,
     handleRemixSuggestion,
     handleSelectHistoryResult,
-    setLastResult,
+    handleClearTemplate,
+    handleStartNewPrompt,
   } = useGeneratorLogic();
-
-  const handleStartNewPrompt = useCallback(() => {
-    handleIntentChange('');
-    handleContextChange('');
-    setLastResult(null);
-  }, [handleIntentChange, handleContextChange, setLastResult]);
 
   if (!apiKey) {
     return <ApiKeyRequired />;
@@ -53,6 +48,7 @@ export default function AIGeneratorPage() {
         context={context}
         isGenerating={isGenerating}
         lastResult={lastResult}
+        templateReference={templateReference}
         onIntentChange={handleIntentChange}
         onContextChange={handleContextChange}
         onGenerate={handleGenerate}
@@ -60,6 +56,7 @@ export default function AIGeneratorPage() {
         onSavePrompt={handleSavePrompt}
         onRemixSuggestion={handleRemixSuggestion}
         onStartNewPrompt={handleStartNewPrompt}
+        onClearTemplate={handleClearTemplate}
       />
 
       <GeneratorHistoryDrawer

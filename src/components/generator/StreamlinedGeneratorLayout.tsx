@@ -13,6 +13,7 @@ interface StreamlinedGeneratorLayoutProps {
   context: string;
   isGenerating: boolean;
   lastResult: GenerationResult | null;
+  templateReference?: any;
   onIntentChange: (value: string) => void;
   onContextChange: (value: string) => void;
   onGenerate: () => void;
@@ -20,6 +21,7 @@ interface StreamlinedGeneratorLayoutProps {
   onSavePrompt: () => void;
   onRemixSuggestion: (suggestion: string) => void;
   onStartNewPrompt: () => void;
+  onClearTemplate?: () => void;
 }
 
 export function StreamlinedGeneratorLayout({
@@ -27,6 +29,7 @@ export function StreamlinedGeneratorLayout({
   context,
   isGenerating,
   lastResult,
+  templateReference,
   onIntentChange,
   onContextChange,
   onGenerate,
@@ -34,6 +37,7 @@ export function StreamlinedGeneratorLayout({
   onSavePrompt,
   onRemixSuggestion,
   onStartNewPrompt,
+  onClearTemplate,
 }: StreamlinedGeneratorLayoutProps) {
   const isMobile = useIsMobile();
   
@@ -41,10 +45,12 @@ export function StreamlinedGeneratorLayout({
     intent,
     context,
     isGenerating,
+    templateReference,
     onIntentChange,
     onContextChange,
     onGenerate,
-  }), [intent, context, isGenerating, onIntentChange, onContextChange, onGenerate]);
+    onClearTemplate,
+  }), [intent, context, isGenerating, templateReference, onIntentChange, onContextChange, onGenerate, onClearTemplate]);
 
   const outputPanelProps = useMemo(() => ({
     lastResult,

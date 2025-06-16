@@ -1,7 +1,7 @@
 
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { VariableProximity } from '@/components/VariableProximity';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { AnimatedPromptDisplay } from './AnimatedPromptDisplay';
@@ -14,11 +14,12 @@ const OptimizedAnimatedPromptDisplay = memo(AnimatedPromptDisplay);
 export function HeroSection() {
   const [showSignInDialog, setShowSignInDialog] = useState(false);
   const { isSignedIn } = useAuthContext();
+  const navigate = useNavigate();
 
   const handleBuildPrompt = () => {
     if (isSignedIn) {
-      // If already signed in, go directly to generator
-      window.location.href = '/app/generator';
+      // Use React Router navigation instead of window.location.href
+      navigate('/app/generator');
     } else {
       // If not signed in, show auth dialog
       setShowSignInDialog(true);
