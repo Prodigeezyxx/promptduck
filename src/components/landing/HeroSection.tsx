@@ -15,10 +15,10 @@ export function HeroSection() {
   const [showSignInDialog, setShowSignInDialog] = useState(false);
   const { isSignedIn } = useAuthContext();
 
-  const handleStartCreating = () => {
+  const handleBuildPrompt = () => {
     if (isSignedIn) {
-      // If already signed in, go directly to app
-      window.location.href = '/app/library';
+      // If already signed in, go directly to generator
+      window.location.href = '/app/generator';
     } else {
       // If not signed in, show auth dialog
       setShowSignInDialog(true);
@@ -111,10 +111,10 @@ export function HeroSection() {
           >
             <Button 
               size="lg" 
-              onClick={handleStartCreating}
+              onClick={handleBuildPrompt}
               className="bg-gradient-to-r from-accent to-accent/90 hover:from-accent/90 hover:to-accent text-white p-fluid-md text-fluid-base lg:text-fluid-lg group border-0 shadow-elevation-2 w-full sm:w-auto touch-target"
             >
-              Start Creating
+              Build Your Prompt
               <ArrowRight className="ml-2 h-4 w-4 lg:h-5 lg:w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
             
@@ -135,17 +135,6 @@ export function HeroSection() {
           >
             <p className="text-fluid-xs lg:text-fluid-sm text-secondaryText">
               20 free generations daily • No credit card required
-            </p>
-            {/* Privacy Policy notice for Google OAuth compliance */}
-            <p className="text-fluid-xs text-secondaryText">
-              By using PromptDuck, you agree to our{' '}
-              <Link to="/privacy" className="text-accent hover:text-accent/80 transition-colors underline">
-                Privacy Policy
-              </Link>
-              {' '}and{' '}
-              <Link to="/terms" className="text-accent hover:text-accent/80 transition-colors underline">
-                Terms of Service
-              </Link>
             </p>
           </motion.div>
         </motion.div>

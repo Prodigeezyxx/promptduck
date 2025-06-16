@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, Mail, Settings } from 'lucide-react';
 import { GoogleAuthButton } from './GoogleAuthButton';
-import { GuestSignInButton } from './GuestSignInButton';
 import { OAuthDiagnostics } from './OAuthDiagnostics';
 import { useAuthContext } from './AuthProvider';
 import { useToast } from '@/hooks/use-toast';
@@ -25,11 +24,13 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
   const { signInWithEmail, signUpWithEmail, isSignedIn } = useAuthContext();
   const { toast } = useToast();
 
-  // Close dialog when user successfully signs in
+  // Close dialog when user successfully signs in and redirect to generator
   useEffect(() => {
     if (isSignedIn && open) {
-      console.log('User signed in, closing dialog');
+      console.log('User signed in, closing dialog and redirecting to generator');
       onOpenChange(false);
+      // Navigate to generator page after successful sign in
+      window.location.href = '/app/generator';
     }
   }, [isSignedIn, open, onOpenChange]);
 
@@ -98,11 +99,11 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
           <OAuthDiagnostics />
         ) : (
           <div className="space-y-4">
-            {/* Guest Sign In Option */}
+            {/* Google Auth - Primary Option */}
             <div className="space-y-2">
-              <GuestSignInButton />
+              <GoogleAuthButton />
               <p className="text-xs text-center text-muted-foreground">
-                Try PromptDuck features for a limited time
+                Sign in with your Google account for the best experience
               </p>
             </div>
 
@@ -111,19 +112,7 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-              </div>
-            </div>
-
-            {/* Google Auth */}
-            <GoogleAuthButton />
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">Or use email</span>
+                <span className="bg-background px-2 text-muted-foreground">Or continue with email</span>
               </div>
             </div>
 
