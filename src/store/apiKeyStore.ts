@@ -11,22 +11,14 @@ interface ApiKeyState {
   isValidKey: () => boolean;
 }
 
-// Developer API key (internal use only)
-const DEVELOPER_API_KEY = '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';
-
 export const useApiKeyStore = create<ApiKeyState>()(
   persist(
     (set, get) => ({
-      apiKey: {
-        openai: DEVELOPER_API_KEY,
-        created_at: new Date().toISOString(),
-        status: 'active'
-      },
+      apiKey: null,
       setApiKey: (key: string) => {
-        // Always use the developer key regardless of input
         set({
           apiKey: {
-            openai: DEVELOPER_API_KEY,
+            openai: key,
             created_at: new Date().toISOString(),
             status: 'active'
           }
@@ -44,15 +36,10 @@ export const useApiKeyStore = create<ApiKeyState>()(
           });
         }
       },
-      clearApiKey: () => set({ 
-        apiKey: {
-          openai: DEVELOPER_API_KEY,
-          created_at: new Date().toISOString(),
-          status: 'active'
-        }
-      }),
+      clearApiKey: () => set({ apiKey: null }),
       isValidKey: () => {
-        return true; // Always return true since we have a hardcoded key
+        const apiKey = get().apiKey;
+        return !!(apiKey?.openai && apiKey.openai.trim().length > 0);
       }
     }),
     {
