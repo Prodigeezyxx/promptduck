@@ -52,7 +52,15 @@ export function ChatInput({
       textarea.style.height = 'auto';
       // Responsive max height based on viewport
       const maxHeight = window.innerWidth < 768 ? 150 : 200;
-      textarea.style.height = Math.min(textarea.scrollHeight, maxHeight) + 'px';
+      const newHeight = Math.min(textarea.scrollHeight, maxHeight);
+      textarea.style.height = newHeight + 'px';
+      
+      // Hide scrollbar when content fits within min height
+      if (textarea.scrollHeight <= 60) { // Approximate min-height
+        textarea.style.overflowY = 'hidden';
+      } else {
+        textarea.style.overflowY = 'auto';
+      }
     }
   }, [value]);
 
@@ -71,10 +79,12 @@ export function ChatInput({
             className={cn(
               "flex-1 resize-none border-0 bg-transparent px-0 py-3 text-fluid-base text-primaryText",
               "focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-secondaryText",
-              "min-h-[40px] max-h-[150px] sm:max-h-[200px]"
+              "min-h-[40px] max-h-[150px] sm:max-h-[200px]",
+              "scrollbar-hide" // Hide scrollbar when not needed
             )}
             rows={1}
             aria-label="Message input"
+            style={{ overflowY: 'hidden' }} // Initially hide scrollbar
           />
 
           {/* Send/Stop button */}

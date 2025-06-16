@@ -1,13 +1,12 @@
 
 import { useState } from 'react';
-import { Settings as SettingsIcon, User, Database, Trash2, Download, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Settings as SettingsIcon, User, Database, Trash2, Download, Loader2, Eye } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { ApiKeySettings } from '@/components/settings/ApiKeySettings';
-import { AuthDiagnostics } from '@/components/auth/AuthDiagnostics';
 import { usePromptStore } from '@/store/promptStore';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
@@ -128,9 +127,6 @@ export default function SettingsPage() {
           )}
         </CardContent>
       </Card>
-
-      {/* Authentication Diagnostics */}
-      <AuthDiagnostics />
 
       {/* UI Preferences */}
       <Card>
