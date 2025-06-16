@@ -108,7 +108,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ delay: 0.4, duration: 0.6 }} 
-            className="flex flex-col sm:flex-row gap-3 lg:gap-4 justify-center items-center pt-4 lg:pt-8"
+            className="flex justify-center items-center pt-4 lg:pt-8"
           >
             <Button 
               size="lg" 
@@ -117,14 +117,6 @@ export function HeroSection() {
             >
               Build Your Prompt
               <ArrowRight className="ml-2 h-4 w-4 lg:h-5 lg:w-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="p-fluid-md text-fluid-base lg:text-fluid-lg border-[rgba(255,255,255,0.1)] text-secondaryText hover:bg-surface hover:text-primaryText transition-colors w-full sm:w-auto touch-target"
-            >
-              Watch Demo
             </Button>
           </motion.div>
           
