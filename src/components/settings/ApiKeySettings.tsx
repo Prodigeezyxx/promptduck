@@ -8,7 +8,7 @@ export function ApiKeySettings() {
       <CardHeader>
         <CardTitle className="text-primaryText flex items-center">
           <Shield className="w-5 h-5 mr-2" />
-          AI Engine Status
+          PromptDuck Engine Status
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -26,12 +26,6 @@ export function ApiKeySettings() {
             <Shield className="w-4 h-4 text-success" />
             <span className="text-sm text-success font-medium">Server-Side Protected</span>
           </div>
-        </div>
-        
-        <div className="bg-success/10 p-4 rounded-lg border border-success/20">
-          <p className="text-success text-sm">
-            <strong>Secure Setup:</strong> Your API key is safely stored on the server and protected from client access. All users can access AI features through secure endpoints.
-          </p>
         </div>
       </CardContent>
     </Card>
