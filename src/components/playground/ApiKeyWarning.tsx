@@ -4,6 +4,6 @@ interface ApiKeyWarningProps {
 }
 
 export function ApiKeyWarning({ isValidKey }: ApiKeyWarningProps) {
-  // Always return null since API key is managed server-side
+  // API key is now hardcoded, so no warning is ever needed
   return null;
 }

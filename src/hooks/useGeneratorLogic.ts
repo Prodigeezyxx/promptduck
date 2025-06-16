@@ -17,6 +17,7 @@ export function useGeneratorLogic() {
   const { user } = useAuthContext();
   const { isGenerating, lastResult, history, setGenerating, setLastResult, setHistory } = useGeneratorStore();
   const { useCredit, canUseCredit, getRemainingCredits } = useCreditStore();
+  const { apiKey } = useApiKeyStore();
   const { addPrompt, currentPrompt, setCurrentPrompt, setPrompts } = usePromptStore();
   
   // Supabase hooks
@@ -93,8 +94,10 @@ export function useGeneratorLogic() {
       // Get intelligent heuristics based on intent and context
       const heuristicsToUse = selectHeuristics(intent, context);
 
-      // Initialize service - no API key needed since it's server-side now
-      openaiService.initialize();
+      // Initialize service with the OpenAI API key
+      if (apiKey?.openai) {
+        openaiService.initialize(apiKey.openai);
+      }
 
       const contextValue = context?.trim();
       
@@ -204,7 +207,7 @@ export function useGeneratorLogic() {
     isGenerating,
     lastResult,
     history: user ? generations : history,
-    isValidKey: true, // Always valid since API key is server-side
+    apiKey,
     templateReference,
     // Handlers
     handleIntentChange,
