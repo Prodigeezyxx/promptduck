@@ -8,6 +8,8 @@ import { useThemeStore } from "@/store/themeStore";
 import { AuthProvider, useAuthContext } from "@/components/auth/AuthProvider";
 import { useEffect } from "react";
 import { DuckIcon } from "@/components/icons/DuckIcon";
+import { analytics } from "@/services/analytics/posthog";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
@@ -24,8 +26,14 @@ const queryClient = new QueryClient();
 
 function AppContent() {
   const { theme } = useThemeStore();
-  const { isSignedIn, isLoaded } = useAuthContext();
+  const { isSignedIn, isLoaded, user } = useAuthContext();
+  const { trackPageView, identifyUser } = useAnalytics();
   const location = useLocation();
+
+  useEffect(() => {
+    // Initialize PostHog
+    analytics.init();
+  }, []);
 
   useEffect(() => {
     // Apply theme on app initialization and route changes
@@ -34,7 +42,20 @@ function AppContent() {
     } else {
       document.documentElement.classList.remove('dark');
     }
-  }, [theme, location.pathname]);
+
+    // Track page views
+    trackPageView(location.pathname);
+  }, [theme, location.pathname, trackPageView]);
+
+  useEffect(() => {
+    // Identify user when signed in
+    if (isSignedIn && user?.id) {
+      identifyUser(user.id, {
+        email: user.email,
+        plan: 'free', // Update based on your user plan logic
+      });
+    }
+  }, [isSignedIn, user, identifyUser]);
 
   // Show loading while auth is initializing
   if (!isLoaded) {
