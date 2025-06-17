@@ -16,14 +16,16 @@ class PostHogService {
     }
 
     posthog.init(posthogKey, {
-      api_host: posthogHost || 'https://app.posthog.com',
+      api_host: posthogHost || 'https://eu.i.posthog.com',
       // Disable in development mode
       loaded: (posthog) => {
         if (import.meta.env.DEV) posthog.debug();
       },
       capture_pageview: false, // We'll manually capture pageviews
       capture_pageleave: true,
-      // Enable session recording (optional)
+      // Configure person profiles to match the provided script
+      person_profiles: 'identified_only',
+      // Session recording configuration
       session_recording: {
         maskAllInputs: false,
         maskInputOptions: {
