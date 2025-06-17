@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { GenerationResult } from '@/types';
 import { downloadPromptAsJSON } from '@/utils/promptExporter';
 import { useToast } from '@/hooks/use-toast';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface OutputActionsProps {
   result: GenerationResult;
@@ -15,8 +16,14 @@ interface OutputActionsProps {
 export function OutputActions({ result, onCopyPrompt, onSavePrompt }: OutputActionsProps) {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { track } = useAnalytics();
 
   const handleTestInPlayground = () => {
+    track('prompt_tested_in_playground', {
+      prompt_length: result.optimized_prompt.length,
+      heuristics_count: result.heuristics?.length || 0,
+    });
+    
     navigate('/app/playground', { 
       state: { prefilledPrompt: result.optimized_prompt }
     });
@@ -50,8 +57,10 @@ export function OutputActions({ result, onCopyPrompt, onSavePrompt }: OutputActi
 
   return (
     <div className="flex gap-2 flex-wrap">
-      {/* Remove Test in Playground button in this context for cleaner output action */}
-      {/* Copy and Save buttons are handled in parent */}
+      <Button onClick={handleTestInPlayground} variant="outline" size="sm">
+        <PlayCircle className="w-4 h-4 mr-2" />
+        Test in Playground
+      </Button>
       <Button onClick={handleDownloadJSON} variant="outline" size="sm">
         <Download className="w-4 h-4 mr-2" />
         Download JSON

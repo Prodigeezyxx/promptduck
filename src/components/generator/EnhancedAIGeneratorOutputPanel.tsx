@@ -163,13 +163,14 @@ export function EnhancedAIGeneratorOutputPanel({
                   </>
                 )}
               </Button>
-
-              <OutputActions 
-                result={lastResult}
-                onCopyPrompt={handleCopy}
-                onSavePrompt={handleSave}
-              />
             </div>
+
+            {/* Additional Actions */}
+            <OutputActions 
+              result={lastResult}
+              onCopyPrompt={handleCopy}
+              onSavePrompt={handleSave}
+            />
 
             {/* Remix Suggestions */}
             {lastResult.remix_suggestions && lastResult.remix_suggestions.length > 0 && (
