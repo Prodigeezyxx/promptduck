@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,7 +9,6 @@ import { Loader2, Mail } from 'lucide-react';
 import { GoogleAuthButton } from './GoogleAuthButton';
 import { useAuthContext } from './AuthProvider';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
 
 interface SignInDialogProps {
   open: boolean;
@@ -22,23 +21,30 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
   const [loading, setLoading] = useState(false);
   const { signInWithEmail, signUpWithEmail, isSignedIn } = useAuthContext();
   const { toast } = useToast();
-  const navigate = useNavigate();
 
-  // Close dialog when user successfully signs in and redirect to generator
+  // Close dialog when user successfully signs in - let App.tsx handle routing
   useEffect(() => {
     if (isSignedIn && open) {
-      console.log('User signed in, closing dialog and redirecting to generator');
+      console.log('User signed in, closing dialog');
       onOpenChange(false);
-      // Use React Router navigation instead of window.location.href
-      navigate('/app/generator');
+      // Don't redirect here - let App.tsx handle it
     }
-  }, [isSignedIn, open, onOpenChange, navigate]);
+  }, [isSignedIn, open, onOpenChange]);
 
   const handleEmailAuth = async (isSignUp: boolean) => {
     if (!email || !password) {
       toast({
         title: 'Missing Information',
         description: 'Please enter both email and password.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: 'Invalid Password',
+        description: 'Password must be at least 6 characters long.',
         variant: 'destructive',
       });
       return;
@@ -51,23 +57,42 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
         : await signInWithEmail(email, password);
 
       if (error) {
+        console.error('Auth error:', error);
+        
+        // Provide more specific error messages
+        let errorMessage = error.message;
+        if (error.message.includes('Invalid login credentials')) {
+          errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+        } else if (error.message.includes('Email not confirmed')) {
+          errorMessage = 'Please check your email and click the confirmation link before signing in.';
+        } else if (error.message.includes('User already registered')) {
+          errorMessage = 'An account with this email already exists. Please sign in instead.';
+        }
+        
         toast({
           title: isSignUp ? 'Sign Up Failed' : 'Sign In Failed',
-          description: error.message,
+          description: errorMessage,
           variant: 'destructive',
         });
       } else {
-        toast({
-          title: isSignUp ? 'Account Created' : 'Welcome Back',
-          description: isSignUp 
-            ? 'Please check your email to confirm your account.'
-            : 'You have been signed in successfully.',
-        });
-        if (!isSignUp) {
-          onOpenChange(false);
+        if (isSignUp) {
+          toast({
+            title: 'Account Created',
+            description: 'Please check your email to confirm your account before signing in.',
+          });
+          // Clear form after successful signup
+          setEmail('');
+          setPassword('');
+        } else {
+          toast({
+            title: 'Welcome Back',
+            description: 'You have been signed in successfully.',
+          });
+          // Dialog will close automatically via useEffect
         }
       }
     } catch (error) {
+      console.error('Unexpected auth error:', error);
       toast({
         title: 'Error',
         description: 'An unexpected error occurred. Please try again.',
@@ -85,6 +110,9 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
           <DialogTitle className="text-center">
             Welcome to PromptDuck
           </DialogTitle>
+          <DialogDescription className="text-center text-sm text-muted-foreground">
+            Sign in to access your personalized prompt library and save your work.
+          </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">
@@ -121,6 +149,7 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
                 />
               </div>
               <div className="space-y-2">
@@ -131,6 +160,7 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
                 />
               </div>
               <Button
@@ -161,6 +191,7 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
                 />
               </div>
               <div className="space-y-2">
@@ -168,9 +199,10 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
                 <Input
                   id="signup-password"
                   type="password"
-                  placeholder="Create a password"
+                  placeholder="Create a password (min. 6 characters)"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
                 />
               </div>
               <Button
