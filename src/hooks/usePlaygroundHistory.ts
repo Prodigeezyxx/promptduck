@@ -10,6 +10,15 @@ interface ConversationHistory {
   timestamp: Date;
 }
 
+// Helper function to generate proper UUIDs
+const generateUUID = (): string => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
+
 export function usePlaygroundHistory() {
   const { user } = useAuthContext();
   const { conversations, saveConversation, deleteConversation } = useSupabaseConversations();
@@ -44,7 +53,8 @@ export function usePlaygroundHistory() {
   const saveCurrentConversation = (messages: any[]) => {
     if (messages.length === 0) return;
 
-    const conversationId = currentConversationId || `conv_${Date.now()}`;
+    // Generate proper UUID for new conversations
+    const conversationId = currentConversationId || generateUUID();
     const title = messages[0]?.content?.slice(0, 50) + '...' || 'Untitled Conversation';
 
     if (user) {
