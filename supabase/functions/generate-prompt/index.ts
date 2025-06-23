@@ -25,8 +25,8 @@ serve(async (req) => {
       throw new Error('Intent is required');
     }
 
-    // Build system prompt for prompt generation
-    const systemPrompt = `You are an expert prompt engineer. Generate an optimized prompt based on the user's intent and context.
+    // Build optimized system prompt for faster processing
+    const systemPrompt = `You are an expert prompt engineer. Generate an optimized prompt based on the user's intent.
 
 CURRENT REQUEST:
 - Intent: ${intent}
@@ -63,8 +63,8 @@ Required structure:
           { role: 'system', content: systemPrompt },
           { role: 'user', content: intent }
         ],
-        max_tokens: 2048,
-        temperature: 0.7,
+        max_tokens: 1024, // Reduced from 2048 for faster response
+        temperature: 0.4, // Reduced from 0.7 for faster, more consistent results
       }),
     });
 

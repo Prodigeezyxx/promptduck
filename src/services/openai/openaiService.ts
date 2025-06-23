@@ -4,7 +4,6 @@ import { OPENAI_CONFIG } from './config';
 import { OpenAIResponseParser } from './responseParser';
 import { OpenAIFallbackGenerator } from './fallbackGenerator';
 import { OptimizedTextCleaner } from '../optimized/textCleaner';
-import { defaultPromptImprover } from '../core/promptImprover';
 import { supabase } from '@/integrations/supabase/client';
 
 export class OpenAIService {
@@ -50,26 +49,13 @@ export class OpenAIService {
         throw new Error('Intent is required and cannot be empty');
       }
 
-      // Fast path optimization
-      const isSimpleRequest = request.intent.length < 100 && (!request.heuristics || request.heuristics.length <= 2);
-      
-      let enhancedRequest = request;
-      if (!isSimpleRequest) {
-        const improvement = await defaultPromptImprover.improvePrompt(request);
-        enhancedRequest = {
-          ...request,
-          intent: improvement.enhancedPrompt,
-          heuristics: improvement.intentAnalysis.suggestedHeuristics,
-          context: typeof request.context === 'string' ? request.context : undefined
-        };
-      }
-
+      // Simplified processing - no duplicate improvement calls
       const { data, error } = await supabase.functions.invoke('generate-prompt', {
         body: {
-          intent: enhancedRequest.intent,
-          context: enhancedRequest.context,
-          heuristics: enhancedRequest.heuristics,
-          complexity: enhancedRequest.complexity
+          intent: request.intent,
+          context: request.context,
+          heuristics: request.heuristics,
+          complexity: request.complexity
         }
       });
 
@@ -83,12 +69,12 @@ export class OpenAIService {
 
       const generationTime = Date.now() - startTime;
       
-      // Convert the response to our expected format
+      // Convert the response to our expected format with minimal processing
       const result: GenerationResult = {
         optimized_prompt: data.optimized_prompt || '',
-        preview_title: data.preview_title || `Generated: ${enhancedRequest.intent}`,
+        preview_title: data.preview_title || `Generated: ${request.intent}`,
         tags: data.tags || ['generated'],
-        heuristics: enhancedRequest.heuristics || [],
+        heuristics: request.heuristics || [],
         variables: data.variables || [],
         metadata: {
           ...data.metadata,
@@ -96,17 +82,6 @@ export class OpenAIService {
         },
         remix_suggestions: data.remix_suggestions || []
       };
-
-      if (!isSimpleRequest) {
-        const improvement = await defaultPromptImprover.improvePrompt(request);
-        result.metadata = {
-          ...result.metadata,
-          improvement_confidence: improvement.confidenceScore,
-          template_used: improvement.templateUsed,
-          intent_detected: improvement.intentAnalysis.primaryIntent,
-          heuristics_applied: improvement.heuristicsApplied
-        };
-      }
       
       return result;
 
