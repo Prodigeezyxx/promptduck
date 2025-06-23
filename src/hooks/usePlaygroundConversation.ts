@@ -43,7 +43,7 @@ export function usePlaygroundConversation() {
   useEffect(() => {
     // Initialize the service - no API key needed since it's server-side
     openaiService.initialize();
-    console.log('OpenAI service initialized for server-side usage');
+    console.log('AI service initialized for server-side usage');
   }, []);
 
   useEffect(() => {
@@ -94,24 +94,24 @@ export function usePlaygroundConversation() {
 
   const sendMessage = async (prompt: string) => {
     if (!prompt.trim()) {
-      toast.error('Enter a prompt');
+      toast.error('Enter a prompt', { duration: 3000 });
       return;
     }
 
     // Check and consume credit
     if (!canUseCredit()) {
-      toast.error(`No credits. ${getRemainingCredits()} left.`);
+      toast.error(`No credits. ${getRemainingCredits()} left.`, { duration: 3000 });
       return;
     }
 
     const creditUsed = useCredit();
     if (!creditUsed) {
-      toast.error('Credit error');
+      toast.error('Credit error', { duration: 3000 });
       return;
     }
 
     const remainingCredits = getRemainingCredits();
-    toast.success(`Sent! ${remainingCredits} left`);
+    toast.success(`Sent! ${remainingCredits} left`, { duration: 3000 });
 
     addMessage(prompt, 'user');
     setCurrentInput('');
@@ -129,7 +129,7 @@ export function usePlaygroundConversation() {
       }
       
       updateMessage(aiMessageId, result, false);
-      toast.success('Done!');
+      toast.success('Done!', { duration: 3000 });
     } catch (error) {
       if (abortControllerRef.current?.signal.aborted) {
         return;
@@ -148,7 +148,7 @@ export function usePlaygroundConversation() {
       }
       
       updateMessage(aiMessageId, `Error: ${errorMessage}`, false);
-      toast.error(`Error: ${errorMessage}`);
+      toast.error(`Error: ${errorMessage}`, { duration: 3000 });
     } finally {
       setIsLoading(false);
       abortControllerRef.current = null;
@@ -179,7 +179,7 @@ export function usePlaygroundConversation() {
 
   const copyMessage = (content: string) => {
     navigator.clipboard.writeText(content);
-    toast.success('Copied!');
+    toast.success('Copied!', { duration: 3000 });
   };
 
   return {

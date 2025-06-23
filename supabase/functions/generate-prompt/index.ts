@@ -16,7 +16,7 @@ serve(async (req) => {
 
   try {
     if (!openAIApiKey) {
-      throw new Error('OpenAI API key not configured');
+      throw new Error('AI service not configured');
     }
 
     const { intent, context, heuristics, complexity } = await req.json();
@@ -69,14 +69,14 @@ Required structure:
     });
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.statusText}`);
+      throw new Error(`AI service error: ${response.statusText}`);
     }
 
     const data = await response.json();
     const content = data.choices[0]?.message?.content;
 
     if (!content) {
-      throw new Error('No response from OpenAI');
+      throw new Error('No response from AI service');
     }
 
     // Parse JSON response
