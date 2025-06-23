@@ -1,6 +1,9 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePromptStore } from '@/store/promptStore';
+import { useSupabasePrompts } from '@/hooks/useSupabasePrompts';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useFeaturedPrompt } from '@/hooks/useFeaturedPrompt';
 import { downloadPromptAsJSON } from '@/utils/promptExporter';
 import { useToast } from '@/hooks/use-toast';
@@ -19,14 +22,42 @@ import {
 
 export default function PromptLibraryPage() {
   const navigate = useNavigate();
-  const { prompts, deletePrompt, duplicatePrompt, setCurrentPrompt, searchPrompts } = usePromptStore();
+  const { user } = useAuthContext();
+  
+  // Local storage prompts (for unauthenticated users)
+  const { 
+    prompts: localPrompts, 
+    deletePrompt: deleteLocalPrompt, 
+    duplicatePrompt: duplicateLocalPrompt, 
+    setCurrentPrompt, 
+    searchPrompts: searchLocalPrompts 
+  } = usePromptStore();
+  
+  // Supabase prompts (for authenticated users)
+  const { 
+    prompts: supabasePrompts, 
+    loading: supabaseLoading,
+    deletePrompt: deleteSupabasePrompt,
+    savePrompt: saveSupabasePrompt
+  } = useSupabasePrompts();
+  
   const { featuredPrompt, forceRotation } = useFeaturedPrompt();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Use the appropriate prompt source based on authentication status
+  const activePrompts = user ? supabasePrompts : localPrompts;
+  const isLoading = user ? supabaseLoading : false;
+
+  // Search functionality that works with both sources
   const filteredPrompts = searchQuery 
-    ? searchPrompts(searchQuery)
-    : prompts;
+    ? (user ? activePrompts.filter(prompt =>
+        prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        prompt.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        prompt.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        prompt.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      ) : searchLocalPrompts(searchQuery))
+    : activePrompts;
 
   const handleFeaturedPromptClick = () => {
     if (featuredPrompt) {
@@ -50,6 +81,37 @@ export default function PromptLibraryPage() {
     navigate('/app/generator');
   };
 
+  const handleDuplicate = async (prompt: any) => {
+    if (user) {
+      // For authenticated users, save to Supabase
+      const duplicatedPrompt = {
+        title: `${prompt.title} (Copy)`,
+        description: prompt.description,
+        content: prompt.content,
+        category: prompt.category,
+        persona: prompt.persona,
+        tags: prompt.tags,
+        heuristics: prompt.heuristics || [],
+        variables: prompt.variables || [],
+        difficulty: prompt.difficulty || 'intermediate',
+        estimatedTime: prompt.estimatedTime || '15 minutes',
+        parent_id: prompt.id
+      };
+      await saveSupabasePrompt(duplicatedPrompt);
+    } else {
+      // For unauthenticated users, use local storage
+      duplicateLocalPrompt(prompt.id);
+    }
+  };
+
+  const handleDelete = async (prompt: any) => {
+    if (user) {
+      await deleteSupabasePrompt(prompt.id);
+    } else {
+      deleteLocalPrompt(prompt.id);
+    }
+  };
+
   const handleDownloadPrompt = (prompt: any) => {
     downloadPromptAsJSON(prompt);
     toast({
@@ -57,6 +119,19 @@ export default function PromptLibraryPage() {
       description: `"${prompt.title}" has been downloaded as a JSON file.`
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className="p-3 lg:p-6 max-w-6xl mx-auto">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500 mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading your prompts...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-3 lg:p-6 max-w-6xl mx-auto">
@@ -218,7 +293,7 @@ export default function PromptLibraryPage() {
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={(e) => {
                           e.stopPropagation();
-                          duplicatePrompt(prompt.id);
+                          handleDuplicate(prompt);
                         }}>
                           <Copy className="w-4 h-4 mr-2" />
                           Duplicate
@@ -233,7 +308,7 @@ export default function PromptLibraryPage() {
                         <DropdownMenuItem 
                           onClick={(e) => {
                             e.stopPropagation();
-                            deletePrompt(prompt.id);
+                            handleDelete(prompt);
                           }}
                           className="text-destructive"
                         >
@@ -259,8 +334,8 @@ export default function PromptLibraryPage() {
                   </div>
                   
                   <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
-                    <span>Used {prompt.usage_count} times</span>
-                    <span>v{prompt.version}</span>
+                    <span>Used {prompt.usage_count || 0} times</span>
+                    <span>v{prompt.version || 1}</span>
                   </div>
                 </CardContent>
               </Card>
