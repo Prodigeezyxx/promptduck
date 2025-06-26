@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+
+import { useState, useEffect, useRef } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
 import { useApiKeyStore } from '@/store/apiKeyStore';
@@ -28,6 +29,10 @@ export function useGeneratorLogic() {
   
   // Use smart defaults - always intermediate complexity
   const complexity = 'intermediate' as const;
+
+  // State to track auto-generation after template loading
+  const [shouldAutoGenerate, setShouldAutoGenerate] = useState(false);
+  const autoGenerateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Sync Supabase data to local stores when user is authenticated
   useEffect(() => {
@@ -89,6 +94,11 @@ export function useGeneratorLogic() {
       setIntent(originalIntent || '');
       setContext(originalContext || '');
       
+      // Set flag to auto-generate after template is loaded
+      if (originalIntent.trim()) {
+        setShouldAutoGenerate(true);
+      }
+      
       toast({ 
         title: 'Template loaded!', 
         description: `"${currentPrompt.title}" has been loaded into the generator.` 
@@ -96,17 +106,44 @@ export function useGeneratorLogic() {
     }
   }, [currentPrompt]);
 
+  // Auto-generate prompt after template loading with slight delay
+  useEffect(() => {
+    if (shouldAutoGenerate && intent.trim() && !isGenerating) {
+      // Clear any existing timeout
+      if (autoGenerateTimeoutRef.current) {
+        clearTimeout(autoGenerateTimeoutRef.current);
+      }
+      
+      // Set a small delay to ensure UI has updated
+      autoGenerateTimeoutRef.current = setTimeout(() => {
+        console.log('Auto-generating prompt for loaded template');
+        handleGenerate(true); // Pass true to indicate this is auto-generation
+        setShouldAutoGenerate(false);
+      }, 500);
+    }
+
+    return () => {
+      if (autoGenerateTimeoutRef.current) {
+        clearTimeout(autoGenerateTimeoutRef.current);
+      }
+    };
+  }, [shouldAutoGenerate, intent, isGenerating]);
+
   const handleIntentChange = (value: string) => {
     setIntent(value);
+    // Clear auto-generation flag if user manually changes intent
+    setShouldAutoGenerate(false);
   };
 
   const handleContextChange = (value: string) => {
     setContext(value);
   };
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (isAutoGeneration = false) => {
     if (!intent.trim()) {
-      toast({ title: 'Error', description: 'Please describe your intent' });
+      if (!isAutoGeneration) {
+        toast({ title: 'Error', description: 'Please describe your intent' });
+      }
       return;
     }
 
@@ -119,7 +156,9 @@ export function useGeneratorLogic() {
     }
 
     if (!useCredit()) {
-      toast({ title: 'Error', description: 'Unable to use credit' });
+      if (!isAutoGeneration) {
+        toast({ title: 'Error', description: 'Unable to use credit' });
+      }
       return;
     }
 
@@ -153,16 +192,22 @@ export function useGeneratorLogic() {
         await saveGeneration(result, intent.trim(), contextValue);
       }
       
+      const toastMessage = isAutoGeneration 
+        ? `Template optimized! Applied ${heuristicsToUse.length} cognitive heuristics`
+        : `Prompt generated! Applied ${heuristicsToUse.length} cognitive heuristics`;
+      
       toast({ 
-        title: 'Prompt generated!', 
+        title: isAutoGeneration ? 'Template optimized!' : 'Prompt generated!', 
         description: `Applied ${heuristicsToUse.length} cognitive heuristics` 
       });
     } catch (error) {
       console.error('Generation error:', error);
-      toast({ 
-        title: 'Generation failed', 
-        description: 'Please try again in a moment.' 
-      });
+      if (!isAutoGeneration) {
+        toast({ 
+          title: 'Generation failed', 
+          description: 'Please try again in a moment.' 
+        });
+      }
     } finally {
       setGenerating(false);
     }
@@ -241,6 +286,10 @@ export function useGeneratorLogic() {
     setCurrentPrompt(null);
     setIntent('');
     setContext('');
+    setShouldAutoGenerate(false);
+    if (autoGenerateTimeoutRef.current) {
+      clearTimeout(autoGenerateTimeoutRef.current);
+    }
   };
 
   const handleStartNewPrompt = () => {
@@ -248,6 +297,10 @@ export function useGeneratorLogic() {
     setContext('');
     setCurrentPrompt(null);
     setLastResult(null);
+    setShouldAutoGenerate(false);
+    if (autoGenerateTimeoutRef.current) {
+      clearTimeout(autoGenerateTimeoutRef.current);
+    }
   };
 
   return {
