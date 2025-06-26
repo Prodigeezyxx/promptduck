@@ -106,7 +106,7 @@ export function useUnifiedData() {
     for (const generation of localHistory) {
       try {
         await saveCloudGeneration(generation, 'Auto-synced from local storage');
-        console.log(`Synced generation: ${generation.title || 'Untitled'}`);
+        console.log(`Synced generation: ${generation.preview_title || 'Untitled'}`);
       } catch (error) {
         console.error('Failed to sync generation:', error);
       }
