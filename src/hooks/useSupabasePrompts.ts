@@ -14,6 +14,9 @@ export function useSupabasePrompts() {
   useEffect(() => {
     if (user) {
       loadPrompts();
+    } else {
+      // Clear prompts when user signs out
+      setPrompts([]);
     }
   }, [user]);
 
@@ -44,7 +47,7 @@ export function useSupabasePrompts() {
         created_at: item.created_at,
         updated_at: item.updated_at,
         heuristics: [],
-        variables: [], // Initialize as empty array instead of object
+        variables: [],
         difficulty: 'intermediate',
         estimatedTime: '15 minutes'
       }));
@@ -52,7 +55,11 @@ export function useSupabasePrompts() {
       setPrompts(mappedPrompts);
     } catch (error) {
       console.error('Error loading prompts:', error);
-      toast({ title: 'Error', description: 'Failed to load prompts from cloud' });
+      toast({ 
+        title: 'Error', 
+        description: 'Failed to load prompts from cloud',
+        variant: 'destructive'
+      });
     } finally {
       setLoading(false);
     }
@@ -93,7 +100,7 @@ export function useSupabasePrompts() {
         created_at: data.created_at,
         updated_at: data.updated_at,
         heuristics: prompt.heuristics || [],
-        variables: prompt.variables || [], // Ensure it's always an array
+        variables: prompt.variables || [],
         difficulty: prompt.difficulty || 'intermediate',
         estimatedTime: prompt.estimatedTime || '15 minutes'
       };
@@ -102,7 +109,11 @@ export function useSupabasePrompts() {
       return newPrompt;
     } catch (error) {
       console.error('Error saving prompt:', error);
-      toast({ title: 'Error', description: 'Failed to save prompt to cloud' });
+      toast({ 
+        title: 'Error', 
+        description: 'Failed to save prompt to cloud',
+        variant: 'destructive'
+      });
       return null;
     }
   };
@@ -132,7 +143,11 @@ export function useSupabasePrompts() {
       ));
     } catch (error) {
       console.error('Error updating prompt:', error);
-      toast({ title: 'Error', description: 'Failed to update prompt' });
+      toast({ 
+        title: 'Error', 
+        description: 'Failed to update prompt',
+        variant: 'destructive'
+      });
     }
   };
 
@@ -149,10 +164,23 @@ export function useSupabasePrompts() {
       if (error) throw error;
 
       setPrompts(prev => prev.filter(prompt => prompt.id !== id));
+      
+      toast({
+        title: 'Prompt deleted',
+        description: 'The prompt has been permanently deleted from your cloud account.'
+      });
     } catch (error) {
       console.error('Error deleting prompt:', error);
-      toast({ title: 'Error', description: 'Failed to delete prompt' });
+      toast({ 
+        title: 'Error', 
+        description: 'Failed to delete prompt',
+        variant: 'destructive'
+      });
     }
+  };
+
+  const refreshPrompts = async () => {
+    await loadPrompts();
   };
 
   return {
@@ -161,6 +189,6 @@ export function useSupabasePrompts() {
     savePrompt,
     updatePrompt,
     deletePrompt,
-    refreshPrompts: loadPrompts
+    refreshPrompts
   };
 }
