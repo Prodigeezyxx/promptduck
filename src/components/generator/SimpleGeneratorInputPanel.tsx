@@ -40,7 +40,7 @@ export function SimpleGeneratorInputPanel({
 
   return (
     <div className="space-y-4">
-      {/* Template Reference Display */}
+      {/* Enhanced Template Reference Display */}
       {currentPrompt && (
         <Card className="border-brand-200 bg-brand-50/50 dark:bg-brand-950/20">
           <CardContent className="p-4">
@@ -51,9 +51,14 @@ export function SimpleGeneratorInputPanel({
                   <h4 className="font-medium text-brand-700 dark:text-brand-300">
                     Using Template: {currentPrompt.title}
                   </h4>
-                  {currentPrompt.description && (
+                  {/* Show better description or fallback */}
+                  {currentPrompt.description && currentPrompt.description !== 'AI Generated Prompt' ? (
                     <p className="text-sm text-brand-600 dark:text-brand-400 mt-1">
                       {currentPrompt.description}
+                    </p>
+                  ) : (
+                    <p className="text-sm text-brand-600 dark:text-brand-400 mt-1">
+                      Template loaded - original intent has been restored to the form
                     </p>
                   )}
                   <div className="flex flex-wrap gap-1 mt-2">
@@ -96,6 +101,9 @@ export function SimpleGeneratorInputPanel({
               <div>
                 <label className="text-sm font-medium text-primaryText mb-2 block">
                   Your Goal *
+                  {currentPrompt && (
+                    <span className="text-xs text-brand-600 ml-2">(Loaded from: {currentPrompt.title})</span>
+                  )}
                 </label>
                 <Textarea
                   placeholder={intentPlaceholder}
@@ -112,6 +120,9 @@ export function SimpleGeneratorInputPanel({
               <div>
                 <label className="text-sm font-medium text-primaryText mb-2 block">
                   Additional Context (Optional)
+                  {currentPrompt && context && (
+                    <span className="text-xs text-brand-600 ml-2">(Restored from template)</span>
+                  )}
                 </label>
                 <Textarea
                   placeholder={contextPlaceholder}

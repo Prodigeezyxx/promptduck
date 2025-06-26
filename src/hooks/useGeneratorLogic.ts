@@ -43,21 +43,56 @@ export function useGeneratorLogic() {
     }
   }, [user, generations, setSupabaseHistory]);
 
-  // Handle template pre-filling when currentPrompt is set - simplified logic
+  // Enhanced template loading logic to handle existing prompts better
   useEffect(() => {
     if (currentPrompt) {
       console.log('Loading template into generator:', currentPrompt.title);
       
-      // Pre-fill the form with the original intent and context
-      const originalIntent = currentPrompt.description || currentPrompt.title || '';
-      const originalContext = currentPrompt.variables?.find(v => v.name === 'original_context')?.description || '';
+      // Smart intent extraction based on available data
+      let originalIntent = '';
+      let originalContext = '';
+
+      // Try to get meaningful intent from description first
+      if (currentPrompt.description && 
+          currentPrompt.description !== 'AI Generated Prompt' && 
+          currentPrompt.description.trim() !== '') {
+        originalIntent = currentPrompt.description;
+      } else {
+        // Fallback: extract intent from title or content
+        originalIntent = currentPrompt.title;
+        
+        // If title is also generic, try to extract from content
+        if (currentPrompt.title.includes('AI Generated') || currentPrompt.title.includes('Copy')) {
+          const contentLines = currentPrompt.content.split('\n').filter(line => line.trim());
+          const meaningfulLine = contentLines.find(line => 
+            !line.startsWith('#') && 
+            !line.includes('Context:') && 
+            !line.includes('Role:') &&
+            line.length > 20
+          );
+          if (meaningfulLine) {
+            originalIntent = meaningfulLine.slice(0, 100);
+          }
+        }
+      }
+
+      // Try to extract context from variables
+      const contextVariable = currentPrompt.variables?.find(v => 
+        v.name === 'original_context' || 
+        v.name.includes('context') ||
+        v.description?.length > 10
+      );
       
-      setIntent(originalIntent);
-      setContext(originalContext);
+      if (contextVariable?.description) {
+        originalContext = contextVariable.description;
+      }
+      
+      setIntent(originalIntent || '');
+      setContext(originalContext || '');
       
       toast({ 
         title: 'Template loaded!', 
-        description: `"${currentPrompt.title}" has been loaded with original intent restored.` 
+        description: `"${currentPrompt.title}" has been loaded into the generator.` 
       });
     }
   }, [currentPrompt]);
@@ -143,7 +178,7 @@ export function useGeneratorLogic() {
     const promptData = {
       title: promptTitle,
       content: lastResult.optimized_prompt, // This is the refined/final prompt
-      description: intent, // Store the original user intent as description
+      description: intent, // Store the original user intent as description (FIXED)
       tags: lastResult.tags,
       persona: 'strategist' as const,
       heuristics: lastResult.heuristics,
@@ -205,6 +240,8 @@ export function useGeneratorLogic() {
 
   const handleClearTemplate = () => {
     setCurrentPrompt(null);
+    setIntent('');
+    setContext('');
   };
 
   const handleStartNewPrompt = () => {

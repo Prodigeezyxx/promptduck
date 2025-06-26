@@ -23,11 +23,32 @@ export function useUnifiedData() {
   
   const [error, setError] = useState<string | null>(null);
 
-  // Unified prompts - cloud takes priority when available and user is authenticated
+  // Enhanced unified prompts - always show available data
   const allPrompts = user ? cloudPrompts : localPrompts;
-  
-  // Unified generations - cloud takes priority when available and user is authenticated
+
+  // Enhanced unified generations - always show available data
   const allGenerations = user ? cloudGenerations : localHistory;
+
+  // Enhanced prompt processing to handle existing prompts with generic descriptions
+  const processedPrompts = allPrompts.map(prompt => {
+    // If description is generic, try to extract meaningful intent from content or title
+    if (!prompt.description || prompt.description === 'AI Generated Prompt' || prompt.description.trim() === '') {
+      // Try to extract intent from the beginning of the content
+      const contentLines = prompt.content.split('\n').filter(line => line.trim());
+      const firstMeaningfulLine = contentLines.find(line => 
+        !line.startsWith('#') && 
+        !line.includes('Context:') && 
+        !line.includes('Role:') &&
+        line.length > 20
+      );
+      
+      return {
+        ...prompt,
+        description: firstMeaningfulLine?.slice(0, 100) + '...' || prompt.title || 'Custom prompt'
+      };
+    }
+    return prompt;
+  });
 
   const savePrompt = async (prompt: Omit<Prompt, 'id' | 'created_at' | 'updated_at' | 'version' | 'usage_count'>) => {
     try {
@@ -78,13 +99,13 @@ export function useUnifiedData() {
   };
 
   return {
-    prompts: allPrompts,
+    prompts: processedPrompts, // Return processed prompts with better descriptions
     generations: allGenerations,
     savePrompt,
     saveGeneration,
-    syncing: false, // Remove blocking syncing state to fix library delay
+    syncing: false, // No blocking syncing
     lastSyncTime: null,
-    performAutoSync: async () => {}, // No-op, migration handles this
+    performAutoSync: async () => {}, // No-op
     error
   };
 }
