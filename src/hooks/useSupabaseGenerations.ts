@@ -41,7 +41,7 @@ export function useSupabaseGenerations() {
           context: item.context || '',
           complexity: item.complexity || 'intermediate',
           heuristics: item.heuristics || [],
-          ...(item.metadata || {})
+          ...(item.metadata && typeof item.metadata === 'object' ? item.metadata : {})
         },
         created_at: item.created_at,
         version: 1
@@ -102,7 +102,7 @@ export function useSupabaseGenerations() {
           context: data.context || '',
           complexity: data.complexity || 'intermediate',
           heuristics: data.heuristics || [],
-          ...(data.metadata || {})
+          ...(data.metadata && typeof data.metadata === 'object' ? data.metadata : {})
         },
         created_at: data.created_at,
         version: 1

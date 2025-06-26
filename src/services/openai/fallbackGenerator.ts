@@ -6,6 +6,7 @@ export class OpenAIFallbackGenerator {
   static generateFallbackPrompt(request: GenerationRequest): GenerationResult {
     console.log('Using fallback prompt generation for OpenAI');
     return {
+      result: `Approach "${request.intent}" with structured thinking. Consider multiple perspectives and create a comprehensive response that balances depth with clarity. Structure your approach around {key_focus} and ensure your output serves {target_outcome}.`,
       optimized_prompt: `Approach "${request.intent}" with structured thinking. Consider multiple perspectives and create a comprehensive response that balances depth with clarity. Structure your approach around {key_focus} and ensure your output serves {target_outcome}.`,
       preview_title: `Generated: ${request.intent}`,
       tags: ['fallback'],
@@ -15,6 +16,10 @@ export class OpenAIFallbackGenerator {
         { name: 'target_outcome', type: 'text', required: true, description: 'Desired outcome' }
       ],
       metadata: {
+        intent: request.intent,
+        context: request.context,
+        complexity: request.complexity,
+        heuristics: request.heuristics,
         ...OPENAI_CONFIG.fallbackPrompt
       },
       remix_suggestions: [

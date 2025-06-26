@@ -1,3 +1,4 @@
+
 import { GenerationRequest, GenerationResult } from '@/types';
 import { OptimizedTextCleaner } from '../optimized/textCleaner';
 
@@ -19,12 +20,17 @@ export class OpenAIResponseParser {
     const optimizedPrompt = parsedData.optimized_prompt || cleanedText;
     
     return {
+      result: optimizedPrompt,
       optimized_prompt: OptimizedTextCleaner.fastClean(optimizedPrompt),
       preview_title: parsedData.preview_title || `Technical Specification: ${request.intent.slice(0, 50)}...`,
       tags: Array.isArray(parsedData.tags) ? parsedData.tags : ['technical', 'specification', ...request.heuristics],
       heuristics: request.heuristics,
       variables: Array.isArray(parsedData.variables) ? parsedData.variables : [],
       metadata: {
+        intent: request.intent,
+        context: request.context,
+        complexity: request.complexity,
+        heuristics: request.heuristics,
         complexity_score: parsedData.metadata?.complexity_score || Math.floor(Math.random() * 3) + 7,
         creativity_score: parsedData.metadata?.creativity_score || Math.floor(Math.random() * 3) + 7,
         coherence_score: parsedData.metadata?.coherence_score || Math.floor(Math.random() * 3) + 8,
@@ -65,12 +71,17 @@ export class OpenAIResponseParser {
     const cleanedText = OptimizedTextCleaner.fastClean(text);
     
     return {
+      result: cleanedText,
       optimized_prompt: cleanedText,
       preview_title: `Technical Specification: ${request.intent.slice(0, 50)}...`,
       tags: ['technical', 'specification', ...request.heuristics],
       heuristics: request.heuristics,
       variables: [],
       metadata: {
+        intent: request.intent,
+        context: request.context,
+        complexity: request.complexity,
+        heuristics: request.heuristics,
         complexity_score: Math.floor(Math.random() * 3) + 7,
         creativity_score: Math.floor(Math.random() * 3) + 7,
         coherence_score: Math.floor(Math.random() * 3) + 8,

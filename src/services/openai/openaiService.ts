@@ -71,12 +71,17 @@ export class OpenAIService {
       
       // Convert the response to our expected format with minimal processing
       const result: GenerationResult = {
+        result: data.optimized_prompt || data.result || '',
         optimized_prompt: data.optimized_prompt || '',
         preview_title: data.preview_title || `Generated: ${request.intent}`,
         tags: data.tags || ['generated'],
         heuristics: request.heuristics || [],
         variables: data.variables || [],
         metadata: {
+          intent: request.intent,
+          context: request.context,
+          complexity: request.complexity,
+          heuristics: request.heuristics,
           ...data.metadata,
           generation_time_ms: generationTime
         },
