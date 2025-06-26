@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
@@ -29,10 +28,6 @@ export function useGeneratorLogic() {
   
   // Use smart defaults - always intermediate complexity
   const complexity = 'intermediate' as const;
-
-  // State to track auto-generation after template loading
-  const [shouldAutoGenerate, setShouldAutoGenerate] = useState(false);
-  const autoGenerateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Sync Supabase data to local stores when user is authenticated
   useEffect(() => {
@@ -94,45 +89,35 @@ export function useGeneratorLogic() {
       setIntent(originalIntent || '');
       setContext(originalContext || '');
       
-      // Set flag to auto-generate after template is loaded
-      if (originalIntent.trim()) {
-        setShouldAutoGenerate(true);
-      }
+      // Create a GenerationResult from the saved template data
+      const templateResult: GenerationResult = {
+        result: currentPrompt.content,
+        optimized_prompt: currentPrompt.content,
+        preview_title: currentPrompt.title,
+        tags: currentPrompt.tags || ['template'],
+        heuristics: currentPrompt.heuristics || [],
+        variables: currentPrompt.variables || [],
+        metadata: {
+          intent: originalIntent,
+          context: originalContext,
+          complexity: currentPrompt.difficulty || 'intermediate',
+          heuristics: currentPrompt.heuristics || []
+        },
+        remix_suggestions: []
+      };
+      
+      // Set the template content as the last result so it displays immediately
+      setLastResult(templateResult);
       
       toast({ 
         title: 'Template loaded!', 
-        description: `"${currentPrompt.title}" has been loaded into the generator.` 
+        description: `"${currentPrompt.title}" content has been loaded and is ready for use.` 
       });
     }
-  }, [currentPrompt]);
-
-  // Auto-generate prompt after template loading with slight delay
-  useEffect(() => {
-    if (shouldAutoGenerate && intent.trim() && !isGenerating) {
-      // Clear any existing timeout
-      if (autoGenerateTimeoutRef.current) {
-        clearTimeout(autoGenerateTimeoutRef.current);
-      }
-      
-      // Set a small delay to ensure UI has updated
-      autoGenerateTimeoutRef.current = setTimeout(() => {
-        console.log('Auto-generating prompt for loaded template');
-        handleGenerate(true); // Pass true to indicate this is auto-generation
-        setShouldAutoGenerate(false);
-      }, 500);
-    }
-
-    return () => {
-      if (autoGenerateTimeoutRef.current) {
-        clearTimeout(autoGenerateTimeoutRef.current);
-      }
-    };
-  }, [shouldAutoGenerate, intent, isGenerating]);
+  }, [currentPrompt, setLastResult]);
 
   const handleIntentChange = (value: string) => {
     setIntent(value);
-    // Clear auto-generation flag if user manually changes intent
-    setShouldAutoGenerate(false);
   };
 
   const handleContextChange = (value: string) => {
@@ -286,10 +271,6 @@ export function useGeneratorLogic() {
     setCurrentPrompt(null);
     setIntent('');
     setContext('');
-    setShouldAutoGenerate(false);
-    if (autoGenerateTimeoutRef.current) {
-      clearTimeout(autoGenerateTimeoutRef.current);
-    }
   };
 
   const handleStartNewPrompt = () => {
@@ -297,10 +278,6 @@ export function useGeneratorLogic() {
     setContext('');
     setCurrentPrompt(null);
     setLastResult(null);
-    setShouldAutoGenerate(false);
-    if (autoGenerateTimeoutRef.current) {
-      clearTimeout(autoGenerateTimeoutRef.current);
-    }
   };
 
   return {
