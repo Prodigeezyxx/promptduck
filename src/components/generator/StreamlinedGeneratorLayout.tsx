@@ -13,7 +13,6 @@ interface StreamlinedGeneratorLayoutProps {
   context: string;
   isGenerating: boolean;
   lastResult: GenerationResult | null;
-  templateReference?: any;
   onIntentChange: (value: string) => void;
   onContextChange: (value: string) => void;
   onGenerate: () => void;
@@ -29,7 +28,6 @@ export function StreamlinedGeneratorLayout({
   context,
   isGenerating,
   lastResult,
-  templateReference,
   onIntentChange,
   onContextChange,
   onGenerate,
@@ -45,12 +43,11 @@ export function StreamlinedGeneratorLayout({
     intent,
     context,
     isGenerating,
-    templateReference,
     onIntentChange,
     onContextChange,
     onGenerate,
     onClearTemplate,
-  }), [intent, context, isGenerating, templateReference, onIntentChange, onContextChange, onGenerate, onClearTemplate]);
+  }), [intent, context, isGenerating, onIntentChange, onContextChange, onGenerate, onClearTemplate]);
 
   const outputPanelProps = useMemo(() => ({
     lastResult,

@@ -6,12 +6,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Sparkles, RefreshCw, X, Info } from 'lucide-react';
 import { useSmartPlaceholder } from '@/hooks/useSmartPlaceholder';
 import { Badge } from '@/components/ui/badge';
+import { usePromptStore } from '@/store/promptStore';
 
 interface SimpleGeneratorInputPanelProps {
   intent: string;
   context: string;
   isGenerating: boolean;
-  templateReference?: any;
   onIntentChange: (value: string) => void;
   onContextChange: (value: string) => void;
   onGenerate: () => void;
@@ -22,7 +22,6 @@ export function SimpleGeneratorInputPanel({
   intent,
   context,
   isGenerating,
-  templateReference,
   onIntentChange,
   onContextChange,
   onGenerate,
@@ -30,6 +29,7 @@ export function SimpleGeneratorInputPanel({
 }: SimpleGeneratorInputPanelProps) {
   const intentPlaceholder = useSmartPlaceholder('intermediate', 'intent');
   const contextPlaceholder = useSmartPlaceholder('intermediate', 'context');
+  const { currentPrompt } = usePromptStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +41,7 @@ export function SimpleGeneratorInputPanel({
   return (
     <div className="space-y-4">
       {/* Template Reference Display */}
-      {templateReference && (
+      {currentPrompt && (
         <Card className="border-brand-200 bg-brand-50/50 dark:bg-brand-950/20">
           <CardContent className="p-4">
             <div className="flex items-start justify-between">
@@ -49,15 +49,15 @@ export function SimpleGeneratorInputPanel({
                 <Info className="w-5 h-5 text-brand-600 mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
                   <h4 className="font-medium text-brand-700 dark:text-brand-300">
-                    Using Template: {templateReference.title}
+                    Using Template: {currentPrompt.title}
                   </h4>
-                  {templateReference.description && (
+                  {currentPrompt.description && (
                     <p className="text-sm text-brand-600 dark:text-brand-400 mt-1">
-                      {templateReference.description}
+                      {currentPrompt.description}
                     </p>
                   )}
                   <div className="flex flex-wrap gap-1 mt-2">
-                    {templateReference.tags?.map((tag: string) => (
+                    {currentPrompt.tags?.map((tag: string) => (
                       <Badge key={tag} variant="secondary" className="text-xs">
                         {tag}
                       </Badge>

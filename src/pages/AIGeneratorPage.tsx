@@ -19,7 +19,6 @@ export default function AIGeneratorPage() {
     isGenerating,
     lastResult,
     apiKey,
-    templateReference,
     // Handlers
     handleIntentChange,
     handleContextChange,
@@ -37,7 +36,6 @@ export default function AIGeneratorPage() {
     track('prompt_generation_started', {
       intent_length: intent.length,
       context_length: context.length,
-      has_template: !!templateReference,
     });
     
     try {
@@ -86,7 +84,6 @@ export default function AIGeneratorPage() {
         context={context}
         isGenerating={isGenerating}
         lastResult={lastResult}
-        templateReference={templateReference}
         onIntentChange={handleIntentChange}
         onContextChange={handleContextChange}
         onGenerate={handleGenerateWithAnalytics}
