@@ -16,10 +16,10 @@ export default function AppLayout() {
   const isMobile = useIsMobile();
   const { user } = useAuthContext();
 
-  // Initialize data migration and realtime sync only for authenticated users
+  // Initialize data migration (this will handle all syncing)
   useDataMigration();
   
-  // Only setup realtime sync for authenticated users
+  // Only setup realtime sync for authenticated users after migration
   if (user) {
     useRealtimeSync();
   }
