@@ -1,7 +1,7 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useDataMigration } from '@/hooks/useDataMigration';
+import { useRealtimeSync } from '@/hooks/useRealtimeSync';
 import { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
@@ -23,8 +23,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [guestUser, setGuestUser] = useState<any>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   
-  // Initialize data migration hook
+  // Initialize automatic data migration and real-time sync
   useDataMigration();
+  useRealtimeSync();
 
   // Check for guest session only if explicitly created
   useEffect(() => {

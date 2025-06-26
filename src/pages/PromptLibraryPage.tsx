@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePromptStore } from '@/store/promptStore';
@@ -24,7 +23,7 @@ export default function PromptLibraryPage() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
   
-  // Local storage prompts (for unauthenticated users)
+  // Use unified data system - no more separation between local and cloud
   const { 
     prompts: localPrompts, 
     deletePrompt: deleteLocalPrompt, 
@@ -33,7 +32,6 @@ export default function PromptLibraryPage() {
     searchPrompts: searchLocalPrompts 
   } = usePromptStore();
   
-  // Supabase prompts (for authenticated users)
   const { 
     prompts: supabasePrompts, 
     loading: supabaseLoading,
@@ -45,11 +43,11 @@ export default function PromptLibraryPage() {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Use the appropriate prompt source based on authentication status
+  // Always show the appropriate data source seamlessly
   const activePrompts = user ? supabasePrompts : localPrompts;
   const isLoading = user ? supabaseLoading : false;
 
-  // Search functionality that works with both sources
+  // Unified search that works with current data source
   const filteredPrompts = searchQuery 
     ? (user ? activePrompts.filter(prompt =>
         prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||

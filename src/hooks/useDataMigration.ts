@@ -17,18 +17,18 @@ export function useDataMigration() {
 
   useEffect(() => {
     if (user && !migrationInProgress) {
-      handleDataSync();
+      handleAutoDataSync();
     }
   }, [user]);
 
-  const handleDataSync = async () => {
+  const handleAutoDataSync = async () => {
     setMigrationInProgress(true);
     
     try {
       // First, refresh to get the latest Supabase data
       await refreshPrompts();
       
-      // Check if there's local data to migrate
+      // Check if there's local data to sync
       const hasLocalPrompts = prompts.length > 0;
       const hasLocalHistory = history.length > 0;
       
@@ -37,44 +37,17 @@ export function useDataMigration() {
         return;
       }
 
-      // Ask user if they want to sync local data
-      const shouldSync = await showSyncDialog(hasLocalPrompts, hasLocalHistory);
+      console.log('Auto-syncing local data to cloud...');
       
-      if (shouldSync) {
-        await migrateLocalData();
-      } else {
-        // User chose not to sync, clear local data to avoid confusion
-        clearPrompts();
-        clearGenerations();
-      }
+      // Automatically sync all local data to cloud
+      await migrateLocalData();
+      
     } catch (error) {
-      console.error('Error during data sync:', error);
-      toast({
-        title: 'Sync error',
-        description: 'There was an issue syncing your data. Your local data is preserved.',
-        variant: 'destructive'
-      });
+      console.error('Error during auto data sync:', error);
+      // Don't show error toast - sync should be invisible to user
     } finally {
       setMigrationInProgress(false);
     }
-  };
-
-  const showSyncDialog = (hasPrompts: boolean, hasHistory: boolean): Promise<boolean> => {
-    return new Promise((resolve) => {
-      const items = [];
-      if (hasPrompts) items.push(`${prompts.length} saved prompts`);
-      if (hasHistory) items.push(`${history.length} generation entries`);
-      
-      const itemText = items.join(' and ');
-      
-      const shouldSync = window.confirm(
-        `You have ${itemText} saved locally. Would you like to sync this data to your cloud account?\n\n` +
-        `Choose "OK" to sync and keep this data across all your devices.\n` +
-        `Choose "Cancel" to start fresh with your cloud data.`
-      );
-      
-      resolve(shouldSync);
-    });
   };
 
   const migrateLocalData = async () => {
@@ -82,7 +55,7 @@ export function useDataMigration() {
     let migratedGenerations = 0;
 
     try {
-      // Migrate prompts
+      // Migrate prompts silently
       for (const prompt of prompts) {
         try {
           await savePrompt({
@@ -104,10 +77,10 @@ export function useDataMigration() {
         }
       }
 
-      // Migrate generation history
+      // Migrate generation history silently
       for (const generation of history) {
         try {
-          await saveGeneration(generation, 'Migrated from local storage');
+          await saveGeneration(generation, 'Auto-synced from local storage');
           migratedGenerations++;
         } catch (error) {
           console.error('Error migrating generation:', error);
@@ -119,22 +92,21 @@ export function useDataMigration() {
         clearPrompts();
         clearGenerations();
         
+        console.log(`Auto-synced ${migratedPrompts} prompts and ${migratedGenerations} generations to cloud`);
+        
+        // Show a subtle success notification
         const items = [];
         if (migratedPrompts > 0) items.push(`${migratedPrompts} prompts`);
         if (migratedGenerations > 0) items.push(`${migratedGenerations} generations`);
         
         toast({
-          title: 'Data synced successfully!',
-          description: `${items.join(' and ')} have been synced to your cloud account.`
+          title: 'Data synced',
+          description: `Your ${items.join(' and ')} are now available across all devices.`
         });
       }
     } catch (error) {
-      console.error('Error during data migration:', error);
-      toast({
-        title: 'Sync incomplete',
-        description: 'Some data may not have synced properly. Your local data is preserved.',
-        variant: 'destructive'
-      });
+      console.error('Error during auto data migration:', error);
+      // Don't clear local data if sync failed
     }
   };
 
