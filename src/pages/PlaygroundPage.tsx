@@ -58,7 +58,7 @@ export default function PlaygroundPage() {
                   Prompt Playground
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  Test and experiment with prompts using OpenAI
+                  Test and experiment with prompts using AI
                 </p>
               </div>
             </div>

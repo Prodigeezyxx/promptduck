@@ -23,6 +23,7 @@ export function useUnifiedData() {
   
   const [syncing, setSyncing] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
+  const [autoSyncCompleted, setAutoSyncCompleted] = useState(false);
 
   // Unified prompts - combines local and cloud data
   const allPrompts = user ? cloudPrompts : localPrompts;
@@ -30,15 +31,19 @@ export function useUnifiedData() {
   // Unified generations - combines local and cloud data  
   const allGenerations = user ? cloudGenerations : localHistory;
 
-  // Auto-sync when user authenticates
+  // Auto-sync when user authenticates (only once per session)
   useEffect(() => {
-    if (user && !syncing) {
+    if (user && !syncing && !autoSyncCompleted) {
       performAutoSync();
     }
-  }, [user]);
+  }, [user, autoSyncCompleted]);
+
+  const createContentHash = (content: string, title: string) => {
+    return btoa(content + title).replace(/[^a-zA-Z0-9]/g, '').slice(0, 20);
+  };
 
   const performAutoSync = async () => {
-    if (!user || syncing) return;
+    if (!user || syncing || autoSyncCompleted) return;
     
     setSyncing(true);
     try {
@@ -47,36 +52,51 @@ export function useUnifiedData() {
       // First refresh cloud data to get latest
       await refreshPrompts();
       
-      // Sync local prompts to cloud
-      await syncPromptsToCloud();
-      
-      // Sync local generations to cloud
-      await syncGenerationsToCloud();
+      // Only sync if we have local data that's not already in the cloud
+      if (localPrompts.length > 0 || localHistory.length > 0) {
+        await syncDataToCloud();
+      }
       
       setLastSyncTime(new Date());
+      setAutoSyncCompleted(true);
       console.log('Auto-sync completed successfully');
     } catch (error) {
       console.error('Auto-sync failed:', error);
-      // Don't throw - sync should be resilient
     } finally {
       setSyncing(false);
     }
   };
 
-  const syncPromptsToCloud = async () => {
-    if (!user || localPrompts.length === 0) return;
+  const syncDataToCloud = async () => {
+    if (!user) return;
     
-    console.log(`Syncing ${localPrompts.length} local prompts to cloud...`);
+    let syncedPrompts = 0;
+    let syncedGenerations = 0;
     
+    // Create hash set for existing cloud prompts
+    const existingHashes = new Set();
+    cloudPrompts.forEach(prompt => {
+      const hash = createContentHash(prompt.content, prompt.title);
+      existingHashes.add(hash);
+    });
+
+    // Sync prompts with deduplication
     for (const localPrompt of localPrompts) {
       try {
-        // Check if prompt already exists in cloud (avoid duplicates)
-        const existsInCloud = cloudPrompts.some(cloudPrompt => 
+        const contentHash = createContentHash(localPrompt.content, localPrompt.title);
+        
+        // Skip if duplicate exists
+        if (existingHashes.has(contentHash)) {
+          continue;
+        }
+
+        // Check for exact duplicates
+        const exactDuplicate = cloudPrompts.some(cloudPrompt => 
           cloudPrompt.title === localPrompt.title && 
           cloudPrompt.content === localPrompt.content
         );
         
-        if (!existsInCloud) {
+        if (!exactDuplicate) {
           await saveCloudPrompt({
             title: localPrompt.title,
             description: localPrompt.description,
@@ -90,35 +110,46 @@ export function useUnifiedData() {
             estimatedTime: localPrompt.estimatedTime || '15 minutes',
             parent_id: localPrompt.parent_id
           });
+          
+          existingHashes.add(contentHash);
+          syncedPrompts++;
           console.log(`Synced prompt: ${localPrompt.title}`);
         }
       } catch (error) {
         console.error(`Failed to sync prompt ${localPrompt.title}:`, error);
       }
     }
-  };
 
-  const syncGenerationsToCloud = async () => {
-    if (!user || localHistory.length === 0) return;
-    
-    console.log(`Syncing ${localHistory.length} local generations to cloud...`);
-    
+    // Sync generations
     for (const generation of localHistory) {
       try {
         await saveCloudGeneration(generation, 'Auto-synced from local storage');
+        syncedGenerations++;
         console.log(`Synced generation: ${generation.preview_title || 'Untitled'}`);
       } catch (error) {
         console.error('Failed to sync generation:', error);
       }
     }
+
+    console.log(`Sync completed: ${syncedPrompts} prompts, ${syncedGenerations} generations`);
   };
 
   const savePrompt = async (prompt: Omit<Prompt, 'id' | 'created_at' | 'updated_at' | 'version' | 'usage_count'>) => {
     if (user) {
-      // Save to cloud for authenticated users
+      // Check for duplicates before saving
+      const contentHash = createContentHash(prompt.content, prompt.title);
+      const existingPrompt = cloudPrompts.find(p => {
+        const existingHash = createContentHash(p.content, p.title);
+        return existingHash === contentHash || (p.title === prompt.title && p.content === prompt.content);
+      });
+
+      if (existingPrompt) {
+        console.log('Prompt already exists, skipping save');
+        return existingPrompt;
+      }
+
       return await saveCloudPrompt(prompt);
     } else {
-      // Save to local storage for unauthenticated users
       const localStore = usePromptStore.getState();
       localStore.addPrompt(prompt);
       return null;
@@ -127,10 +158,8 @@ export function useUnifiedData() {
 
   const saveGeneration = async (result: GenerationResult, intent: string, context?: string) => {
     if (user) {
-      // Save to cloud for authenticated users
       await saveCloudGeneration(result, intent, context);
     } else {
-      // Save to local storage for unauthenticated users
       const localStore = useGeneratorStore.getState();
       localStore.addToHistory(result);
     }

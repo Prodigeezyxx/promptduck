@@ -1,14 +1,14 @@
 
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Mail } from 'lucide-react';
+import { Loader2, Mail, ChevronDown } from 'lucide-react';
 import { GoogleAuthButton } from './GoogleAuthButton';
 import { useAuthContext } from './AuthProvider';
 import { useToast } from '@/hooks/use-toast';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface SignInDialogProps {
   open: boolean;
@@ -19,19 +19,20 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [showEmailAuth, setShowEmailAuth] = useState(false);
   const { signInWithEmail, signUpWithEmail, isSignedIn } = useAuthContext();
   const { toast } = useToast();
 
-  // Close dialog when user successfully signs in - let App.tsx handle routing
+  // Close dialog when user successfully signs in
   useEffect(() => {
     if (isSignedIn && open) {
       console.log('User signed in, closing dialog');
       onOpenChange(false);
-      // Don't redirect here - let App.tsx handle it
     }
   }, [isSignedIn, open, onOpenChange]);
 
-  const handleEmailAuth = async (isSignUp: boolean) => {
+  const handleEmailAuth = async () => {
     if (!email || !password) {
       toast({
         title: 'Missing Information',
@@ -59,7 +60,6 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
       if (error) {
         console.error('Auth error:', error);
         
-        // Provide more specific error messages
         let errorMessage = error.message;
         if (error.message.includes('Invalid login credentials')) {
           errorMessage = 'Invalid email or password. Please check your credentials and try again.';
@@ -80,7 +80,6 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
             title: 'Account Created',
             description: 'Please check your email to confirm your account before signing in.',
           });
-          // Clear form after successful signup
           setEmail('');
           setPassword('');
         } else {
@@ -88,7 +87,6 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
             title: 'Welcome Back',
             description: 'You have been signed in successfully.',
           });
-          // Dialog will close automatically via useEffect
         }
       }
     } catch (error) {
@@ -105,125 +103,107 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center">
+          <DialogTitle className="text-center text-xl">
             Welcome to PromptDuck
           </DialogTitle>
-          <DialogDescription className="text-center text-sm text-muted-foreground">
-            Sign in to access your personalized prompt library and save your work.
-          </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-4">
-          {/* Google Auth - Primary Option */}
-          <div className="space-y-2">
+        <div className="space-y-6">
+          {/* Primary Google Auth */}
+          <div className="space-y-3">
             <GoogleAuthButton />
-            <p className="text-xs text-center text-muted-foreground">
-              Sign in with your Google account for the best experience
-            </p>
           </div>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or continue with email</span>
-            </div>
-          </div>
+          {/* Secondary Email Auth - Collapsible */}
+          <Collapsible open={showEmailAuth} onOpenChange={setShowEmailAuth}>
+            <CollapsibleTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className="w-full text-sm text-muted-foreground hover:text-foreground"
+              >
+                <span>Other sign-in options</span>
+                <ChevronDown className={`w-4 h-4 ml-2 transition-transform ${showEmailAuth ? 'rotate-180' : ''}`} />
+              </Button>
+            </CollapsibleTrigger>
+            
+            <CollapsibleContent className="space-y-4 pt-2">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">Email</span>
+                </div>
+              </div>
 
-          {/* Email/Password Auth */}
-          <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="signin" className="space-y-3">
-              <div className="space-y-2">
-                <Label htmlFor="signin-email">Email</Label>
-                <Input
-                  id="signin-email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={loading}
-                />
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder={isSignUp ? "Create a password (min. 6 characters)" : "Enter your password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+                
+                <div className="flex gap-2">
+                  <Button
+                    onClick={handleEmailAuth}
+                    disabled={loading}
+                    className="flex-1"
+                    variant={isSignUp ? "outline" : "default"}
+                  >
+                    {loading && !isSignUp ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Signing In...
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="w-4 h-4 mr-2" />
+                        Sign In
+                      </>
+                    )}
+                  </Button>
+                  
+                  <Button
+                    onClick={() => {
+                      setIsSignUp(true);
+                      handleEmailAuth();
+                    }}
+                    disabled={loading}
+                    variant={isSignUp ? "default" : "outline"}
+                    className="flex-1"
+                  >
+                    {loading && isSignUp ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      'Sign Up'
+                    )}
+                  </Button>
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="signin-password">Password</Label>
-                <Input
-                  id="signin-password"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={loading}
-                />
-              </div>
-              <Button
-                onClick={() => handleEmailAuth(false)}
-                disabled={loading}
-                className="w-full"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Signing In...
-                  </>
-                ) : (
-                  <>
-                    <Mail className="w-4 h-4 mr-2" />
-                    Sign In
-                  </>
-                )}
-              </Button>
-            </TabsContent>
-            
-            <TabsContent value="signup" className="space-y-3">
-              <div className="space-y-2">
-                <Label htmlFor="signup-email">Email</Label>
-                <Input
-                  id="signup-email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={loading}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="signup-password">Password</Label>
-                <Input
-                  id="signup-password"
-                  type="password"
-                  placeholder="Create a password (min. 6 characters)"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={loading}
-                />
-              </div>
-              <Button
-                onClick={() => handleEmailAuth(true)}
-                disabled={loading}
-                className="w-full"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Creating Account...
-                  </>
-                ) : (
-                  <>
-                    <Mail className="w-4 h-4 mr-2" />
-                    Create Account
-                  </>
-                )}
-              </Button>
-            </TabsContent>
-          </Tabs>
+            </CollapsibleContent>
+          </Collapsible>
         </div>
       </DialogContent>
     </Dialog>
