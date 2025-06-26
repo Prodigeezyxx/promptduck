@@ -29,6 +29,20 @@ export function useGeneratorLogic() {
   // Use smart defaults - always intermediate complexity
   const complexity = 'intermediate' as const;
 
+  // Helper function to convert prompt difficulty to generation complexity
+  const mapDifficultyToComplexity = (difficulty: string | undefined): 'simple' | 'intermediate' | 'advanced' => {
+    switch (difficulty) {
+      case 'beginner':
+        return 'simple';
+      case 'intermediate':
+        return 'intermediate';
+      case 'advanced':
+        return 'advanced';
+      default:
+        return 'intermediate';
+    }
+  };
+
   // Sync Supabase data to local stores when user is authenticated
   useEffect(() => {
     if (user && supabasePrompts.length > 0) {
@@ -100,7 +114,7 @@ export function useGeneratorLogic() {
         metadata: {
           intent: originalIntent,
           context: originalContext,
-          complexity: currentPrompt.difficulty || 'intermediate',
+          complexity: mapDifficultyToComplexity(currentPrompt.difficulty),
           heuristics: currentPrompt.heuristics || []
         },
         remix_suggestions: []
