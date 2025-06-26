@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUnifiedData } from '@/hooks/useUnifiedData';
@@ -8,16 +7,35 @@ import { downloadPromptAsJSON } from '@/utils/promptExporter';
 import { useToast } from '@/hooks/use-toast';
 import { usePromptStore } from '@/store/promptStore';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { LibraryHeader } from '@/components/library/LibraryHeader';
 import { FeaturedPromptCard } from '@/components/library/FeaturedPromptCard';
 import { SearchBar } from '@/components/library/SearchBar';
 import { PromptCard } from '@/components/library/PromptCard';
 import { EmptyState } from '@/components/library/EmptyState';
 
+function LoadingSkeleton() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="space-y-3">
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-3 w-full" />
+          <Skeleton className="h-3 w-2/3" />
+          <div className="flex gap-2">
+            <Skeleton className="h-6 w-16" />
+            <Skeleton className="h-6 w-20" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function PromptLibraryPage() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  const { prompts, savePrompt, error } = useUnifiedData();
+  const { prompts, savePrompt, error, syncing } = useUnifiedData();
   const { featuredPrompt, forceRotation } = useFeaturedPrompt();
   const { setCurrentPrompt } = usePromptStore();
   const { toast } = useToast();
@@ -132,8 +150,8 @@ export default function PromptLibraryPage() {
         />
       )}
 
-      {/* Search - Only show if there are user prompts */}
-      {prompts.length > 0 && (
+      {/* Search - Only show if there are user prompts or if still loading */}
+      {(prompts.length > 0 || syncing) && (
         <SearchBar 
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
@@ -143,7 +161,11 @@ export default function PromptLibraryPage() {
       {/* Your Prompts */}
       <div className="mb-4">
         <h2 className="text-lg font-semibold mb-3">Your Prompts ({filteredPrompts.length})</h2>
-        {filteredPrompts.length > 0 ? (
+        
+        {/* Show loading skeleton only for very brief initial load */}
+        {syncing && prompts.length === 0 ? (
+          <LoadingSkeleton />
+        ) : filteredPrompts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
             {filteredPrompts.map((prompt) => (
               <PromptCard

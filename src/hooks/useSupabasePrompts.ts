@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { Prompt } from '@/types';
@@ -9,19 +8,18 @@ export function useSupabasePrompts() {
   const { user } = useAuthContext();
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [loading, setLoading] = useState(false);
+  const [lastLoadTime, setLastLoadTime] = useState<number | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Load prompts from Supabase when user is authenticated
-  useEffect(() => {
-    if (user) {
-      loadPrompts();
-    } else {
-      // Clear prompts when user signs out
-      setPrompts([]);
-    }
-  }, [user]);
-
-  const loadPrompts = async () => {
+  // Load prompts from Supabase
+  const loadPrompts = useCallback(async (force = false) => {
     if (!user) return;
+    
+    // Skip if recently loaded and not forced
+    const now = Date.now();
+    if (!force && lastLoadTime && (now - lastLoadTime) < 30000) { // 30 seconds cache
+      return;
+    }
     
     setLoading(true);
     try {
@@ -53,6 +51,8 @@ export function useSupabasePrompts() {
       }));
 
       setPrompts(mappedPrompts);
+      setLastLoadTime(now);
+      setIsInitialized(true);
     } catch (error) {
       console.error('Error loading prompts:', error);
       toast({ 
@@ -63,7 +63,19 @@ export function useSupabasePrompts() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, lastLoadTime]);
+
+  // Initialize prompts when user is authenticated
+  useEffect(() => {
+    if (user && !isInitialized) {
+      loadPrompts();
+    } else if (!user) {
+      // Clear prompts when user signs out
+      setPrompts([]);
+      setIsInitialized(false);
+      setLastLoadTime(null);
+    }
+  }, [user, isInitialized, loadPrompts]);
 
   const savePrompt = async (prompt: Omit<Prompt, 'id' | 'created_at' | 'updated_at' | 'version' | 'usage_count'>) => {
     if (!user) return null;
@@ -197,15 +209,24 @@ export function useSupabasePrompts() {
   };
 
   const refreshPrompts = async () => {
-    await loadPrompts();
+    await loadPrompts(true);
   };
+
+  // External initialization function for preloading
+  const initializePrompts = useCallback(() => {
+    if (user && !isInitialized && !loading) {
+      loadPrompts();
+    }
+  }, [user, isInitialized, loading, loadPrompts]);
 
   return {
     prompts,
     loading,
+    isInitialized,
     savePrompt,
     updatePrompt,
     deletePrompt,
-    refreshPrompts
+    refreshPrompts,
+    initializePrompts
   };
 }

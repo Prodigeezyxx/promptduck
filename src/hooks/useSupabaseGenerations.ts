@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { GenerationResult } from '@/types';
@@ -9,15 +8,18 @@ export function useSupabaseGenerations() {
   const { user } = useAuthContext();
   const [generations, setGenerations] = useState<GenerationResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [lastLoadTime, setLastLoadTime] = useState<number | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      loadGenerations();
-    }
-  }, [user]);
-
-  const loadGenerations = async () => {
+  // Load generations from Supabase
+  const loadGenerations = useCallback(async (force = false) => {
     if (!user) return;
+    
+    // Skip if recently loaded and not forced
+    const now = Date.now();
+    if (!force && lastLoadTime && (now - lastLoadTime) < 30000) { // 30 seconds cache
+      return;
+    }
     
     setLoading(true);
     try {
@@ -30,93 +32,109 @@ export function useSupabaseGenerations() {
 
       if (error) throw error;
 
-      const mappedGenerations: GenerationResult[] = data.map(item => {
-        try {
-          const result = JSON.parse(item.result);
-          return {
-            ...result,
-            id: item.id,
-            created_at: item.created_at
-          };
-        } catch (e) {
-          console.error('Error parsing generation result:', e);
-          return null;
-        }
-      }).filter(Boolean);
+      const mappedGenerations: GenerationResult[] = data.map(item => ({
+        id: item.id,
+        result: item.result,
+        metadata: {
+          intent: item.intent,
+          context: item.context || '',
+          complexity: item.complexity || 'intermediate',
+          heuristics: item.heuristics || [],
+          ...(item.metadata || {})
+        },
+        created_at: item.created_at,
+        version: 1
+      }));
 
       setGenerations(mappedGenerations);
+      setLastLoadTime(now);
+      setIsInitialized(true);
     } catch (error) {
       console.error('Error loading generations:', error);
-      toast({ title: 'Error', description: 'Failed to load generation history from cloud' });
+      toast({ 
+        title: 'Error', 
+        description: 'Failed to load generation history',
+        variant: 'destructive'
+      });
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, lastLoadTime]);
+
+  // Initialize generations when user is authenticated
+  useEffect(() => {
+    if (user && !isInitialized) {
+      loadGenerations();
+    } else if (!user) {
+      // Clear generations when user signs out
+      setGenerations([]);
+      setIsInitialized(false);
+      setLastLoadTime(null);
+    }
+  }, [user, isInitialized, loadGenerations]);
 
   const saveGeneration = async (result: GenerationResult, intent: string, context?: string) => {
     if (!user) return;
 
     try {
-      // Convert variables array to JSON-compatible format
-      const metadata = {
-        tags: result.tags,
-        variables: result.variables.map(v => ({
-          name: v.name,
-          type: v.type,
-          required: v.required,
-          description: v.description
-        }))
-      };
-
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('user_generations')
         .insert({
           user_id: user.id,
-          intent,
-          context,
-          complexity: 'intermediate',
-          heuristics: result.heuristics || [],
-          result: JSON.stringify(result),
-          metadata
-        });
+          result: result.result,
+          intent: intent,
+          context: context,
+          complexity: result.metadata?.complexity || 'intermediate',
+          heuristics: result.metadata?.heuristics || [],
+          metadata: result.metadata || {}
+        })
+        .select()
+        .single();
 
       if (error) throw error;
 
-      setGenerations(prev => [result, ...prev].slice(0, 50));
+      const newGeneration: GenerationResult = {
+        id: data.id,
+        result: data.result,
+        metadata: {
+          intent: data.intent,
+          context: data.context || '',
+          complexity: data.complexity || 'intermediate',
+          heuristics: data.heuristics || [],
+          ...data.metadata
+        },
+        created_at: data.created_at,
+        version: 1
+      };
+
+      setGenerations(prev => [newGeneration, ...prev]);
     } catch (error) {
       console.error('Error saving generation:', error);
-      toast({ title: 'Error', description: 'Failed to save generation to cloud' });
+      toast({ 
+        title: 'Error', 
+        description: 'Failed to save generation to cloud',
+        variant: 'destructive'
+      });
     }
   };
 
-  const clearGenerations = async () => {
-    if (!user) return;
+  const refreshGenerations = async () => {
+    await loadGenerations(true);
+  };
 
-    try {
-      const { error } = await supabase
-        .from('user_generations')
-        .delete()
-        .eq('user_id', user.id);
-
-      if (error) throw error;
-
-      setGenerations([]);
-    } catch (error) {
-      console.error('Error clearing generations:', error);
-      toast({ title: 'Error', description: 'Failed to clear generation history' });
+  // External initialization function for preloading
+  const initializeGenerations = useCallback(() => {
+    if (user && !isInitialized && !loading) {
+      loadGenerations();
     }
-  };
-
-  const setHistory = (history: GenerationResult[]) => {
-    setGenerations(history);
-  };
+  }, [user, isInitialized, loading, loadGenerations]);
 
   return {
     generations,
     loading,
+    isInitialized,
     saveGeneration,
-    clearGenerations,
-    refreshGenerations: loadGenerations,
-    setHistory
+    refreshGenerations,
+    initializeGenerations
   };
 }

@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { usePromptStore } from '@/store/promptStore';
 import { useGeneratorStore } from '@/store/generatorStore';
@@ -9,23 +8,27 @@ import { Prompt, GenerationResult } from '@/types';
 
 export function useUnifiedData() {
   const { user } = useAuthContext();
-  const { prompts: localPrompts, setPrompts: setLocalPrompts, addPrompt: addLocalPrompt } = usePromptStore();
-  const { history: localHistory, setHistory: setLocalHistory, addToHistory: addLocalGeneration } = useGeneratorStore();
+  const { prompts: localPrompts, addPrompt: addLocalPrompt } = usePromptStore();
+  const { history: localHistory, addToHistory: addLocalGeneration } = useGeneratorStore();
   const { 
     prompts: cloudPrompts, 
     savePrompt: saveCloudPrompt,
-    refreshPrompts
+    isInitialized: promptsInitialized
   } = useSupabasePrompts();
   const { 
     generations: cloudGenerations, 
-    saveGeneration: saveCloudGeneration 
+    saveGeneration: saveCloudGeneration,
+    isInitialized: generationsInitialized 
   } = useSupabaseGenerations();
   
   const [error, setError] = useState<string | null>(null);
 
-  // Show data immediately - no blocking
+  // Show data immediately - prompts are preloaded in background
   const allPrompts = user ? cloudPrompts : localPrompts;
   const allGenerations = user ? cloudGenerations : localHistory;
+
+  // For loading states, only show loading if user is authenticated but data isn't initialized yet
+  const isLoading = user && !promptsInitialized;
 
   // Process prompts for better descriptions without changing functionality
   const processedPrompts = allPrompts.map(prompt => {
@@ -87,7 +90,7 @@ export function useUnifiedData() {
     generations: allGenerations,
     savePrompt,
     saveGeneration,
-    syncing: false,
+    syncing: isLoading,
     lastSyncTime: null,
     performAutoSync: async () => {},
     error

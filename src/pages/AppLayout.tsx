@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navigation } from '@/components/layout/Navigation';
@@ -9,6 +8,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useDataMigration } from '@/hooks/useDataMigration';
 import { useRealtimeSync } from '@/hooks/useRealtimeSync';
+import { useBackgroundPreloader } from '@/hooks/useBackgroundPreloader';
 
 export default function AppLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -18,6 +18,9 @@ export default function AppLayout() {
 
   // Initialize data migration (this will handle all syncing)
   useDataMigration();
+  
+  // Start background preloading of prompts and generations
+  useBackgroundPreloader();
   
   // Only setup realtime sync for authenticated users after migration
   if (user) {
