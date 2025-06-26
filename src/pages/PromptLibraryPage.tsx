@@ -6,12 +6,13 @@ import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useFeaturedPrompt } from '@/hooks/useFeaturedPrompt';
 import { downloadPromptAsJSON } from '@/utils/promptExporter';
 import { useToast } from '@/hooks/use-toast';
+import { usePromptStore } from '@/store/promptStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Search, Plus, MoreHorizontal, Copy, Trash2, Edit, Zap, Info, Download } from 'lucide-react';
+import { Search, Plus, MoreHorizontal, Copy, Trash2, Edit, Zap, Info, Download, Eye } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +25,7 @@ export default function PromptLibraryPage() {
   const { user } = useAuthContext();
   const { prompts, savePrompt, syncing, error } = useUnifiedData();
   const { featuredPrompt, forceRotation } = useFeaturedPrompt();
+  const { setCurrentPrompt } = usePromptStore();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -44,14 +46,20 @@ export default function PromptLibraryPage() {
   };
 
   const handleCardClick = (prompt: any) => {
+    // Set the current prompt so it loads into the generator
+    setCurrentPrompt(prompt);
     navigate('/app/generator');
   };
 
   const handleNewPrompt = () => {
+    // Clear any current prompt and go to generator
+    setCurrentPrompt(null);
     navigate('/app/generator');
   };
 
   const handleEdit = (prompt: any) => {
+    // Set the current prompt for editing
+    setCurrentPrompt(prompt);
     navigate('/app/generator');
   };
 
@@ -257,9 +265,22 @@ export default function PromptLibraryPage() {
                       <CardTitle className="text-sm lg:text-base font-semibold line-clamp-2 mb-1 lg:mb-2">
                         {prompt.title}
                       </CardTitle>
-                      <p className="text-xs text-muted-foreground line-clamp-3">
-                        {prompt.description || prompt.content.slice(0, 120) + '...'}
-                      </p>
+                      {/* Show original intent (description) prominently */}
+                      {prompt.description && (
+                        <div className="mb-2">
+                          <p className="text-xs font-medium text-brand-600 dark:text-brand-400">Original Intent:</p>
+                          <p className="text-xs text-muted-foreground line-clamp-2">
+                            {prompt.description}
+                          </p>
+                        </div>
+                      )}
+                      {/* Show preview of refined prompt */}
+                      <div>
+                        <p className="text-xs font-medium text-purple-600 dark:text-purple-400">Refined Prompt:</p>
+                        <p className="text-xs text-muted-foreground line-clamp-2">
+                          {prompt.content.slice(0, 100) + (prompt.content.length > 100 ? '...' : '')}
+                        </p>
+                      </div>
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

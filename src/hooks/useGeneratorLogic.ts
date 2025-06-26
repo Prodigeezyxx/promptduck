@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
@@ -48,14 +49,14 @@ export function useGeneratorLogic() {
     if (currentPrompt) {
       console.log('Template selected for pre-filling:', currentPrompt.title);
       
-      // Pre-fill the form with template data
-      setIntent(currentPrompt.title || '');
-      setContext(currentPrompt.description || '');
+      // Pre-fill the form with template data - use description as original intent if available
+      setIntent(currentPrompt.description || currentPrompt.title || '');
+      setContext(currentPrompt.variables?.find(v => v.name === 'original_context')?.description || '');
       setTemplateReference(currentPrompt);
       
       toast({ 
         title: 'Template loaded!', 
-        description: `${currentPrompt.title} has been loaded as your starting point.` 
+        description: `${currentPrompt.title} has been loaded. Original intent restored.` 
       });
     }
   }, [currentPrompt]);
@@ -135,14 +136,26 @@ export function useGeneratorLogic() {
   const handleSavePrompt = async () => {
     if (!lastResult) return;
 
+    // Create a meaningful title from the preview title or intent
+    const promptTitle = lastResult.preview_title || intent.slice(0, 60) + (intent.length > 60 ? '...' : '');
+    
     const promptData = {
-      title: lastResult.preview_title,
-      content: lastResult.optimized_prompt,
-      description: 'AI Generated Prompt',
+      title: promptTitle,
+      content: lastResult.optimized_prompt, // This is the refined/final prompt
+      description: intent, // Store the original user intent as description
       tags: lastResult.tags,
       persona: 'strategist' as const,
       heuristics: lastResult.heuristics,
-      variables: lastResult.variables,
+      variables: [
+        // Store the original context as a variable for reference
+        ...(context ? [{
+          name: 'original_context',
+          type: 'text' as const,
+          required: false,
+          description: context
+        }] : []),
+        ...lastResult.variables
+      ],
       category: 'general' as const,
       difficulty: 'intermediate' as const,
       estimatedTime: '15 minutes'
@@ -152,12 +165,18 @@ export function useGeneratorLogic() {
       // Save to Supabase for authenticated users
       const saved = await saveToSupabase(promptData);
       if (saved) {
-        toast({ title: 'Saved!', description: 'Prompt added to your cloud library.' });
+        toast({ 
+          title: 'Saved!', 
+          description: 'Prompt added to your cloud library with original intent preserved.' 
+        });
       }
     } else {
       // Save to localStorage for unauthenticated users
       addPrompt(promptData);
-      toast({ title: 'Saved!', description: 'Prompt added to your local library.' });
+      toast({ 
+        title: 'Saved!', 
+        description: 'Prompt added to your local library with original intent preserved.' 
+      });
     }
   };
 
@@ -165,7 +184,7 @@ export function useGeneratorLogic() {
     if (!lastResult) return;
     
     navigator.clipboard.writeText(lastResult.optimized_prompt);
-    toast({ title: 'Copied!', description: 'Prompt copied to clipboard.' });
+    toast({ title: 'Copied!', description: 'Refined prompt copied to clipboard.' });
   };
 
   const handleRemixSuggestion = (suggestion: string) => {
