@@ -12,6 +12,14 @@ export function useSupabaseGenerations() {
   const [lastLoadTime, setLastLoadTime] = useState<number | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
+  // Helper function to validate complexity value
+  const validateComplexity = (complexity: string | null): 'simple' | 'intermediate' | 'advanced' => {
+    if (complexity === 'simple' || complexity === 'intermediate' || complexity === 'advanced') {
+      return complexity;
+    }
+    return 'intermediate'; // default fallback
+  };
+
   // Load generations from Supabase
   const loadGenerations = useCallback(async (force = false) => {
     if (!user) return;
@@ -39,7 +47,7 @@ export function useSupabaseGenerations() {
         metadata: {
           intent: item.intent || '',
           context: item.context || '',
-          complexity: item.complexity || 'intermediate',
+          complexity: validateComplexity(item.complexity),
           heuristics: item.heuristics || [],
           ...(item.metadata && typeof item.metadata === 'object' ? item.metadata : {})
         },
@@ -100,7 +108,7 @@ export function useSupabaseGenerations() {
         metadata: {
           intent: data.intent || '',
           context: data.context || '',
-          complexity: data.complexity || 'intermediate',
+          complexity: validateComplexity(data.complexity),
           heuristics: data.heuristics || [],
           ...(data.metadata && typeof data.metadata === 'object' ? data.metadata : {})
         },
