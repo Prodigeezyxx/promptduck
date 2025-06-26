@@ -49,14 +49,16 @@ export function useUnifiedData() {
   const savePrompt = async (prompt: Omit<Prompt, 'id' | 'created_at' | 'updated_at' | 'version' | 'usage_count'>) => {
     try {
       if (user) {
-        // Simple save without duplicate checking (let database handle it)
+        // Save to cloud - the saveCloudPrompt function now handles duplicates gracefully
         return await saveCloudPrompt(prompt);
       } else {
+        // Save locally - the local store already has duplicate checking
         addLocalPrompt(prompt);
         return null;
       }
     } catch (error) {
       console.error('Failed to save prompt:', error);
+      // Only fallback to local storage if user is signed in but cloud save failed
       if (user) {
         addLocalPrompt(prompt);
       }

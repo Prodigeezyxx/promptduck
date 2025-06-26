@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Prompt, PromptCategory, PersonaType } from '@/types';
@@ -33,13 +34,13 @@ export const usePromptStore = create<PromptState>()(
       addPrompt: (promptData) => {
         const state = get();
         
-        // Check for duplicates before adding
+        // Check for duplicates before adding (for local storage only)
         const isDuplicate = state.prompts.some(existing => 
           existing.title === promptData.title && existing.content === promptData.content
         );
         
         if (isDuplicate) {
-          console.log('Duplicate prompt detected, skipping add');
+          console.log('Duplicate prompt detected in local storage, skipping add');
           return;
         }
 
@@ -140,7 +141,7 @@ export const usePromptStore = create<PromptState>()(
       }
     }),
     {
-      name: 'promptduck-prompts-v3' // Changed version to reset any corrupted data
+      name: 'promptduck-prompts-v4' // Updated version to clear any problematic cached data
     }
   )
 );

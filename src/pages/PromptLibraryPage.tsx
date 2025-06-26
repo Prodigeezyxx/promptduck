@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUnifiedData } from '@/hooks/useUnifiedData';
@@ -6,7 +7,6 @@ import { useFeaturedPrompt } from '@/hooks/useFeaturedPrompt';
 import { downloadPromptAsJSON } from '@/utils/promptExporter';
 import { useToast } from '@/hooks/use-toast';
 import { usePromptStore } from '@/store/promptStore';
-import { LibraryCleanupTools } from '@/components/library/LibraryCleanupTools';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -143,9 +143,6 @@ export default function PromptLibraryPage() {
           New Prompt
         </Button>
       </div>
-
-      {/* Cleanup Tools - Show only if user has prompts and issues might exist */}
-      {user && prompts.length > 5 && <LibraryCleanupTools />}
 
       {/* Featured Template */}
       {featuredPrompt && (

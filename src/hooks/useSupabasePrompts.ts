@@ -84,7 +84,18 @@ export function useSupabasePrompts() {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        // Check if this is a duplicate error due to our unique constraint
+        if (error.code === '23505' && error.message.includes('unique_user_prompt_content')) {
+          toast({ 
+            title: 'Prompt already exists', 
+            description: 'A prompt with this title and content already exists in your library.',
+            variant: 'default'
+          });
+          return null;
+        }
+        throw error;
+      }
 
       const newPrompt: Prompt = {
         id: data.id,
@@ -106,6 +117,12 @@ export function useSupabasePrompts() {
       };
 
       setPrompts(prev => [newPrompt, ...prev]);
+      
+      toast({
+        title: 'Prompt saved',
+        description: `"${newPrompt.title}" has been saved to your library.`
+      });
+
       return newPrompt;
     } catch (error) {
       console.error('Error saving prompt:', error);
