@@ -14,8 +14,7 @@ export function useUnifiedData() {
   const { 
     prompts: cloudPrompts, 
     savePrompt: saveCloudPrompt,
-    refreshPrompts,
-    loading: cloudLoading 
+    refreshPrompts
   } = useSupabasePrompts();
   const { 
     generations: cloudGenerations, 
@@ -83,7 +82,7 @@ export function useUnifiedData() {
     generations: allGenerations,
     savePrompt,
     saveGeneration,
-    syncing: cloudLoading,
+    syncing: false, // Remove blocking syncing state to fix library delay
     lastSyncTime: null,
     performAutoSync: async () => {}, // No-op, migration handles this
     error

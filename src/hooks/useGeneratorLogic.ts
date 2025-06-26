@@ -26,7 +26,6 @@ export function useGeneratorLogic() {
 
   const [intent, setIntent] = useState('');
   const [context, setContext] = useState('');
-  const [templateReference, setTemplateReference] = useState<any>(null);
   
   // Use smart defaults - always intermediate complexity
   const complexity = 'intermediate' as const;
@@ -44,19 +43,21 @@ export function useGeneratorLogic() {
     }
   }, [user, generations, setSupabaseHistory]);
 
-  // Handle template pre-filling when currentPrompt is set
+  // Handle template pre-filling when currentPrompt is set - simplified logic
   useEffect(() => {
     if (currentPrompt) {
-      console.log('Template selected for pre-filling:', currentPrompt.title);
+      console.log('Loading template into generator:', currentPrompt.title);
       
-      // Pre-fill the form with template data - use description as original intent if available
-      setIntent(currentPrompt.description || currentPrompt.title || '');
-      setContext(currentPrompt.variables?.find(v => v.name === 'original_context')?.description || '');
-      setTemplateReference(currentPrompt);
+      // Pre-fill the form with the original intent and context
+      const originalIntent = currentPrompt.description || currentPrompt.title || '';
+      const originalContext = currentPrompt.variables?.find(v => v.name === 'original_context')?.description || '';
+      
+      setIntent(originalIntent);
+      setContext(originalContext);
       
       toast({ 
         title: 'Template loaded!', 
-        description: `${currentPrompt.title} has been loaded. Original intent restored.` 
+        description: `"${currentPrompt.title}" has been loaded with original intent restored.` 
       });
     }
   }, [currentPrompt]);
@@ -203,14 +204,12 @@ export function useGeneratorLogic() {
   };
 
   const handleClearTemplate = () => {
-    setTemplateReference(null);
     setCurrentPrompt(null);
   };
 
   const handleStartNewPrompt = () => {
     setIntent('');
     setContext('');
-    setTemplateReference(null);
     setCurrentPrompt(null);
     setLastResult(null);
   };
@@ -224,7 +223,6 @@ export function useGeneratorLogic() {
     lastResult,
     history: user ? generations : history,
     apiKey,
-    templateReference,
     // Handlers
     handleIntentChange,
     handleContextChange,

@@ -6,9 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { RefreshCw, Sparkles, BookOpen } from 'lucide-react';
 import { HeuristicType } from '@/types';
 import { CompactHeuristicsDisplay } from './CompactHeuristicsDisplay';
-import { TemplateReference } from './TemplateReference';
 import { usePromptStore } from '@/store/promptStore';
-import { memo, useState } from 'react';
+import { memo } from 'react';
 
 const OptimizedHeuristicsDisplay = memo(CompactHeuristicsDisplay);
 
@@ -35,44 +34,10 @@ export function AIGeneratorInputPanel({
   onComplexityChange,
   onGenerate
 }: AIGeneratorInputPanelProps) {
-  const { currentPrompt, setCurrentPrompt } = usePromptStore();
-  const [showTemplateReference, setShowTemplateReference] = useState(false);
-
-  // Show template reference when a template is selected
-  const handleTemplateUseAsStartingPoint = () => {
-    if (currentPrompt) {
-      // Pre-fill the form with template details
-      onIntentChange(currentPrompt.description || currentPrompt.title);
-      const originalContext = currentPrompt.variables?.find(v => v.name === 'original_context')?.description;
-      if (originalContext) {
-        onContextChange(originalContext);
-      }
-      setShowTemplateReference(false);
-      setCurrentPrompt(null);
-    }
-  };
-
-  const handleCloseTemplateReference = () => {
-    setShowTemplateReference(false);
-    setCurrentPrompt(null);
-  };
-
-  // Show template reference when currentPrompt is set
-  if (currentPrompt && !showTemplateReference) {
-    setShowTemplateReference(true);
-  }
+  const { currentPrompt } = usePromptStore();
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Template Reference Panel */}
-      {showTemplateReference && currentPrompt && (
-        <TemplateReference
-          template={currentPrompt}
-          onClose={handleCloseTemplateReference}
-          onUseAsStartingPoint={handleTemplateUseAsStartingPoint}
-        />
-      )}
-
       {/* Template Loaded Indicator */}
       {currentPrompt && (
         <Card className="border-brand-200 bg-brand-50/50 dark:bg-brand-900/20 dark:border-brand-800">

@@ -23,7 +23,7 @@ import {
 export default function PromptLibraryPage() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  const { prompts, savePrompt, syncing, error } = useUnifiedData();
+  const { prompts, savePrompt, error } = useUnifiedData();
   const { featuredPrompt, forceRotation } = useFeaturedPrompt();
   const { setCurrentPrompt } = usePromptStore();
   const { toast } = useToast();
@@ -132,9 +132,6 @@ export default function PromptLibraryPage() {
           <h1 className="text-xl lg:text-3xl font-bold">Prompt Library</h1>
           <p className="text-sm text-muted-foreground">
             {user ? 'Discover curated prompts and manage your collection' : 'Discover curated prompts and create your collection'}
-            {syncing && user && (
-              <span className="ml-2 text-xs text-brand-600">• Syncing...</span>
-            )}
           </p>
         </div>
         <Button 
