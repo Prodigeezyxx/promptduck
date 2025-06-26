@@ -74,14 +74,14 @@ function AppContent() {
 
   return (
     <Routes>
-      {/* Landing Page - always accessible at root */}
+      {/* Landing Page */}
       <Route path="/" element={<LandingPage />} />
       
-      {/* Legal Pages - publicly accessible */}
+      {/* Legal Pages */}
       <Route path="/terms" element={<TermsOfServicePage />} />
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
       
-      {/* App Routes - accessible to all users */}
+      {/* App Routes */}
       <Route path="/app" element={<AppLayout />}>
         <Route index element={<Navigate to="/app/library" replace />} />
         <Route path="library" element={<PromptLibraryPage />} />
@@ -92,7 +92,7 @@ function AppContent() {
         } />
       </Route>
 
-      {/* Redirects for convenience */}
+      {/* Direct redirects for convenience */}
       <Route path="/library" element={<Navigate to="/app/library" replace />} />
       <Route path="/generator" element={<Navigate to="/app/generator" replace />} />
       <Route path="/playground" element={<Navigate to="/app/playground" replace />} />

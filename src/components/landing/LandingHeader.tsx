@@ -23,11 +23,18 @@ export function LandingHeader() {
         </Link>
         
         <div className="flex items-center space-x-1 sm:space-x-2">
+          {/* Always show Library link */}
+          <Link to="/app/library">
+            <Button variant="ghost" className="text-white hover:bg-white/10 text-xs sm:text-sm px-3 sm:px-4 py-2">
+              Library
+            </Button>
+          </Link>
+          
           {isSignedIn ? (
             <div className="flex items-center space-x-1 sm:space-x-2">
-              <Link to="/app/library">
+              <Link to="/app/generator">
                 <Button className="bg-gradient-to-r from-brand-500 to-purple-600 hover:from-brand-600 hover:to-purple-700 text-white border-0 shadow-lg text-xs sm:text-sm px-3 sm:px-4 py-2">
-                  Launch App
+                  Generator
                 </Button>
               </Link>
               {/* Show clear session button for guest users */}

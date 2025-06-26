@@ -22,10 +22,18 @@ import {
 export default function PromptLibraryPage() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  const { prompts, savePrompt, syncing } = useUnifiedData();
+  const { prompts, savePrompt, syncing, error } = useUnifiedData();
   const { featuredPrompt, forceRotation } = useFeaturedPrompt();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Initialize loading state
+  useEffect(() => {
+    if (!syncing) {
+      setIsLoading(false);
+    }
+  }, [syncing]);
 
   // Filter prompts based on search query
   const filteredPrompts = searchQuery 
@@ -86,8 +94,6 @@ export default function PromptLibraryPage() {
   };
 
   const handleDelete = async (prompt: any) => {
-    // For now, we'll show a toast that this feature is coming soon
-    // since we need to implement delete in the unified data system
     toast({
       title: "Feature coming soon",
       description: "Delete functionality will be available soon.",
@@ -103,13 +109,32 @@ export default function PromptLibraryPage() {
     });
   };
 
-  if (syncing) {
+  // Show loading state
+  if (isLoading || syncing) {
     return (
       <div className="p-3 lg:p-6 max-w-6xl mx-auto">
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500 mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Syncing your prompts...</p>
+            <p className="text-muted-foreground">
+              {user ? 'Syncing your prompts...' : 'Loading library...'}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if there's an error
+  if (error) {
+    return (
+      <div className="p-3 lg:p-6 max-w-6xl mx-auto">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <p className="text-destructive mb-4">{error}</p>
+            <Button onClick={() => window.location.reload()}>
+              Retry
+            </Button>
           </div>
         </div>
       </div>
@@ -333,7 +358,7 @@ export default function PromptLibraryPage() {
               <p className="text-muted-foreground mb-6">
                 {user 
                   ? 'Start creating and saving your own prompts to build your personal library.'
-                  : 'Sign in to save prompts to your personal library, or start creating prompts now.'
+                  : 'Start creating prompts now. Sign in to save them to your personal library.'
                 }
                 {featuredPrompt && ' You can also try the featured template above to get started.'}
               </p>
