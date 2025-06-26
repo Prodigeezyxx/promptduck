@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navigation } from '@/components/layout/Navigation';
@@ -6,14 +7,16 @@ import { MobileNavigation } from '@/components/layout/MobileNavigation';
 import { useUiStore } from '@/store/uiStore';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useDataMigration } from '@/hooks/useDataMigration';
+import { useRealtimeSync } from '@/hooks/useRealtimeSync';
 
 export default function AppLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { sidebarVisible } = useUiStore();
   const isMobile = useIsMobile();
 
-  // Add data migration hook
+  // Initialize data migration and realtime sync here where auth context is available
   useDataMigration();
+  useRealtimeSync();
 
   return (
     <div className="min-h-screen flex w-full">
