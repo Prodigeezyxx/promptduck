@@ -23,17 +23,13 @@ export function useUnifiedData() {
   
   const [error, setError] = useState<string | null>(null);
 
-  // Enhanced unified prompts - always show available data
+  // Show data immediately - no blocking
   const allPrompts = user ? cloudPrompts : localPrompts;
-
-  // Enhanced unified generations - always show available data
   const allGenerations = user ? cloudGenerations : localHistory;
 
-  // Enhanced prompt processing to handle existing prompts with generic descriptions
+  // Process prompts for better descriptions without changing functionality
   const processedPrompts = allPrompts.map(prompt => {
-    // If description is generic, try to extract meaningful intent from content or title
     if (!prompt.description || prompt.description === 'AI Generated Prompt' || prompt.description.trim() === '') {
-      // Try to extract intent from the beginning of the content
       const contentLines = prompt.content.split('\n').filter(line => line.trim());
       const firstMeaningfulLine = contentLines.find(line => 
         !line.startsWith('#') && 
@@ -53,27 +49,15 @@ export function useUnifiedData() {
   const savePrompt = async (prompt: Omit<Prompt, 'id' | 'created_at' | 'updated_at' | 'version' | 'usage_count'>) => {
     try {
       if (user) {
-        // Check for duplicates before saving to cloud
-        const existingPrompt = cloudPrompts.find(p => 
-          p.title === prompt.title && p.content === prompt.content
-        );
-
-        if (existingPrompt) {
-          console.log('Prompt already exists in cloud, skipping save');
-          return existingPrompt;
-        }
-
+        // Simple save without duplicate checking (let database handle it)
         return await saveCloudPrompt(prompt);
       } else {
-        // For unauthenticated users, save to local storage
         addLocalPrompt(prompt);
         return null;
       }
     } catch (error) {
       console.error('Failed to save prompt:', error);
-      // Fallback to local storage if cloud save fails
       if (user) {
-        console.log('Falling back to local storage');
         addLocalPrompt(prompt);
       }
       throw error;
@@ -89,9 +73,7 @@ export function useUnifiedData() {
       }
     } catch (error) {
       console.error('Failed to save generation:', error);
-      // Fallback to local storage if cloud save fails
       if (user) {
-        console.log('Falling back to local storage for generation');
         addLocalGeneration(result);
       }
       throw error;
@@ -99,13 +81,13 @@ export function useUnifiedData() {
   };
 
   return {
-    prompts: processedPrompts, // Return processed prompts with better descriptions
+    prompts: processedPrompts,
     generations: allGenerations,
     savePrompt,
     saveGeneration,
-    syncing: false, // No blocking syncing
+    syncing: false,
     lastSyncTime: null,
-    performAutoSync: async () => {}, // No-op
+    performAutoSync: async () => {},
     error
   };
 }

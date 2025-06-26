@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Prompt, PromptCategory, PersonaType } from '@/types';
@@ -32,6 +31,18 @@ export const usePromptStore = create<PromptState>()(
       setCurrentPrompt: (prompt) => set({ currentPrompt: prompt }),
       setPrompts: (prompts) => set({ prompts }),
       addPrompt: (promptData) => {
+        const state = get();
+        
+        // Check for duplicates before adding
+        const isDuplicate = state.prompts.some(existing => 
+          existing.title === promptData.title && existing.content === promptData.content
+        );
+        
+        if (isDuplicate) {
+          console.log('Duplicate prompt detected, skipping add');
+          return;
+        }
+
         const newPrompt: Prompt = {
           ...promptData,
           id: crypto.randomUUID(),
@@ -129,7 +140,7 @@ export const usePromptStore = create<PromptState>()(
       }
     }),
     {
-      name: 'promptduck-prompts-v2'
+      name: 'promptduck-prompts-v3' // Changed version to reset any corrupted data
     }
   )
 );

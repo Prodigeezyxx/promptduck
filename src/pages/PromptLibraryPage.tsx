@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUnifiedData } from '@/hooks/useUnifiedData';
@@ -7,6 +6,7 @@ import { useFeaturedPrompt } from '@/hooks/useFeaturedPrompt';
 import { downloadPromptAsJSON } from '@/utils/promptExporter';
 import { useToast } from '@/hooks/use-toast';
 import { usePromptStore } from '@/store/promptStore';
+import { LibraryCleanupTools } from '@/components/library/LibraryCleanupTools';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -144,6 +144,9 @@ export default function PromptLibraryPage() {
         </Button>
       </div>
 
+      {/* Cleanup Tools - Show only if user has prompts and issues might exist */}
+      {user && prompts.length > 5 && <LibraryCleanupTools />}
+
       {/* Featured Template */}
       {featuredPrompt && (
         <div className="mb-6 lg:mb-8">
@@ -247,7 +250,7 @@ export default function PromptLibraryPage() {
 
       {/* Your Prompts */}
       <div className="mb-4">
-        <h2 className="text-lg font-semibold mb-3">Your Prompts</h2>
+        <h2 className="text-lg font-semibold mb-3">Your Prompts ({filteredPrompts.length})</h2>
         {filteredPrompts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
             {filteredPrompts.map((prompt) => (
@@ -262,7 +265,6 @@ export default function PromptLibraryPage() {
                       <CardTitle className="text-sm lg:text-base font-semibold line-clamp-2 mb-1 lg:mb-2">
                         {prompt.title}
                       </CardTitle>
-                      {/* Show original intent (description) prominently */}
                       {prompt.description && (
                         <div className="mb-2">
                           <p className="text-xs font-medium text-brand-600 dark:text-brand-400">Original Intent:</p>
@@ -271,7 +273,6 @@ export default function PromptLibraryPage() {
                           </p>
                         </div>
                       )}
-                      {/* Show preview of refined prompt */}
                       <div>
                         <p className="text-xs font-medium text-purple-600 dark:text-purple-400">Refined Prompt:</p>
                         <p className="text-xs text-muted-foreground line-clamp-2">
