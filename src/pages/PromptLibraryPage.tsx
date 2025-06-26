@@ -26,14 +26,6 @@ export default function PromptLibraryPage() {
   const { featuredPrompt, forceRotation } = useFeaturedPrompt();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Initialize loading state
-  useEffect(() => {
-    if (!syncing) {
-      setIsLoading(false);
-    }
-  }, [syncing]);
 
   // Filter prompts based on search query
   const filteredPrompts = searchQuery 
@@ -109,22 +101,6 @@ export default function PromptLibraryPage() {
     });
   };
 
-  // Show loading state
-  if (isLoading || syncing) {
-    return (
-      <div className="p-3 lg:p-6 max-w-6xl mx-auto">
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500 mx-auto mb-4"></div>
-            <p className="text-muted-foreground">
-              {user ? 'Syncing your prompts...' : 'Loading library...'}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // Show error state if there's an error
   if (error) {
     return (
@@ -148,6 +124,9 @@ export default function PromptLibraryPage() {
           <h1 className="text-xl lg:text-3xl font-bold">Prompt Library</h1>
           <p className="text-sm text-muted-foreground">
             {user ? 'Discover curated prompts and manage your collection' : 'Discover curated prompts and create your collection'}
+            {syncing && user && (
+              <span className="ml-2 text-xs text-brand-600">• Syncing...</span>
+            )}
           </p>
         </div>
         <Button 
