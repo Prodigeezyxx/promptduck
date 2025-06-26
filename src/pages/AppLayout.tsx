@@ -6,6 +6,7 @@ import { MobileHeader } from '@/components/layout/MobileHeader';
 import { MobileNavigation } from '@/components/layout/MobileNavigation';
 import { useUiStore } from '@/store/uiStore';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useDataMigration } from '@/hooks/useDataMigration';
 import { useRealtimeSync } from '@/hooks/useRealtimeSync';
 
@@ -13,10 +14,15 @@ export default function AppLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { sidebarVisible } = useUiStore();
   const isMobile = useIsMobile();
+  const { user } = useAuthContext();
 
-  // Initialize data migration and realtime sync here where auth context is available
+  // Initialize data migration and realtime sync only for authenticated users
   useDataMigration();
-  useRealtimeSync();
+  
+  // Only setup realtime sync for authenticated users
+  if (user) {
+    useRealtimeSync();
+  }
 
   return (
     <div className="min-h-screen flex w-full">

@@ -81,15 +81,15 @@ function AppContent() {
       <Route path="/terms" element={<TermsOfServicePage />} />
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
       
-      {/* Protected App Routes */}
-      <Route path="/app" element={
-        isSignedIn ? <AppLayout /> : <Navigate to="/" replace />
-      }>
+      {/* App Routes - accessible to all users */}
+      <Route path="/app" element={<AppLayout />}>
         <Route index element={<Navigate to="/app/library" replace />} />
         <Route path="library" element={<PromptLibraryPage />} />
         <Route path="generator" element={<AIGeneratorPage />} />
         <Route path="playground" element={<PlaygroundPage />} />
-        <Route path="settings" element={<SettingsPage />} />
+        <Route path="settings" element={
+          isSignedIn ? <SettingsPage /> : <Navigate to="/app/library" replace />
+        } />
       </Route>
 
       {/* Redirects for convenience */}

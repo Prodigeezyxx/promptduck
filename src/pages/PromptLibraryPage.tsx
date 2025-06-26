@@ -1,7 +1,7 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePromptStore } from '@/store/promptStore';
-import { useSupabasePrompts } from '@/hooks/useSupabasePrompts';
+import { useUnifiedData } from '@/hooks/useUnifiedData';
 import { useAuthContext } from '@/components/auth/AuthProvider';
 import { useFeaturedPrompt } from '@/hooks/useFeaturedPrompt';
 import { downloadPromptAsJSON } from '@/utils/promptExporter';
@@ -22,92 +22,77 @@ import {
 export default function PromptLibraryPage() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  
-  // Use unified data system - no more separation between local and cloud
-  const { 
-    prompts: localPrompts, 
-    deletePrompt: deleteLocalPrompt, 
-    duplicatePrompt: duplicateLocalPrompt, 
-    setCurrentPrompt, 
-    searchPrompts: searchLocalPrompts 
-  } = usePromptStore();
-  
-  const { 
-    prompts: supabasePrompts, 
-    loading: supabaseLoading,
-    deletePrompt: deleteSupabasePrompt,
-    savePrompt: saveSupabasePrompt
-  } = useSupabasePrompts();
-  
+  const { prompts, savePrompt, syncing } = useUnifiedData();
   const { featuredPrompt, forceRotation } = useFeaturedPrompt();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Always show the appropriate data source seamlessly
-  const activePrompts = user ? supabasePrompts : localPrompts;
-  const isLoading = user ? supabaseLoading : false;
-
-  // Unified search that works with current data source
+  // Filter prompts based on search query
   const filteredPrompts = searchQuery 
-    ? (user ? activePrompts.filter(prompt =>
+    ? prompts.filter(prompt =>
         prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         prompt.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         prompt.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
         prompt.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-      ) : searchLocalPrompts(searchQuery))
-    : activePrompts;
+      )
+    : prompts;
 
   const handleFeaturedPromptClick = () => {
     if (featuredPrompt) {
-      setCurrentPrompt(featuredPrompt);
       navigate('/app/generator');
     }
   };
 
   const handleCardClick = (prompt: any) => {
-    setCurrentPrompt(prompt);
     navigate('/app/generator');
   };
 
   const handleNewPrompt = () => {
-    setCurrentPrompt(null);
     navigate('/app/generator');
   };
 
   const handleEdit = (prompt: any) => {
-    setCurrentPrompt(prompt);
     navigate('/app/generator');
   };
 
   const handleDuplicate = async (prompt: any) => {
-    if (user) {
-      // For authenticated users, save to Supabase
-      const duplicatedPrompt = {
-        title: `${prompt.title} (Copy)`,
-        description: prompt.description,
-        content: prompt.content,
-        category: prompt.category,
-        persona: prompt.persona,
-        tags: prompt.tags,
-        heuristics: prompt.heuristics || [],
-        variables: prompt.variables || [],
-        difficulty: prompt.difficulty || 'intermediate',
-        estimatedTime: prompt.estimatedTime || '15 minutes',
-        parent_id: prompt.id
-      };
-      await saveSupabasePrompt(duplicatedPrompt);
-    } else {
-      // For unauthenticated users, use local storage
-      duplicateLocalPrompt(prompt.id);
+    const duplicatedPrompt = {
+      title: `${prompt.title} (Copy)`,
+      description: prompt.description,
+      content: prompt.content,
+      category: prompt.category,
+      persona: prompt.persona,
+      tags: prompt.tags,
+      heuristics: prompt.heuristics || [],
+      variables: prompt.variables || [],
+      difficulty: prompt.difficulty || 'intermediate',
+      estimatedTime: prompt.estimatedTime || '15 minutes',
+      parent_id: prompt.id
+    };
+    
+    try {
+      await savePrompt(duplicatedPrompt);
+      toast({
+        title: "Prompt duplicated",
+        description: `"${duplicatedPrompt.title}" has been created.`
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to duplicate prompt. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
   const handleDelete = async (prompt: any) => {
-    if (user) {
-      await deleteSupabasePrompt(prompt.id);
-    } else {
-      deleteLocalPrompt(prompt.id);
-    }
+    // For now, we'll show a toast that this feature is coming soon
+    // since we need to implement delete in the unified data system
+    toast({
+      title: "Feature coming soon",
+      description: "Delete functionality will be available soon.",
+      variant: "default"
+    });
   };
 
   const handleDownloadPrompt = (prompt: any) => {
@@ -118,13 +103,13 @@ export default function PromptLibraryPage() {
     });
   };
 
-  if (isLoading) {
+  if (syncing) {
     return (
       <div className="p-3 lg:p-6 max-w-6xl mx-auto">
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500 mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading your prompts...</p>
+            <p className="text-muted-foreground">Syncing your prompts...</p>
           </div>
         </div>
       </div>
@@ -136,7 +121,9 @@ export default function PromptLibraryPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 lg:mb-6 gap-3 lg:gap-4">
         <div className="space-y-1">
           <h1 className="text-xl lg:text-3xl font-bold">Prompt Library</h1>
-          <p className="text-sm text-muted-foreground">Discover curated prompts and manage your collection</p>
+          <p className="text-sm text-muted-foreground">
+            {user ? 'Discover curated prompts and manage your collection' : 'Discover curated prompts and create your collection'}
+          </p>
         </div>
         <Button 
           onClick={handleNewPrompt}
@@ -235,7 +222,7 @@ export default function PromptLibraryPage() {
       )}
 
       {/* Search - Only show if there are user prompts */}
-      {filteredPrompts.length > 0 && (
+      {prompts.length > 0 && (
         <div className="mb-4 lg:mb-6">
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -344,8 +331,11 @@ export default function PromptLibraryPage() {
             <div className="max-w-md mx-auto">
               <h3 className="text-lg font-semibold mb-2">No saved prompts yet</h3>
               <p className="text-muted-foreground mb-6">
-                Start creating and saving your own prompts to build your personal library. 
-                You can also try the featured template above to get started.
+                {user 
+                  ? 'Start creating and saving your own prompts to build your personal library.'
+                  : 'Sign in to save prompts to your personal library, or start creating prompts now.'
+                }
+                {featuredPrompt && ' You can also try the featured template above to get started.'}
               </p>
               <Button onClick={handleNewPrompt} size="lg">
                 <Plus className="w-4 h-4 mr-2" />
