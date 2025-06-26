@@ -13,24 +13,32 @@ export interface Variable {
 }
 
 export interface GenerationResult {
-  optimized_prompt: string;
-  preview_title: string;
-  tags: string[];
-  heuristics: string[];
-  variables: Variable[];
+  id?: string;
+  result: string;
   metadata: {
-    complexity_score: number;
-    creativity_score: number;
-    coherence_score: number;
-    estimated_tokens: number;
-    confidence_score: number;
-    generation_time_ms: number;
+    intent: string;
+    context?: string;
+    complexity?: 'simple' | 'intermediate' | 'advanced';
+    heuristics?: string[];
+    complexity_score?: number;
+    creativity_score?: number;
+    coherence_score?: number;
+    estimated_tokens?: number;
+    confidence_score?: number;
+    generation_time_ms?: number;
     improvement_confidence?: number;
     template_used?: string;
     intent_detected?: string;
     heuristics_applied?: string[];
   };
-  remix_suggestions: string[];
+  optimized_prompt?: string;
+  preview_title?: string;
+  tags?: string[];
+  heuristics?: string[];
+  variables?: Variable[];
+  remix_suggestions?: string[];
+  created_at?: string;
+  version?: number;
 }
 
 export interface Heuristic {

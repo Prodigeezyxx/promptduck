@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useCreditStore } from '@/store/creditStore';
@@ -15,7 +14,7 @@ import { toast } from '@/hooks/use-toast';
 
 export function useGeneratorLogic() {
   const { user } = useAuthContext();
-  const { isGenerating, lastResult, history, setGenerating, setLastResult, setHistory } = useGeneratorStore();
+  const { isGenerating, lastResult, history, setGenerating, setLastResult, setHistory: setLocalHistory } = useGeneratorStore();
   const { useCredit, canUseCredit, getRemainingCredits } = useCreditStore();
   const { apiKey } = useApiKeyStore();
   const { addPrompt, currentPrompt, setCurrentPrompt, setPrompts } = usePromptStore();
@@ -177,11 +176,11 @@ export function useGeneratorLogic() {
     
     const promptData = {
       title: promptTitle,
-      content: lastResult.optimized_prompt, // This is the refined/final prompt
+      content: lastResult.optimized_prompt || lastResult.result, // Use optimized_prompt if available, fallback to result
       description: intent, // Store the original user intent as description (FIXED)
-      tags: lastResult.tags,
+      tags: lastResult.tags || [],
       persona: 'strategist' as const,
-      heuristics: lastResult.heuristics,
+      heuristics: lastResult.heuristics || [],
       variables: [
         // Store the original context as a variable for reference
         ...(context ? [{
@@ -190,7 +189,7 @@ export function useGeneratorLogic() {
           required: false,
           description: context
         }] : []),
-        ...lastResult.variables
+        ...(lastResult.variables || [])
       ],
       category: 'general' as const,
       difficulty: 'intermediate' as const,
@@ -219,7 +218,7 @@ export function useGeneratorLogic() {
   const handleCopyPrompt = () => {
     if (!lastResult) return;
     
-    navigator.clipboard.writeText(lastResult.optimized_prompt);
+    navigator.clipboard.writeText(lastResult.optimized_prompt || lastResult.result);
     toast({ title: 'Copied!', description: 'Refined prompt copied to clipboard.' });
   };
 

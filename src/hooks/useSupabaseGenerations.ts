@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuthContext } from '@/components/auth/AuthProvider';
@@ -36,7 +37,7 @@ export function useSupabaseGenerations() {
         id: item.id,
         result: item.result,
         metadata: {
-          intent: item.intent,
+          intent: item.intent || '',
           context: item.context || '',
           complexity: item.complexity || 'intermediate',
           heuristics: item.heuristics || [],
@@ -97,11 +98,11 @@ export function useSupabaseGenerations() {
         id: data.id,
         result: data.result,
         metadata: {
-          intent: data.intent,
+          intent: data.intent || '',
           context: data.context || '',
           complexity: data.complexity || 'intermediate',
           heuristics: data.heuristics || [],
-          ...data.metadata
+          ...(data.metadata || {})
         },
         created_at: data.created_at,
         version: 1
@@ -122,6 +123,10 @@ export function useSupabaseGenerations() {
     await loadGenerations(true);
   };
 
+  const setHistory = (history: GenerationResult[]) => {
+    setGenerations(history);
+  };
+
   // External initialization function for preloading
   const initializeGenerations = useCallback(() => {
     if (user && !isInitialized && !loading) {
@@ -135,6 +140,7 @@ export function useSupabaseGenerations() {
     isInitialized,
     saveGeneration,
     refreshGenerations,
+    setHistory,
     initializeGenerations
   };
 }
