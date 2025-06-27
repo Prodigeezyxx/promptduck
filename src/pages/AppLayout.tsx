@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navigation } from '@/components/layout/Navigation';
@@ -28,7 +29,7 @@ export default function AppLayout() {
   }
 
   return (
-    <div className="min-h-screen flex w-full">
+    <div className="min-h-screen flex w-full bg-background mobile-safe-area">
       {/* Desktop Navigation - conditionally rendered */}
       {(!isMobile && sidebarVisible) && <Navigation />}
       
@@ -46,7 +47,7 @@ export default function AppLayout() {
         <MobileHeader onMenuToggle={() => setMobileMenuOpen(true)} />
         
         {/* Page Content */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto mobile-scroll">
           <Outlet />
         </main>
       </div>

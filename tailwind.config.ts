@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -13,10 +12,35 @@ export default {
 	theme: {
 		container: {
 			center: true,
-			padding: '2rem',
+			padding: {
+				DEFAULT: '1rem',
+				sm: '1.5rem',
+				lg: '2rem',
+				xl: '2.5rem',
+				'2xl': '3rem'
+			},
 			screens: {
+				'sm': '640px',
+				'md': '768px',
+				'lg': '1024px',
+				'xl': '1280px',
 				'2xl': '1400px'
 			}
+		},
+		screens: {
+			'xs': '360px',
+			'sm': '640px',
+			'md': '768px',
+			'lg': '1024px',
+			'xl': '1280px',
+			'2xl': '1536px',
+			// Mobile-first breakpoints
+			'mobile': {'max': '767px'},
+			'tablet': {'min': '768px', 'max': '1023px'},
+			'desktop': {'min': '1024px'},
+			// Touch device detection
+			'touch': {'raw': '(hover: none) and (pointer: coarse)'},
+			'no-touch': {'raw': '(hover: hover) and (pointer: fine)'},
 		},
 		extend: {
 			colors: {
@@ -111,12 +135,21 @@ export default {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
+			spacing: {
+				'safe-top': 'env(safe-area-inset-top)',
+				'safe-bottom': 'env(safe-area-inset-bottom)',
+				'safe-left': 'env(safe-area-inset-left)',
+				'safe-right': 'env(safe-area-inset-right)',
+			},
 			boxShadow: {
 				'soft-inner': 'inset 0 0 0 1px rgba(255,255,255,0.05)',
 				'soft-inner-light': 'inset 0 0 0 1px rgba(0,0,0,0.05)',
 				'elevation-1': '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
 				'elevation-2': '0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)',
 				'elevation-3': '0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23)',
+				// Mobile-optimized shadows
+				'mobile-soft': '0 2px 8px rgba(0, 0, 0, 0.1)',
+				'mobile-elevated': '0 4px 16px rgba(0, 0, 0, 0.15)',
 			},
 			keyframes: {
 				'accordion-down': {
@@ -178,6 +211,28 @@ export default {
 					'50%': {
 						opacity: '0.5'
 					}
+				},
+				// Mobile-optimized animations
+				'mobile-slide-in': {
+					'0%': {
+						transform: 'translateY(20px)',
+						opacity: '0'
+					},
+					'100%': {
+						transform: 'translateY(0)',
+						opacity: '1'
+					}
+				},
+				'mobile-bounce': {
+					'0%, 20%, 50%, 80%, 100%': {
+						transform: 'translateY(0)'
+					},
+					'40%': {
+						transform: 'translateY(-8px)'
+					},
+					'60%': {
+						transform: 'translateY(-4px)'
+					}
 				}
 			},
 			animation: {
@@ -188,9 +243,20 @@ export default {
 				'float': 'float 3s ease-in-out infinite',
 				'glow': 'glow 2s ease-in-out infinite',
 				'pulse-accent': 'pulse-accent 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+				// Mobile-optimized animations
+				'mobile-slide-in': 'mobile-slide-in 0.3s ease-out',
+				'mobile-bounce': 'mobile-bounce 1s ease-in-out',
 			},
 			fontFamily: {
 				sans: ['Inter', 'system-ui', 'sans-serif'],
+			},
+			fontSize: {
+				// Mobile-optimized font sizes
+				'mobile-xs': ['0.75rem', { lineHeight: '1.4' }],
+				'mobile-sm': ['0.875rem', { lineHeight: '1.5' }],
+				'mobile-base': ['1rem', { lineHeight: '1.6' }],
+				'mobile-lg': ['1.125rem', { lineHeight: '1.5' }],
+				'mobile-xl': ['1.25rem', { lineHeight: '1.4' }],
 			},
 			backdropBlur: {
 				xs: '2px',

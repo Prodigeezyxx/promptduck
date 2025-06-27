@@ -37,12 +37,12 @@ export function MobileNavigation({ open, onOpenChange }: MobileNavigationProps) 
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="h-[80vh] bg-surface border-t border-[rgba(255,255,255,0.05)]">
-        <DrawerHeader className="border-b border-[rgba(255,255,255,0.05)]">
-          <DrawerTitle className="text-primaryText">Navigation</DrawerTitle>
+      <DrawerContent className="h-[85vh] bg-surface border-t border-[rgba(255,255,255,0.05)] mobile-safe-bottom">
+        <DrawerHeader className="border-b border-[rgba(255,255,255,0.05)] p-fluid-lg">
+          <DrawerTitle className="text-primaryText text-fluid-lg">Navigation</DrawerTitle>
         </DrawerHeader>
         
-        <div className="p-4 space-y-2">
+        <div className="p-fluid-lg space-y-3 mobile-scroll overflow-y-auto flex-1">
           {navigation.map((item) => {
             const isActive = location.pathname === item.href;
             const Icon = item.icon;
@@ -53,27 +53,27 @@ export function MobileNavigation({ open, onOpenChange }: MobileNavigationProps) 
                 to={item.href}
                 onClick={handleLinkClick}
                 className={cn(
-                  "flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-colors touch-target",
+                  "flex items-center space-x-4 px-4 py-4 rounded-xl text-fluid-base font-medium transition-colors touch-target-large",
                   isActive 
-                    ? "bg-accent text-white" 
-                    : "text-secondaryText hover:text-primaryText hover:bg-input"
+                    ? "bg-accent text-white shadow-sm" 
+                    : "text-secondaryText hover:text-primaryText hover:bg-input active:bg-input/80"
                 )}
               >
-                <Icon className="w-5 h-5" />
-                <span>{item.name}</span>
+                <Icon className="w-6 h-6 flex-shrink-0" />
+                <span className="truncate">{item.name}</span>
               </Link>
             );
           })}
           
-          <div className="pt-4 border-t border-[rgba(255,255,255,0.05)]">
+          <div className="pt-4 border-t border-[rgba(255,255,255,0.05)] mt-6">
             <Link
               to="/"
               onClick={handleLinkClick}
-              className="flex items-center justify-center py-3"
+              className="block"
             >
-              <Button variant="outline" size="sm" className="w-full">
-                <Home className="w-4 h-4 mr-2" />
-                Home
+              <Button variant="outline" size="lg" className="w-full touch-target-large">
+                <Home className="w-5 h-5 mr-3" />
+                Back to Home
               </Button>
             </Link>
           </div>
