@@ -1,0 +1,105 @@
+
+@tailwind base;
+
+@layer base {
+  :root {
+    /* Light mode colors (default) */
+    --background: 255 255 255;
+    --surface: 248 249 250;
+    --input: 241 243 244;
+    --primary-text: 26 26 26;
+    --secondary-text: 107 114 128;
+    --accent: 126 132 249;
+    --warning: 239 68 68;
+    --success: 5 150 105;
+    --border: 0 0 0;
+    
+    /* Legacy CSS variables for compatibility */
+    --foreground: 26 26 26;
+    --card: 248 249 250;
+    --card-foreground: 26 26 26;
+    --popover: 248 249 250;
+    --popover-foreground: 26 26 26;
+    --primary: 126 132 249;
+    --primary-foreground: 255 255 255;
+    --secondary: 241 243 244;
+    --secondary-foreground: 26 26 26;
+    --muted: 241 243 244;
+    --muted-foreground: 107 114 128;
+    --destructive: 239 68 68;
+    --destructive-foreground: 255 255 255;
+    --ring: 126 132 249;
+    --radius: 0.75rem;
+
+    /* Enhanced responsive font sizes */
+    --text-xs: clamp(0.7rem, 0.5vw + 0.6rem, 0.75rem);
+    --text-sm: clamp(0.8rem, 0.75vw + 0.65rem, 0.875rem);
+    --text-base: clamp(0.9rem, 1vw + 0.75rem, 1rem);
+    --text-lg: clamp(1.05rem, 1.25vw + 0.85rem, 1.125rem);
+    --text-xl: clamp(1.2rem, 1.5vw + 0.95rem, 1.25rem);
+    --text-2xl: clamp(1.35rem, 2vw + 1.1rem, 1.5rem);
+    --text-3xl: clamp(1.6rem, 3vw + 1.3rem, 1.875rem);
+    --text-4xl: clamp(1.95rem, 4vw + 1.6rem, 2.25rem);
+    --text-5xl: clamp(2.4rem, 5vw + 2.1rem, 3rem);
+    --text-6xl: clamp(3.2rem, 6vw + 2.7rem, 3.75rem);
+    --text-7xl: clamp(4rem, 7vw + 3.2rem, 4.5rem);
+    --text-8xl: clamp(4.8rem, 8vw + 4.2rem, 6rem);
+
+    /* Enhanced responsive spacing */
+    --space-xs: clamp(0.35rem, 0.75vw + 0.2rem, 0.5rem);
+    --space-sm: clamp(0.6rem, 1.25vw + 0.35rem, 0.75rem);
+    --space-md: clamp(0.85rem, 1.75vw + 0.6rem, 1rem);
+    --space-lg: clamp(1.15rem, 2.25vw + 0.85rem, 1.5rem);
+    --space-xl: clamp(1.65rem, 3.25vw + 1.1rem, 2rem);
+    --space-2xl: clamp(2.25rem, 4.5vw + 1.6rem, 3rem);
+    --space-3xl: clamp(3.25rem, 6.5vw + 2.2rem, 4rem);
+
+    /* Enhanced responsive containers */
+    --container-xs: clamp(18rem, 95vw, 20rem);
+    --container-sm: clamp(22rem, 90vw, 24rem);
+    --container-md: clamp(30rem, 85vw, 32rem);
+    --container-lg: clamp(34rem, 80vw, 48rem);
+    --container-xl: clamp(50rem, 75vw, 64rem);
+    --container-2xl: clamp(66rem, 70vw, 80rem);
+  }
+
+  .dark {
+    /* Dark mode - primary theme */
+    --background: 30 30 34; /* #1E1E22 */
+    --surface: 42 42 46; /* #2A2A2E */
+    --input: 47 47 51; /* #2F2F33 */
+    --primary-text: 229 229 229; /* #E5E5E5 */
+    --secondary-text: 136 136 136; /* #888888 */
+    --accent: 126 132 249; /* #7E84F9 */
+    --warning: 217 74 74; /* #D94A4A */
+    --success: 16 185 129; /* #10B981 */
+    --border: 255 255 255; /* For rgba(255,255,255,0.05) */
+    
+    /* Legacy variables for dark mode */
+    --foreground: 229 229 229;
+    --card: 42 42 46;
+    --card-foreground: 229 229 229;
+    --popover: 42 42 46;
+    --popover-foreground: 229 229 229;
+    --primary: 126 132 249;
+    --primary-foreground: 255 255 255;
+    --secondary: 47 47 51;
+    --secondary-foreground: 229 229 229;
+    --muted: 47 47 51;
+    --muted-foreground: 136 136 136;
+    --destructive: 217 74 74;
+    --destructive-foreground: 255 255 255;
+    --ring: 126 132 249;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-primaryText font-sans antialiased;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+}
