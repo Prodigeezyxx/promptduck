@@ -34,130 +34,136 @@ export const MODES: ModeConfiguration = {
   },
   lovable: {
     id: 'lovable',
-    name: 'Lovable',
-    description: 'Optimized for Lovable.dev web development',
-    icon: '💜',
+    name: 'Lovable Transformer',
+    description: 'Advanced prompt engineering engine for Lovable.dev with intelligent intent classification',
+    icon: '🧠',
     color: 'bg-purple-500',
     targetPlatform: 'Lovable.dev',
-    heuristics: ['universal_clarity', 'format_optimization', 'quality_enhancement', 'self_repairing'],
+    heuristics: ['universal_clarity', 'format_optimization', 'quality_enhancement', 'self_repairing', 'multi_role_collision'],
     contextInjection: [
-      'Focus on React + TypeScript + Tailwind CSS',
-      'Emphasize responsive design',
-      'Include component structure',
-      'Consider mobile-first approach',
-      'Mention shadcn/ui components when relevant'
+      'Apply intelligent intent classification (New Project, UI/Design, Code Refactoring, Debugging, Feature Addition)',
+      'Use template augmentation based on detected intent',
+      'Focus on React + TypeScript + Tailwind CSS patterns',
+      'Emphasize responsive, mobile-first design',
+      'Include component structure and shadcn/ui usage',
+      'Apply safety rails to prevent breaking functionality',
+      'Generate structured, copy-paste-ready markdown blocks'
     ],
     formatRules: [
-      'Start with clear feature description',
-      'Break down into components',
-      'Specify styling requirements',
-      'Include responsive behavior',
-      'Mention accessibility considerations'
+      'Classify user intent before generating prompts',
+      'Apply corresponding best-practice templates',
+      'Structure output as actionable, self-contained blocks',
+      'Include clear constraints and guidelines',
+      'Separate planning from implementation phases',
+      'Use chain-of-thought reasoning for debugging tasks'
     ],
-    systemPromptModifier: `Generate prompts optimized for Lovable.dev web development. Focus on:
-- React + TypeScript patterns
-- Tailwind CSS styling
-- Responsive, mobile-first design
-- shadcn/ui component usage
-- Modern web development practices
-- Clear component breakdown
-- Accessibility considerations`,
+    systemPromptModifier: `You are the Lovable Prompt Transformer. Apply advanced prompt engineering:
+
+INTENT CLASSIFICATION ENGINE:
+- New Project Scaffolding: Keywords like "build," "create app," "start project"
+- UI/Design Modification: Keywords like "style," "responsive," "colors," "layout"  
+- Code Refactoring: Keywords like "clean up," "refactor," "organize"
+- Debugging: Keywords like "error," "fix," "not working," "bug"
+- Feature Addition: Keywords like "add feature," "implement," "change how X works"
+- Vague/Ambiguous: Input too broad to be actionable
+
+TEMPLATE AUGMENTATION SYSTEM:
+For each intent type, apply structured templates with:
+- Context setting and safety constraints
+- Step-by-step guidelines with clear objectives
+- Lovable-specific best practices (React/TypeScript/Tailwind)
+- Risk mitigation and functionality preservation
+- Evidence-based solutions with clear explanations
+
+OUTPUT STRUCTURE:
+Generate complete, copy-paste-ready prompts with:
+- Clear context and task definition
+- Specific guidelines tailored to Lovable.dev
+- Explicit constraints to prevent breaking changes
+- Mobile-first, component-driven approach
+- Integration with shadcn/ui and modern patterns`,
     examples: [
-      'Build a responsive dashboard with charts',
-      'Create a mobile-first landing page',
-      'Design a form with validation'
+      'Transform "build an e-commerce site" into structured project scaffolding',
+      'Convert "make it look better" into safe UI enhancement prompts',
+      'Turn "fix this bug" into systematic debugging workflows'
     ],
     benefits: [
-      'Lovable-specific optimization',
-      'React/TypeScript focused',
-      'Mobile-responsive emphasis',
-      'Component-driven structure'
+      'Intelligent intent detection',
+      'Template-based prompt engineering',
+      'Safety-first approach',
+      'Lovable-optimized workflows',
+      'Structured, actionable outputs'
     ]
   },
-  replit: {
-    id: 'replit',
-    name: 'Replit',
-    description: 'Educational and beginner-friendly development',
-    icon: '🎓',
-    color: 'bg-green-500',
-    targetPlatform: 'Replit',
-    heuristics: ['universal_clarity', 'structure', 'contextual_adaptation', 'quality_enhancement'],
-    contextInjection: [
-      'Emphasize learning and education',
-      'Provide step-by-step explanations',
-      'Include beginner-friendly context',
-      'Focus on interactive examples',
-      'Encourage experimentation'
-    ],
-    formatRules: [
-      'Start with learning objectives',
-      'Break into digestible steps',
-      'Include code explanations',
-      'Add interactive elements',
-      'Provide extension challenges'
-    ],
-    systemPromptModifier: `Generate educational prompts optimized for Replit development. Focus on:
-- Beginner-friendly explanations
-- Step-by-step learning approach
-- Interactive code examples
-- Multiple programming languages
-- Clear concept explanations
-- Hands-on practice exercises
-- Progressive complexity`,
-    examples: [
-      'Learn Python basics with interactive exercises',
-      'Build a simple web scraper with explanations',
-      'Create a CLI tool step-by-step'
-    ],
-    benefits: [
-      'Educational focus',
-      'Beginner-friendly',
-      'Interactive learning',
-      'Multi-language support'
-    ]
-  },
-  bolt: {
-    id: 'bolt',
-    name: 'Bolt',
-    description: 'Full-stack, production-ready development',
+  cursor: {
+    id: 'cursor',
+    name: 'Cursor AI',
+    description: 'AI-powered code editing and intelligent suggestions for IDE workflows',
     icon: '⚡',
-    color: 'bg-yellow-500',
-    targetPlatform: 'Bolt.new',
-    heuristics: ['universal_clarity', 'format_optimization', 'self_repairing', 'multi_role_collision'],
+    color: 'bg-blue-500',
+    targetPlatform: 'Cursor IDE',
+    heuristics: ['universal_clarity', 'format_optimization', 'self_repairing'],
     contextInjection: [
-      'Focus on full-stack architecture',
-      'Emphasize production readiness',
-      'Include deployment considerations',
-      'Consider scalability and performance',
-      'Mention security best practices'
+      'Focus on AI-assisted code completion',
+      'Emphasize intelligent code suggestions',
+      'Consider IDE-specific workflows',
+      'Include refactoring and optimization hints'
     ],
     formatRules: [
-      'Define full application architecture',
-      'Specify frontend and backend requirements',
-      'Include database schema if needed',
-      'Mention deployment strategy',
-      'Consider environment configuration'
+      'Structure for AI code assistance',
+      'Include contextual code improvements',
+      'Focus on developer productivity',
+      'Emphasize code quality and best practices'
     ],
-    systemPromptModifier: `Generate prompts optimized for Bolt.new full-stack development. Focus on:
-- Complete application architecture
-- Production-ready code patterns
-- Full-stack integration
-- Database design and implementation
-- API development and testing
-- Deployment and DevOps considerations
-- Security and performance optimization
-- Scalable code structure`,
+    systemPromptModifier: 'Generate prompts optimized for Cursor AI IDE with focus on intelligent code assistance and developer productivity.',
     examples: [
-      'Build a full-stack e-commerce platform',
-      'Create a real-time chat application',
-      'Develop a SaaS dashboard with authentication'
+      'AI-assisted code completion',
+      'Intelligent refactoring suggestions',
+      'Context-aware code improvements'
     ],
     benefits: [
-      'Full-stack optimization',
-      'Production-ready focus',
-      'Architecture guidance',
-      'Deployment considerations'
-    ]
+      'AI-powered code assistance',
+      'Intelligent suggestions',
+      'IDE integration',
+      'Developer productivity focus'
+    ],
+    isComingSoon: true,
+    disabled: true
+  },
+  midjourney: {
+    id: 'midjourney',
+    name: 'Midjourney',
+    description: 'Visual design prompts and creative image generation workflows',
+    icon: '🎨',
+    color: 'bg-pink-500',
+    targetPlatform: 'Midjourney',
+    heuristics: ['creativity', 'format_optimization', 'contextual_adaptation'],
+    contextInjection: [
+      'Focus on visual design language',
+      'Emphasize artistic styles and composition',
+      'Include lighting, mood, and aesthetic details',
+      'Consider aspect ratios and technical parameters'
+    ],
+    formatRules: [
+      'Structure for image generation',
+      'Include style and mood descriptors',
+      'Specify technical parameters',
+      'Focus on visual storytelling'
+    ],
+    systemPromptModifier: 'Generate prompts optimized for Midjourney image generation with focus on visual design, artistic styles, and creative composition.',
+    examples: [
+      'UI mockup generation',
+      'Brand identity visuals',
+      'Creative design concepts'
+    ],
+    benefits: [
+      'Visual design focus',
+      'Creative image generation',
+      'Artistic style guidance',
+      'Brand identity support'
+    ],
+    isComingSoon: true,
+    disabled: true
   }
 };
 

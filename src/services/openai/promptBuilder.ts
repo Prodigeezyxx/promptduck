@@ -1,4 +1,3 @@
-
 import { GenerationRequest } from '@/types';
 import { HEURISTICS } from '@/constants';
 import { MODES } from '@/constants/modes';
@@ -9,7 +8,12 @@ export class OpenAIPromptBuilder {
     const mode = request.mode && MODES[request.mode] ? MODES[request.mode] : MODES.general;
     const heuristicsDesc = request.heuristics.map(h => HEURISTICS[h]?.description || h).join(', ');
 
-    // Apply mode-specific context injection
+    // Special handling for Lovable Transformer mode
+    if (mode.id === 'lovable') {
+      return this.buildLovableTransformerPrompt(request, mode, heuristicsDesc);
+    }
+
+    // Standard mode handling
     const modeContext = mode.contextInjection.join('\n- ');
     const formatRules = mode.formatRules.join('\n- ');
 
@@ -34,14 +38,6 @@ CURRENT REQUEST ANALYSIS:
 
 ${PROMPT_DUCK_SPECIFICATION}
 
-TECHNICAL PROCESSING INSTRUCTIONS:
-1. Analyze the user intent using technical classification methods
-2. Apply appropriate heuristic combinations systematically
-3. Apply mode-specific optimizations for ${mode.targetPlatform}
-4. Generate structured, technical prompt specifications optimized for ${mode.name} mode
-5. Ensure output serves as executable instructions for ${mode.targetPlatform}
-6. Maintain technical precision while following ${mode.name}-specific patterns
-
 OUTPUT FORMAT: Return ONLY valid JSON with no markdown formatting.
 
 Required JSON structure optimized for ${mode.name} mode:
@@ -59,17 +55,72 @@ Required JSON structure optimized for ${mode.name} mode:
     "target_platform": "${mode.targetPlatform}"
   },
   "remix_suggestions": ["${mode.name}-specific enhancement specification", "Platform-optimized improvement method", "Advanced ${mode.targetPlatform} optimization approach"]
+}`;
+
+    return [
+      { role: 'system', content: systemMessage }
+    ];
+  }
+
+  private static buildLovableTransformerPrompt(request: GenerationRequest, mode: any, heuristicsDesc: string): Array<{role: 'system' | 'user' | 'assistant', content: string}> {
+    const systemMessage = `${mode.systemPromptModifier}
+
+LOVABLE PROMPT TRANSFORMER ENGINE:
+
+Your role is to analyze the user's input and transform it into a highly effective, structured prompt optimized for Lovable.dev development.
+
+PROCESSING WORKFLOW:
+1. INTENT CLASSIFICATION: Analyze the input to classify primary intent:
+   - New Project Scaffolding: "build," "create app," "start project"
+   - UI/Design Modification: "style," "responsive," "colors," "layout"
+   - Code Refactoring: "clean up," "refactor," "organize"
+   - Debugging: "error," "fix," "not working," "bug"
+   - Feature Addition: "add feature," "implement," "change how X works"
+   - Vague/Ambiguous: Input too broad to be actionable
+
+2. TEMPLATE AUGMENTATION: Apply corresponding best-practice templates
+3. OUTPUT GENERATION: Create structured, copy-paste-ready markdown
+
+CURRENT REQUEST ANALYSIS:
+- User Intent: ${request.intent}
+- Additional Context: ${request.context || 'None provided'}
+- Applied Heuristics: ${heuristicsDesc}
+- Complexity Level: ${request.complexity || 'intermediate'}
+
+LOVABLE-SPECIFIC OPTIMIZATIONS:
+- React + TypeScript + Tailwind CSS focus
+- Component-driven architecture
+- Mobile-first responsive design
+- shadcn/ui integration
+- Safety rails to prevent breaking functionality
+- Clear separation of planning vs implementation
+
+OUTPUT FORMAT: Return ONLY valid JSON with structured prompt templates:
+
+{
+  "optimized_prompt": "Complete, copy-paste-ready prompt with intent-specific template applied",
+  "preview_title": "Clear description of the generated prompt's purpose",
+  "tags": ["lovable", "prompt-engineering", "intent-classification"],
+  "variables": [{"name": "detected_intent", "type": "text", "required": true, "description": "Primary intent classification result"}],
+  "metadata": {
+    "complexity_score": 9,
+    "creativity_score": 8,
+    "coherence_score": 10,
+    "estimated_tokens": 300,
+    "mode": "lovable",
+    "target_platform": "Lovable.dev",
+    "detected_intent": "classified_intent_type",
+    "template_applied": "template_type_used"
+  },
+  "remix_suggestions": [
+    "Apply advanced component architecture patterns",
+    "Integrate additional safety constraints",
+    "Add mobile-first responsive enhancements",
+    "Include accessibility considerations"
+  ]
 }
 
-SPECIFICATIONS FOR ${mode.name.toUpperCase()} MODE:
-- optimized_prompt: Technical instruction set with numbered steps optimized for ${mode.targetPlatform} (minimum 100 words)
-- preview_title: Factual summary of prompt functionality for ${mode.name} context
-- tags: Include "${mode.id}" as first tag, followed by 3-4 technical classification tags  
-- variables: Configurable parameters with ${mode.name}-specific technical specifications
-- metadata: Include mode and target_platform fields
-- remix_suggestions: 3-4 ${mode.name}-specific technical enhancement specifications
-
-Generate structured, factual prompt specifications optimized for ${mode.targetPlatform} without anthropomorphic language or conversational elements.`;
+Generate a sophisticated, template-based prompt that transforms the user's input into actionable Lovable.dev instructions.`;
 
     return [
       { role: 'system', content: systemMessage }

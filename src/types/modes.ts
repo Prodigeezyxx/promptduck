@@ -1,5 +1,5 @@
 
-export type ModeType = 'general' | 'lovable' | 'replit' | 'bolt';
+export type ModeType = 'general' | 'lovable' | 'cursor' | 'midjourney';
 
 export interface Mode {
   id: ModeType;
@@ -14,11 +14,13 @@ export interface Mode {
   systemPromptModifier: string;
   examples: string[];
   benefits: string[];
+  isComingSoon?: boolean;
+  disabled?: boolean;
 }
 
 export interface ModeConfiguration {
   general: Mode;
   lovable: Mode;
-  replit: Mode;
-  bolt: Mode;
+  cursor: Mode;
+  midjourney: Mode;
 }

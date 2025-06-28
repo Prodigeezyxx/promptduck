@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Clock } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ModeType } from '@/types';
 import { MODES, getAllModes } from '@/constants/modes';
 import { cn } from '@/lib/utils';
@@ -26,7 +27,14 @@ export function ModeSelector({ selectedMode, onModeChange, className }: ModeSele
           <div className="flex items-center space-x-3">
             <span className="text-2xl">{currentMode.icon}</span>
             <div>
-              <h3 className="font-semibold text-base">{currentMode.name} Mode</h3>
+              <h3 className="font-semibold text-base flex items-center gap-2">
+                {currentMode.name} Mode
+                {currentMode.isComingSoon && (
+                  <Badge variant="secondary" className="text-xs">
+                    Coming Soon
+                  </Badge>
+                )}
+              </h3>
               <p className="text-sm text-secondaryText">{currentMode.description}</p>
             </div>
           </div>
@@ -44,27 +52,51 @@ export function ModeSelector({ selectedMode, onModeChange, className }: ModeSele
           <div className="space-y-3 pt-2 border-t border-[rgba(255,255,255,0.05)]">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {modes.map((mode) => (
-                <Button
-                  key={mode.id}
-                  variant={selectedMode === mode.id ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => onModeChange(mode.id)}
-                  className={cn(
-                    "justify-start h-auto p-3 text-left",
-                    selectedMode === mode.id && "ring-2 ring-accent"
-                  )}
-                >
-                  <div className="flex items-start space-x-2 w-full">
-                    <span className="text-lg flex-shrink-0">{mode.icon}</span>
-                    <div className="min-w-0 flex-1">
-                      <div className="font-medium text-sm">{mode.name}</div>
-                      <div className="text-xs opacity-80 line-clamp-2">{mode.description}</div>
-                      <Badge variant="secondary" className="mt-1 text-xs">
-                        {mode.targetPlatform}
-                      </Badge>
-                    </div>
-                  </div>
-                </Button>
+                <TooltipProvider key={mode.id}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant={selectedMode === mode.id ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => !mode.disabled && onModeChange(mode.id)}
+                        disabled={mode.disabled}
+                        className={cn(
+                          "justify-start h-auto p-3 text-left relative",
+                          selectedMode === mode.id && "ring-2 ring-accent",
+                          mode.disabled && "opacity-50 cursor-not-allowed"
+                        )}
+                      >
+                        <div className="flex items-start space-x-2 w-full">
+                          <span className="text-lg flex-shrink-0">{mode.icon}</span>
+                          <div className="min-w-0 flex-1">
+                            <div className="font-medium text-sm flex items-center gap-2">
+                              {mode.name}
+                              {mode.isComingSoon && (
+                                <Clock className="w-3 h-3 text-muted-foreground" />
+                              )}
+                            </div>
+                            <div className="text-xs opacity-80 line-clamp-2">{mode.description}</div>
+                            <div className="flex items-center gap-1 mt-1">
+                              <Badge variant="secondary" className="text-xs">
+                                {mode.targetPlatform}
+                              </Badge>
+                              {mode.isComingSoon && (
+                                <Badge variant="outline" className="text-xs">
+                                  Soon
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </Button>
+                    </TooltipTrigger>
+                    {mode.disabled && (
+                      <TooltipContent>
+                        <p>Coming soon! This mode is under development.</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
               ))}
             </div>
 
