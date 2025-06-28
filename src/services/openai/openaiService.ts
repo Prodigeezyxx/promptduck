@@ -49,13 +49,14 @@ export class OpenAIService {
         throw new Error('Intent is required and cannot be empty');
       }
 
-      // Simplified processing - no duplicate improvement calls
+      // Send mode parameter to edge function
       const { data, error } = await supabase.functions.invoke('generate-prompt', {
         body: {
           intent: request.intent,
           context: request.context,
           heuristics: request.heuristics,
-          complexity: request.complexity
+          complexity: request.complexity,
+          mode: request.mode || 'general' // Include mode parameter
         }
       });
 
