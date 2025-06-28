@@ -17,5 +17,8 @@ export interface Mode {
 }
 
 export interface ModeConfiguration {
-  [K in ModeType]: Mode;
+  general: Mode;
+  lovable: Mode;
+  replit: Mode;
+  bolt: Mode;
 }

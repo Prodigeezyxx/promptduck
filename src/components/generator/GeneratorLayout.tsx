@@ -2,7 +2,7 @@
 import { useIsMobile } from '@/hooks/use-mobile';
 import { AIGeneratorInputPanel } from './AIGeneratorInputPanel';
 import { AIGeneratorOutputPanel } from './AIGeneratorOutputPanel';
-import { HeuristicType, GenerationResult } from '@/types';
+import { HeuristicType, GenerationResult, ModeType } from '@/types';
 import { memo, useMemo } from 'react';
 
 const OptimizedInputPanel = memo(AIGeneratorInputPanel);
@@ -13,11 +13,13 @@ interface GeneratorLayoutProps {
   context: string;
   complexity: 'simple' | 'intermediate' | 'advanced';
   selectedHeuristics: HeuristicType[];
+  selectedMode: ModeType;
   isGenerating: boolean;
   lastResult: GenerationResult | null;
   onIntentChange: (value: string) => void;
   onContextChange: (value: string) => void;
   onComplexityChange: (value: 'simple' | 'intermediate' | 'advanced') => void;
+  onModeChange: (mode: ModeType) => void;
   onGenerate: () => void;
   onCopyPrompt: () => void;
   onSavePrompt: () => void;
@@ -29,11 +31,13 @@ export function GeneratorLayout({
   context,
   complexity,
   selectedHeuristics,
+  selectedMode,
   isGenerating,
   lastResult,
   onIntentChange,
   onContextChange,
   onComplexityChange,
+  onModeChange,
   onGenerate,
   onCopyPrompt,
   onSavePrompt,
@@ -47,19 +51,22 @@ export function GeneratorLayout({
     context,
     complexity,
     selectedHeuristics,
+    selectedMode,
     isGenerating,
     onIntentChange,
     onContextChange,
     onComplexityChange,
+    onModeChange,
     onGenerate,
-  }), [intent, context, complexity, selectedHeuristics, isGenerating, onIntentChange, onContextChange, onComplexityChange, onGenerate]);
+  }), [intent, context, complexity, selectedHeuristics, selectedMode, isGenerating, onIntentChange, onContextChange, onComplexityChange, onModeChange, onGenerate]);
 
   const outputPanelProps = useMemo(() => ({
+    isGenerating,
     lastResult,
     onCopyPrompt,
     onSavePrompt,
     onRemixSuggestion,
-  }), [lastResult, onCopyPrompt, onSavePrompt, onRemixSuggestion]);
+  }), [isGenerating, lastResult, onCopyPrompt, onSavePrompt, onRemixSuggestion]);
 
   if (isMobile) {
     return (

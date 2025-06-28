@@ -6,7 +6,7 @@ import { MASTER_SYSTEM_PROMPT, PROMPT_DUCK_SPECIFICATION } from '@/constants/pro
 
 export class OpenAIPromptBuilder {
   static buildSystemPrompt(request: GenerationRequest): Array<{role: 'system' | 'user' | 'assistant', content: string}> {
-    const mode = request.mode ? MODES[request.mode] : MODES.general;
+    const mode = request.mode && MODES[request.mode] ? MODES[request.mode] : MODES.general;
     const heuristicsDesc = request.heuristics.map(h => HEURISTICS[h]?.description || h).join(', ');
 
     // Apply mode-specific context injection
