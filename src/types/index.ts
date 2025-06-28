@@ -1,3 +1,5 @@
+// Import mode types first
+export type { ModeType, Mode, ModeConfiguration } from './modes';
 
 export interface GenerationRequest {
   intent: string;
@@ -145,6 +147,3 @@ export interface PromptIteration {
   timestamp: string;
   parentId?: string;
 }
-
-// Import mode types
-export type { ModeType, Mode, ModeConfiguration } from './modes';

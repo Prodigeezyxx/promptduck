@@ -68,7 +68,6 @@ export function StreamlinedGeneratorLayout({
           onCopyPrompt={onCopyPrompt}
           onSavePrompt={onSavePrompt}
           onRemixSuggestion={onRemixSuggestion}
-          onClearTemplate={onClearTemplate}
         />
       </div>
     </div>
