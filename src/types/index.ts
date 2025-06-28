@@ -1,4 +1,8 @@
+
 // Import mode types first
+import type { ModeType, Mode, ModeConfiguration } from './modes';
+
+// Re-export mode types
 export type { ModeType, Mode, ModeConfiguration } from './modes';
 
 export interface GenerationRequest {
