@@ -16,12 +16,14 @@ export default function AIGeneratorPage() {
     // State
     intent,
     context,
+    selectedMode,
     isGenerating,
     lastResult,
     apiKey,
     // Handlers
     handleIntentChange,
     handleContextChange,
+    handleModeChange,
     handleGenerate,
     handleSavePrompt,
     handleCopyPrompt,
@@ -36,16 +38,19 @@ export default function AIGeneratorPage() {
     track('prompt_generation_started', {
       intent_length: intent.length,
       context_length: context.length,
+      mode: selectedMode,
     });
     
     try {
       await handleGenerate();
       track('prompt_generation_completed', {
         success: true,
+        mode: selectedMode,
       });
     } catch (error) {
       track('prompt_generation_completed', {
         success: false,
+        mode: selectedMode,
         error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
@@ -55,6 +60,7 @@ export default function AIGeneratorPage() {
     track('prompt_saved', {
       prompt_length: lastResult?.optimized_prompt?.length || 0,
       heuristics_count: lastResult?.heuristics?.length || 0,
+      mode: selectedMode,
     });
     handleSavePrompt();
   };
@@ -62,6 +68,7 @@ export default function AIGeneratorPage() {
   const handleCopyPromptWithAnalytics = () => {
     track('prompt_copied', {
       prompt_length: lastResult?.optimized_prompt?.length || 0,
+      mode: selectedMode,
     });
     handleCopyPrompt();
   };
@@ -82,10 +89,12 @@ export default function AIGeneratorPage() {
       <StreamlinedGeneratorLayout
         intent={intent}
         context={context}
+        selectedMode={selectedMode}
         isGenerating={isGenerating}
         lastResult={lastResult}
         onIntentChange={handleIntentChange}
         onContextChange={handleContextChange}
+        onModeChange={handleModeChange}
         onGenerate={handleGenerateWithAnalytics}
         onCopyPrompt={handleCopyPromptWithAnalytics}
         onSavePrompt={handleSavePromptWithAnalytics}

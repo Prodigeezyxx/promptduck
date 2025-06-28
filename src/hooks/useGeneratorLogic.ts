@@ -9,7 +9,8 @@ import { useAuthContext } from '@/components/auth/AuthProvider';
 import { openaiService } from '@/services/openaiService';
 import { IntentDetectionEngine } from '@/services/intent/intentDetection';
 import { selectHeuristics } from '@/utils/heuristicSelector';
-import { GenerationRequest, GenerationResult } from '@/types';
+import { GenerationRequest, GenerationResult, ModeType } from '@/types';
+import { DEFAULT_MODE } from '@/constants/modes';
 import { toast } from '@/hooks/use-toast';
 
 export function useGeneratorLogic() {
@@ -25,6 +26,7 @@ export function useGeneratorLogic() {
 
   const [intent, setIntent] = useState('');
   const [context, setContext] = useState('');
+  const [selectedMode, setSelectedMode] = useState<ModeType>(DEFAULT_MODE);
   
   // Use smart defaults - always intermediate complexity
   const complexity = 'intermediate' as const;
@@ -138,6 +140,14 @@ export function useGeneratorLogic() {
     setContext(value);
   };
 
+  const handleModeChange = (mode: ModeType) => {
+    setSelectedMode(mode);
+    toast({ 
+      title: 'Mode changed', 
+      description: `Switched to ${mode} mode for optimized prompt generation.` 
+    });
+  };
+
   const handleGenerate = async (isAutoGeneration = false) => {
     if (!intent.trim()) {
       if (!isAutoGeneration) {
@@ -176,7 +186,8 @@ export function useGeneratorLogic() {
         intent: intent.trim(),
         heuristics: heuristicsToUse,
         context: contextValue || undefined,
-        complexity
+        complexity,
+        mode: selectedMode
       };
 
       console.log('Generation request object:', JSON.stringify(request, null, 2));
@@ -192,12 +203,12 @@ export function useGeneratorLogic() {
       }
       
       const toastMessage = isAutoGeneration 
-        ? `Template optimized! Applied ${heuristicsToUse.length} cognitive heuristics`
-        : `Prompt generated! Applied ${heuristicsToUse.length} cognitive heuristics`;
+        ? `Template optimized with ${selectedMode} mode! Applied ${heuristicsToUse.length} cognitive heuristics`
+        : `Prompt generated with ${selectedMode} mode! Applied ${heuristicsToUse.length} cognitive heuristics`;
       
       toast({ 
         title: isAutoGeneration ? 'Template optimized!' : 'Prompt generated!', 
-        description: `Applied ${heuristicsToUse.length} cognitive heuristics` 
+        description: `Applied ${heuristicsToUse.length} cognitive heuristics with ${selectedMode} mode optimization` 
       });
     } catch (error) {
       console.error('Generation error:', error);
@@ -290,6 +301,7 @@ export function useGeneratorLogic() {
   const handleStartNewPrompt = () => {
     setIntent('');
     setContext('');
+    setSelectedMode(DEFAULT_MODE);
     setCurrentPrompt(null);
     setLastResult(null);
   };
@@ -299,6 +311,7 @@ export function useGeneratorLogic() {
     intent,
     context,
     complexity,
+    selectedMode,
     isGenerating,
     lastResult,
     history: user ? generations : history,
@@ -306,6 +319,7 @@ export function useGeneratorLogic() {
     // Handlers
     handleIntentChange,
     handleContextChange,
+    handleModeChange,
     handleGenerate,
     handleSavePrompt,
     handleCopyPrompt,

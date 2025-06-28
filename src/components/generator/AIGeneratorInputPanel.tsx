@@ -4,8 +4,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RefreshCw, Sparkles, BookOpen } from 'lucide-react';
-import { HeuristicType } from '@/types';
+import { HeuristicType, ModeType } from '@/types';
 import { CompactHeuristicsDisplay } from './CompactHeuristicsDisplay';
+import { ModeSelector } from './ModeSelector';
 import { usePromptStore } from '@/store/promptStore';
 import { memo } from 'react';
 
@@ -16,10 +17,12 @@ interface AIGeneratorInputPanelProps {
   context: string;
   complexity: 'simple' | 'intermediate' | 'advanced';
   selectedHeuristics: HeuristicType[];
+  selectedMode: ModeType;
   isGenerating: boolean;
   onIntentChange: (value: string) => void;
   onContextChange: (value: string) => void;
   onComplexityChange: (value: 'simple' | 'intermediate' | 'advanced') => void;
+  onModeChange: (mode: ModeType) => void;
   onGenerate: () => void;
 }
 
@@ -28,10 +31,12 @@ export function AIGeneratorInputPanel({
   context,
   complexity,
   selectedHeuristics,
+  selectedMode,
   isGenerating,
   onIntentChange,
   onContextChange,
   onComplexityChange,
+  onModeChange,
   onGenerate
 }: AIGeneratorInputPanelProps) {
   const { currentPrompt } = usePromptStore();
@@ -54,6 +59,12 @@ export function AIGeneratorInputPanel({
           </CardContent>
         </Card>
       )}
+
+      {/* Mode Selection */}
+      <ModeSelector
+        selectedMode={selectedMode}
+        onModeChange={onModeChange}
+      />
 
       <Card>
         <CardHeader className="pb-4 sm:pb-6">

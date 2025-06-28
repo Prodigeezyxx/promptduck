@@ -1,84 +1,76 @@
 
-import { useIsMobile } from '@/hooks/use-mobile';
-import { SimpleGeneratorInputPanel } from './SimpleGeneratorInputPanel';
-import { EnhancedAIGeneratorOutputPanel } from './EnhancedAIGeneratorOutputPanel';
-import { HeuristicType, GenerationResult } from '@/types';
-import { memo, useMemo } from 'react';
-
-const OptimizedInputPanel = memo(SimpleGeneratorInputPanel);
-const OptimizedOutputPanel = memo(EnhancedAIGeneratorOutputPanel);
+import { AIGeneratorInputPanel } from './AIGeneratorInputPanel';
+import { AIGeneratorOutputPanel } from './AIGeneratorOutputPanel';
+import { GenerationResult, HeuristicType, ModeType } from '@/types';
+import { selectHeuristics } from '@/utils/heuristicSelector';
 
 interface StreamlinedGeneratorLayoutProps {
   intent: string;
   context: string;
+  selectedMode: ModeType;
   isGenerating: boolean;
   lastResult: GenerationResult | null;
   onIntentChange: (value: string) => void;
   onContextChange: (value: string) => void;
+  onModeChange: (mode: ModeType) => void;
   onGenerate: () => void;
   onCopyPrompt: () => void;
   onSavePrompt: () => void;
   onRemixSuggestion: (suggestion: string) => void;
   onStartNewPrompt: () => void;
-  onClearTemplate?: () => void;
+  onClearTemplate: () => void;
 }
 
 export function StreamlinedGeneratorLayout({
   intent,
   context,
+  selectedMode,
   isGenerating,
   lastResult,
   onIntentChange,
   onContextChange,
+  onModeChange,
   onGenerate,
   onCopyPrompt,
   onSavePrompt,
   onRemixSuggestion,
   onStartNewPrompt,
-  onClearTemplate,
+  onClearTemplate
 }: StreamlinedGeneratorLayoutProps) {
-  const isMobile = useIsMobile();
-  
-  const inputPanelProps = useMemo(() => ({
-    intent,
-    context,
-    isGenerating,
-    onIntentChange,
-    onContextChange,
-    onGenerate,
-    onClearTemplate,
-  }), [intent, context, isGenerating, onIntentChange, onContextChange, onGenerate, onClearTemplate]);
-
-  const outputPanelProps = useMemo(() => ({
-    lastResult,
-    isGenerating,
-    onCopyPrompt,
-    onSavePrompt,
-    onRemixSuggestion,
-    onStartNewPrompt,
-  }), [lastResult, isGenerating, onCopyPrompt, onSavePrompt, onRemixSuggestion, onStartNewPrompt]);
-
-  if (isMobile) {
-    return (
-      <div className="space-y-6 pb-6">
-        <OptimizedInputPanel {...inputPanelProps} />
-        <OptimizedOutputPanel {...outputPanelProps} />
-      </div>
-    );
-  }
+  // Get selected heuristics for display
+  const selectedHeuristics = selectHeuristics(intent, context) as HeuristicType[];
+  const complexity = 'intermediate' as const;
 
   return (
-    <div className="grid gap-8 max-w-7xl mx-auto min-h-0 lg:grid-cols-12">
-      {/* Left Column - Input Panel */}
-      <div className="lg:col-span-5 min-h-0">
-        <div className="sticky top-6">
-          <OptimizedInputPanel {...inputPanelProps} />
-        </div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 max-w-7xl mx-auto">
+      {/* Input Panel */}
+      <div className="order-1">
+        <AIGeneratorInputPanel
+          intent={intent}
+          context={context}
+          complexity={complexity}
+          selectedHeuristics={selectedHeuristics}
+          selectedMode={selectedMode}
+          isGenerating={isGenerating}
+          onIntentChange={onIntentChange}
+          onContextChange={onContextChange}
+          onComplexityChange={() => {}} // Not used in streamlined version
+          onModeChange={onModeChange}
+          onGenerate={onGenerate}
+        />
       </div>
 
-      {/* Right Column - Output Panel */}
-      <div className="lg:col-span-7 min-h-0 overflow-hidden">
-        <OptimizedOutputPanel {...outputPanelProps} />
+      {/* Output Panel */}
+      <div className="order-2">
+        <AIGeneratorOutputPanel
+          isGenerating={isGenerating}
+          lastResult={lastResult}
+          onCopyPrompt={onCopyPrompt}
+          onSavePrompt={onSavePrompt}
+          onRemixSuggestion={onRemixSuggestion}
+          onStartNewPrompt={onStartNewPrompt}
+          onClearTemplate={onClearTemplate}
+        />
       </div>
     </div>
   );
