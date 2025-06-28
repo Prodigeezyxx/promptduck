@@ -1,4 +1,3 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
@@ -35,7 +34,7 @@ const MODES = {
   }
 };
 
-// Advanced intent classification with contextual analysis
+// Enhanced intent classification with better new project detection
 function classifyIntent(intent: string, context: string = ''): { 
   primary: string, 
   confidence: number, 
@@ -46,17 +45,23 @@ function classifyIntent(intent: string, context: string = ''): {
   const fullText = `${intent} ${context}`.toLowerCase();
   const keywords = fullText.split(/\s+/).filter(word => word.length > 2);
   
-  // Project type detection
+  // Enhanced project type detection with more categories
   const projectPatterns = {
-    'messaging_app': ['chat', 'message', 'conversation', 'talk', 'communicate', 'social'],
-    'e_commerce': ['shop', 'store', 'buy', 'sell', 'commerce', 'marketplace', 'product'],
-    'productivity': ['todo', 'task', 'organize', 'manage', 'plan', 'schedule', 'note'],
-    'creative': ['blog', 'write', 'create', 'art', 'design', 'portfolio', 'gallery'],
-    'analytics': ['dashboard', 'chart', 'data', 'report', 'analyze', 'track', 'metric'],
-    'gaming': ['game', 'play', 'score', 'level', 'match', 'compete', 'fun'],
-    'health': ['health', 'fitness', 'exercise', 'medical', 'wellness', 'track'],
-    'finance': ['money', 'budget', 'expense', 'financial', 'payment', 'bank'],
-    'education': ['learn', 'teach', 'course', 'education', 'study', 'tutorial']
+    'messaging_app': ['chat', 'message', 'conversation', 'talk', 'communicate', 'social', 'messenger'],
+    'e_commerce': ['shop', 'store', 'buy', 'sell', 'commerce', 'marketplace', 'product', 'ecommerce'],
+    'productivity': ['todo', 'task', 'organize', 'manage', 'plan', 'schedule', 'note', 'productivity'],
+    'creative': ['blog', 'write', 'create', 'art', 'design', 'portfolio', 'gallery', 'creative'],
+    'analytics': ['dashboard', 'chart', 'data', 'report', 'analyze', 'track', 'metric', 'analytics'],
+    'gaming': ['game', 'play', 'score', 'level', 'match', 'compete', 'fun', 'gaming'],
+    'health': ['health', 'fitness', 'exercise', 'medical', 'wellness', 'track', 'healthcare'],
+    'finance': ['money', 'budget', 'expense', 'financial', 'payment', 'bank', 'finance'],
+    'education': ['learn', 'teach', 'course', 'education', 'study', 'tutorial', 'learning'],
+    'government_services': ['visa', 'application', 'government', 'legal', 'document', 'permit', 'license', 'official'],
+    'travel_planning': ['travel', 'trip', 'booking', 'hotel', 'flight', 'vacation', 'journey'],
+    'real_estate': ['property', 'house', 'rent', 'real estate', 'apartment', 'listing'],
+    'food_delivery': ['food', 'restaurant', 'delivery', 'order', 'menu', 'cooking'],
+    'event_management': ['event', 'party', 'meeting', 'conference', 'calendar', 'booking'],
+    'fitness_tracking': ['workout', 'gym', 'exercise', 'fitness', 'training', 'sports']
   };
 
   let detectedProjectType = 'general_app';
@@ -70,8 +75,30 @@ function classifyIntent(intent: string, context: string = ''): {
     }
   });
 
-  // Intent classification
-  if (fullText.includes('build') || fullText.includes('create app') || fullText.includes('start project') || fullText.includes('new project')) {
+  // Enhanced new project detection - more flexible patterns
+  const newProjectIndicators = [
+    'build', 'create app', 'start project', 'new project', 'develop',
+    'an app for', 'app that', 'application for', 'application that',
+    'platform for', 'system for', 'tool for', 'website for',
+    'make an app', 'need an app', 'want to build', 'want to create'
+  ];
+
+  const hasNewProjectIndicator = newProjectIndicators.some(indicator => 
+    fullText.includes(indicator)
+  );
+
+  // If mentions "app" or "application" with specific features/domain, it's likely a new project
+  const hasAppMention = fullText.includes('app') || fullText.includes('application');
+  const hasSpecificFeatures = fullText.includes('with') || fullText.includes('should') || 
+                             fullText.includes('feature') || fullText.includes('allow') ||
+                             fullText.includes('help') || fullText.includes('manage');
+
+  // Check for clear project intent with decent detail (more than just "build an app")
+  const wordCount = fullText.split(/\s+/).length;
+  const hasDetailedDescription = wordCount > 8;
+
+  // New project classification logic
+  if (hasNewProjectIndicator || (hasAppMention && hasSpecificFeatures && hasDetailedDescription)) {
     return { 
       primary: 'new_project_scaffolding', 
       confidence: 0.9, 
@@ -80,7 +107,10 @@ function classifyIntent(intent: string, context: string = ''): {
       keywords
     };
   }
-  if (fullText.includes('style') || fullText.includes('design') || fullText.includes('ui') || fullText.includes('look')) {
+
+  // Other intent classifications
+  if (fullText.includes('style') || fullText.includes('design') || fullText.includes('ui') || 
+      fullText.includes('look') || fullText.includes('color') || fullText.includes('layout')) {
     return { 
       primary: 'ui_design_modification', 
       confidence: 0.8,
@@ -88,7 +118,9 @@ function classifyIntent(intent: string, context: string = ''): {
       keywords
     };
   }
-  if (fullText.includes('refactor') || fullText.includes('clean') || fullText.includes('organize')) {
+
+  if (fullText.includes('refactor') || fullText.includes('clean') || fullText.includes('organize') ||
+      fullText.includes('restructure') || fullText.includes('improve code')) {
     return { 
       primary: 'code_refactoring', 
       confidence: 0.8,
@@ -96,7 +128,9 @@ function classifyIntent(intent: string, context: string = ''): {
       keywords
     };
   }
-  if (fullText.includes('error') || fullText.includes('fix') || fullText.includes('bug')) {
+
+  if (fullText.includes('error') || fullText.includes('fix') || fullText.includes('bug') ||
+      fullText.includes('broken') || fullText.includes('not working')) {
     return { 
       primary: 'debugging', 
       confidence: 0.9,
@@ -104,7 +138,9 @@ function classifyIntent(intent: string, context: string = ''): {
       keywords
     };
   }
-  if (fullText.includes('add') || fullText.includes('implement') || fullText.includes('feature')) {
+
+  if (fullText.includes('add') || fullText.includes('implement') || fullText.includes('feature') ||
+      fullText.includes('new functionality') || fullText.includes('enhance')) {
     return { 
       primary: 'feature_addition', 
       confidence: 0.8,
@@ -112,10 +148,22 @@ function classifyIntent(intent: string, context: string = ''): {
       keywords
     };
   }
-  
+
+  // Only classify as vague if truly unclear (very short, no specific mentions)
+  if (wordCount < 5 && !hasAppMention && maxMatches === 0) {
+    return { 
+      primary: 'vague_ambiguous', 
+      confidence: 0.6,
+      projectType: detectedProjectType,
+      complexity: 'intermediate',
+      keywords
+    };
+  }
+
+  // Default to new project for anything that mentions building something specific
   return { 
-    primary: 'vague_ambiguous', 
-    confidence: 0.6,
+    primary: 'new_project_scaffolding', 
+    confidence: 0.7,
     projectType: detectedProjectType,
     complexity: 'intermediate',
     keywords
@@ -133,7 +181,13 @@ function generateProjectName(intent: string, projectType: string): string {
     'gaming': ['GameFlow', 'PlaySpace', 'GameHub', 'FunVibe', 'PlayPro'],
     'health': ['HealthFlow', 'WellnessSpace', 'FitnessHub', 'HealthVibe', 'WellnessPro'],
     'finance': ['FinanceFlow', 'MoneySpace', 'BudgetHub', 'FinanceVibe', 'MoneyPro'],
-    'education': ['LearnFlow', 'EduSpace', 'StudyHub', 'LearnVibe', 'EduPro']
+    'education': ['LearnFlow', 'EduSpace', 'StudyHub', 'LearnVibe', 'EduPro'],
+    'government_services': ['GovFlow', 'DocumentHub', 'VisaSpace', 'LegalVibe', 'ApplicationPro'],
+    'travel_planning': ['TravelFlow', 'JourneySpace', 'TripHub', 'TravelVibe', 'VoyagePro'],
+    'real_estate': ['PropertyFlow', 'RealtySpace', 'HomeHub', 'PropertyVibe', 'EstatePro'],
+    'food_delivery': ['FoodFlow', 'DeliverySpace', 'OrderHub', 'FoodVibe', 'TastePro'],
+    'event_management': ['EventFlow', 'PlannerSpace', 'EventHub', 'PartyVibe', 'EventPro'],
+    'fitness_tracking': ['FitFlow', 'WorkoutSpace', 'FitnessHub', 'GymVibe', 'FitPro']
   };
 
   const names = projectNames[projectType] || ['AppFlow', 'ProjectSpace', 'MyApp', 'AppVibe', 'ProjectPro'];
@@ -171,6 +225,30 @@ function generateLovableTemplate(intent: string, context: string, analysis: any)
             'Product reviews and ratings system'
           ],
           designNotes: 'Clean product displays, intuitive navigation, and trustworthy checkout'
+        },
+        'government_services': {
+          description: 'a streamlined government services and application platform',
+          audience: '• Citizens navigating complex government processes\n  • Legal professionals and consultants\n  • International travelers and immigrants',
+          features: [
+            'Step-by-step application guidance with smart checklists',
+            'Document upload and management system',
+            'AI-powered form assistance and validation',
+            'Progress tracking and deadline reminders',
+            'Multi-language support and accessibility features'
+          ],
+          designNotes: 'Professional, trustworthy design with clear progress indicators and helpful guidance'
+        },
+        'travel_planning': {
+          description: 'a comprehensive travel planning and booking platform',
+          audience: '• Adventure seekers and frequent travelers\n  • Business travelers needing efficiency\n  • Families planning vacations together',
+          features: [
+            'Trip planning with itinerary management',
+            'Flight and hotel booking integration',
+            'Expense tracking and budget management',
+            'Travel document organization',
+            'Local recommendations and discovery'
+          ],
+          designNotes: 'Inspiring visuals, intuitive booking flows, and mobile-optimized interfaces'
         },
         'productivity': {
           description: 'a productivity and task management application',
@@ -488,7 +566,7 @@ What aspects of your idea are you most excited about?`
   };
 
   const templateFunction = templates[primary];
-  return templateFunction ? templateFunction() : templates.vague_ambiguous();
+  return templateFunction ? templateFunction() : templates.new_project_scaffolding();
 }
 
 serve(async (req) => {
