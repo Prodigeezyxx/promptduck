@@ -9,7 +9,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Mode configurations replicated from frontend
+// Enhanced mode configurations
 const MODES = {
   general: {
     id: 'general',
@@ -30,191 +30,465 @@ const MODES = {
   lovable: {
     id: 'lovable',
     name: 'Lovable Transformer',
-    systemPromptModifier: `You are the Lovable Prompt Transformer. Apply advanced prompt engineering:
-
-INTENT CLASSIFICATION ENGINE:
-- New Project Scaffolding: Keywords like "build," "create app," "start project"
-- UI/Design Modification: Keywords like "style," "responsive," "colors," "layout"  
-- Code Refactoring: Keywords like "clean up," "refactor," "organize"
-- Debugging: Keywords like "error," "fix," "not working," "bug"
-- Feature Addition: Keywords like "add feature," "implement," "change how X works"
-- Vague/Ambiguous: Input too broad to be actionable
-
-TEMPLATE AUGMENTATION SYSTEM:
-For each intent type, apply structured templates with:
-- Context setting and safety constraints
-- Step-by-step guidelines with clear objectives
-- Lovable-specific best practices (React/TypeScript/Tailwind)
-- Risk mitigation and functionality preservation
-- Evidence-based solutions with clear explanations
-
-OUTPUT STRUCTURE:
-Generate complete, copy-paste-ready prompts with:
-- Clear context and task definition
-- Specific guidelines tailored to Lovable.dev
-- Explicit constraints to prevent breaking changes
-- Mobile-first, component-driven approach
-- Integration with shadcn/ui and modern patterns`,
+    systemPromptModifier: `You are the Lovable Prompt Transformer with advanced contextual intelligence.`,
     targetPlatform: 'Lovable.dev'
   }
 };
 
-// Intent classification function
-function classifyIntent(intent: string): string {
-  const intentLower = intent.toLowerCase();
+// Advanced intent classification with contextual analysis
+function classifyIntent(intent: string, context: string = ''): { 
+  primary: string, 
+  confidence: number, 
+  projectType?: string, 
+  complexity: string,
+  keywords: string[]
+} {
+  const fullText = `${intent} ${context}`.toLowerCase();
+  const keywords = fullText.split(/\s+/).filter(word => word.length > 2);
   
-  if (intentLower.includes('build') || intentLower.includes('create app') || intentLower.includes('start project') || intentLower.includes('new project')) {
-    return 'new_project_scaffolding';
+  // Project type detection
+  const projectPatterns = {
+    'messaging_app': ['chat', 'message', 'conversation', 'talk', 'communicate', 'social'],
+    'e_commerce': ['shop', 'store', 'buy', 'sell', 'commerce', 'marketplace', 'product'],
+    'productivity': ['todo', 'task', 'organize', 'manage', 'plan', 'schedule', 'note'],
+    'creative': ['blog', 'write', 'create', 'art', 'design', 'portfolio', 'gallery'],
+    'analytics': ['dashboard', 'chart', 'data', 'report', 'analyze', 'track', 'metric'],
+    'gaming': ['game', 'play', 'score', 'level', 'match', 'compete', 'fun'],
+    'health': ['health', 'fitness', 'exercise', 'medical', 'wellness', 'track'],
+    'finance': ['money', 'budget', 'expense', 'financial', 'payment', 'bank'],
+    'education': ['learn', 'teach', 'course', 'education', 'study', 'tutorial']
+  };
+
+  let detectedProjectType = 'general_app';
+  let maxMatches = 0;
+  
+  Object.entries(projectPatterns).forEach(([type, patterns]) => {
+    const matches = patterns.filter(pattern => fullText.includes(pattern)).length;
+    if (matches > maxMatches) {
+      maxMatches = matches;
+      detectedProjectType = type;
+    }
+  });
+
+  // Intent classification
+  if (fullText.includes('build') || fullText.includes('create app') || fullText.includes('start project') || fullText.includes('new project')) {
+    return { 
+      primary: 'new_project_scaffolding', 
+      confidence: 0.9, 
+      projectType: detectedProjectType,
+      complexity: maxMatches > 2 ? 'advanced' : 'intermediate',
+      keywords
+    };
   }
-  if (intentLower.includes('style') || intentLower.includes('responsive') || intentLower.includes('colors') || intentLower.includes('layout') || intentLower.includes('design')) {
-    return 'ui_design_modification';
+  if (fullText.includes('style') || fullText.includes('design') || fullText.includes('ui') || fullText.includes('look')) {
+    return { 
+      primary: 'ui_design_modification', 
+      confidence: 0.8,
+      complexity: 'intermediate',
+      keywords
+    };
   }
-  if (intentLower.includes('clean up') || intentLower.includes('refactor') || intentLower.includes('organize')) {
-    return 'code_refactoring';
+  if (fullText.includes('refactor') || fullText.includes('clean') || fullText.includes('organize')) {
+    return { 
+      primary: 'code_refactoring', 
+      confidence: 0.8,
+      complexity: 'advanced',
+      keywords
+    };
   }
-  if (intentLower.includes('error') || intentLower.includes('fix') || intentLower.includes('not working') || intentLower.includes('bug')) {
-    return 'debugging';
+  if (fullText.includes('error') || fullText.includes('fix') || fullText.includes('bug')) {
+    return { 
+      primary: 'debugging', 
+      confidence: 0.9,
+      complexity: 'advanced',
+      keywords
+    };
   }
-  if (intentLower.includes('add feature') || intentLower.includes('implement') || intentLower.includes('change how')) {
-    return 'feature_addition';
+  if (fullText.includes('add') || fullText.includes('implement') || fullText.includes('feature')) {
+    return { 
+      primary: 'feature_addition', 
+      confidence: 0.8,
+      complexity: 'intermediate',
+      keywords
+    };
   }
   
-  return 'vague_ambiguous';
+  return { 
+    primary: 'vague_ambiguous', 
+    confidence: 0.6,
+    projectType: detectedProjectType,
+    complexity: 'intermediate',
+    keywords
+  };
 }
 
-// Template generation for Lovable mode
-function generateLovableTemplate(intent: string, context: string, detectedIntent: string): string {
+// Generate project name suggestions
+function generateProjectName(intent: string, projectType: string): string {
+  const projectNames = {
+    'messaging_app': ['ChatFlow', 'MessageSpace', 'TalkStream', 'ConversaHub', 'ChatVibe'],
+    'e_commerce': ['ShopFlow', 'MarketPlace', 'BuyNow', 'CommerceHub', 'StoreVibe'],
+    'productivity': ['TaskFlow', 'ProductiveSpace', 'OrganizeHub', 'PlannerPro', 'TaskVibe'],
+    'creative': ['CreateFlow', 'ArtSpace', 'DesignHub', 'CreativeVibe', 'PortfolioPro'],
+    'analytics': ['DataFlow', 'AnalyticsHub', 'ChartSpace', 'MetricsVibe', 'DashboardPro'],
+    'gaming': ['GameFlow', 'PlaySpace', 'GameHub', 'FunVibe', 'PlayPro'],
+    'health': ['HealthFlow', 'WellnessSpace', 'FitnessHub', 'HealthVibe', 'WellnessPro'],
+    'finance': ['FinanceFlow', 'MoneySpace', 'BudgetHub', 'FinanceVibe', 'MoneyPro'],
+    'education': ['LearnFlow', 'EduSpace', 'StudyHub', 'LearnVibe', 'EduPro']
+  };
+
+  const names = projectNames[projectType] || ['AppFlow', 'ProjectSpace', 'MyApp', 'AppVibe', 'ProjectPro'];
+  return names[Math.floor(Math.random() * names.length)];
+}
+
+// Generate sophisticated Lovable templates
+function generateLovableTemplate(intent: string, context: string, analysis: any): string {
+  const { primary, projectType, complexity, keywords } = analysis;
+  const projectName = generateProjectName(intent, projectType || 'general_app');
+
   const templates = {
-    new_project_scaffolding: `### **Part 1: Your Project Knowledge Base (PRD)**
-*Paste this into your Lovable project's "Knowledge Base" settings to provide the AI with critical context.*
+    new_project_scaffolding: () => {
+      const appTypeDescriptions = {
+        'messaging_app': {
+          description: 'a modern messaging and communication platform',
+          audience: '• Users seeking meaningful conversations\n  • Remote teams and communities\n  • Privacy-conscious communicators',
+          features: [
+            'Real-time messaging with typing indicators',
+            'Thread organization and conversation history', 
+            'Rich media sharing (images, files, links)',
+            'User presence and status indicators',
+            'Search and conversation management'
+          ],
+          designNotes: 'Chat bubbles, smooth animations, and intuitive message flows'
+        },
+        'e_commerce': {
+          description: 'a comprehensive e-commerce and shopping platform',
+          audience: '• Online shoppers seeking quality products\n  • Small to medium business owners\n  • Users who value seamless shopping experiences',
+          features: [
+            'Product catalog with search and filtering',
+            'Shopping cart and checkout flow',
+            'User accounts and order history',
+            'Payment integration and security',
+            'Product reviews and ratings system'
+          ],
+          designNotes: 'Clean product displays, intuitive navigation, and trustworthy checkout'
+        },
+        'productivity': {
+          description: 'a productivity and task management application',
+          audience: '• Busy professionals and entrepreneurs\n  • Students and academic users\n  • Teams requiring coordination and planning',
+          features: [
+            'Task creation and organization system',
+            'Project management and collaboration',
+            'Calendar integration and scheduling',
+            'Progress tracking and analytics',
+            'Team coordination and sharing'
+          ],
+          designNotes: 'Clean interfaces, clear hierarchy, and efficient workflows'
+        },
+        'creative': {
+          description: 'a creative platform for artists and content creators',
+          audience: '• Artists and creative professionals\n  • Content creators and influencers\n  • Users seeking inspiration and community',
+          features: [
+            'Portfolio creation and showcasing',
+            'Creative tools and editing capabilities',
+            'Community features and collaboration',
+            'Content organization and categorization',
+            'Social sharing and engagement'
+          ],
+          designNotes: 'Visual focus, inspiring layouts, and creative freedom'
+        }
+      };
 
-# Project Requirements: ${intent}
+      const appInfo = appTypeDescriptions[projectType] || {
+        description: 'a modern web application',
+        audience: '• Target users who need this solution\n  • People seeking efficiency and quality\n  • Users who value great experiences',
+        features: [
+          'Core functionality tailored to user needs',
+          'Intuitive user interface and navigation',
+          'Responsive design for all devices',
+          'User authentication and profiles',
+          'Data management and persistence'
+        ],
+        designNotes: 'Clean, modern design with excellent user experience'
+      };
 
-## 1. Project Purpose & User Flow
-- **Goal:** To build a modern web application that ${intent.toLowerCase()}.
-- **User Journey:** Users will interact with a clean, intuitive interface designed for optimal user experience.
+      return `### 💡 **Lovable App Prompt: ${projectName.toUpperCase()}**
 
-## 2. Core Features (MVP)
-- Responsive UI components
-- Modern design system
-- Mobile-first approach
-- Component-driven architecture
-
-## 3. Tech Stack & Design
-- **Stack:** React, TypeScript, Tailwind CSS, shadcn/ui, Supabase.
-- **Design:** Clean, minimalist, and mobile-first.
+I want to build **${appInfo.description}** that delivers an exceptional user experience. The app should feel **modern, intuitive, and performant**, optimized for both **web and mobile** platforms.
 
 ---
 
-### **Part 2: Your First Lovable Implementation Prompt**
-*Now, use this prompt in Lovable to start building.*
+### **Project Name:**
+${projectName}
 
-# Context
-You are an expert AI developer tasked with building the application defined in the project's Knowledge Base. Focus on creating a solid foundation with proper component structure.
+---
 
-## Task
+### **Target Audience:**
+${appInfo.audience}
+
+---
+
+### **Core Features and Pages:**
+
+#### ✅ **Homepage / Landing**
+• Clean, engaging welcome page with clear value proposition
+• Call-to-action buttons for key user flows
+• Mobile-responsive hero section and navigation
+
+#### ✅ **Main Application Interface**
+${appInfo.features.map(feature => `• ${feature}`).join('\n')}
+
+#### ✅ **User Management**
+• User registration and authentication
+• Profile management and settings
+• Account dashboard and preferences
+
+#### ✅ **Data Management**
+• Efficient data storage and retrieval
+• Real-time updates where appropriate
+• Export and backup capabilities
+
+---
+
+### **Tech Stack (Lovable Optimized):**
+• **Frontend:** React + TypeScript + Tailwind CSS
+• **UI Components:** shadcn/ui for consistent design
+• **Backend & Storage:** Supabase for seamless integration
+• **Authentication:** Supabase Auth with social login options
+• **Deployment:** Automated through Lovable platform
+
+---
+
+### **Design Preferences:**
+• **Typography:** Inter font family for readability
+• **Color Scheme:**
+  - Primary: Modern, accessible color palette
+  - Accent: Complementary highlight colors
+  - Backgrounds: Clean whites and subtle grays
+• **Layout:** ${appInfo.designNotes}
+• **Mobile-First:** Responsive design prioritizing mobile experience
+
+---
+
+### **Development Guidelines:**
+• Component-driven architecture with reusable elements
+• TypeScript for type safety and better development experience
+• Tailwind CSS for rapid, consistent styling
+• Accessibility-first approach (WCAG compliance)
+• Performance optimization and lazy loading
+
+---
+
+### **Next Steps:**
+1. **Start with core MVP features** - Focus on essential functionality first
+2. **Design system setup** - Establish colors, typography, and component patterns  
+3. **User authentication** - Implement secure login and registration
+4. **Core feature development** - Build main application functionality iteratively
+5. **Testing and polish** - Ensure smooth user experience across devices
+
+${context ? `\n---\n\n### **Additional Context:**\n${context}` : ''}
+
+Ready to start building? Let's begin with the homepage and core navigation structure!`;
+    },
+
+    ui_design_modification: () => `# 🎨 **Lovable UI Enhancement Prompt**
+
+Transform your application's visual design with modern, user-centric improvements that enhance both aesthetics and usability.
+
+## **Current Task**
 ${intent}
 
-### Guidelines
-- Use React + TypeScript + Tailwind CSS stack
-- Implement responsive, mobile-first design
-- Use shadcn/ui components for consistency
-- Create reusable, focused components
-- Follow modern React patterns and best practices
+## **Design Enhancement Strategy**
 
-#### Constraints
-- **Start with core functionality first**. Build incrementally.
-- **Use component-driven architecture**. Keep components focused and reusable.
-- **Prioritize user experience** with clean, intuitive interfaces.`,
+### **Visual Improvements**
+• Apply modern design principles with clean, minimal aesthetics
+• Implement consistent spacing using Tailwind's spacing scale
+• Use shadcn/ui components for professional, accessible interfaces
+• Enhance typography hierarchy with proper font weights and sizes
 
-    ui_design_modification: `# Context
-This is a design-focused task. The core functionality of the application must be preserved without any changes.
+### **User Experience Focus**
+• Improve navigation clarity and user flow
+• Add smooth transitions and micro-interactions
+• Enhance mobile responsiveness across all breakpoints
+• Optimize touch targets for mobile users
 
-## Task
-Implement the following visual enhancements: ${intent}
+### **Implementation Guidelines**
+• **Mobile-First Approach**: Design for mobile, then enhance for desktop
+• **Accessibility**: Ensure WCAG 2.1 AA compliance
+• **Performance**: Maintain fast load times and smooth animations
+• **Consistency**: Use design tokens for colors, spacing, and typography
 
-### Guidelines
-- Apply a mobile-first responsive strategy using Tailwind's standard breakpoints
-- Use shadcn/ui components for consistency
-- Focus on improving user experience and visual appeal
-- ${context ? `Additional context: ${context}` : ''}
+### **Safety Constraints**
+⚠️ **CRITICAL**: Preserve all existing functionality and data flows
+⚠️ **Visual Only**: Make no changes to business logic or state management
+⚠️ **Testing**: Verify the app works exactly as before after changes
 
-#### Constraints
-- **Make solely visual enhancements**. Ensure logic, state management, and APIs stay intact.
-- Conduct a mental check to verify that the app will operate precisely as it did before.
-- **Cease all actions if there is any uncertainty** regarding potential unintended consequences.`,
+${context ? `\n### **Specific Context:**\n${context}` : ''}
 
-    code_refactoring: `# Context
-This task requires refactoring existing code for maintainability and clarity without altering its external behavior.
+---
 
-## Task
-Develop a comprehensive plan to refactor: ${intent}
+Ready to enhance your app's visual appeal while maintaining its core functionality!`,
 
-### Guidelines
-- Focus on improving code structure, readability, and maintainability
-- Identify areas for enhancement such as simplifying logic, removing redundancy, or improving modularity
-- **Present the plan for review before implementing any changes**
-- ${context ? `Additional context: ${context}` : ''}
+    code_refactoring: () => `# 🔧 **Lovable Code Refactoring Plan**
 
-#### Constraints
-- **The user interface and functionality must remain entirely intact and operate identically post-refactor**
-- Prioritize low-risk, incremental changes
-- If uncertain at any point, pause the process and ask for clarification`,
+Improve your codebase structure and maintainability with systematic refactoring that preserves functionality.
 
-    debugging: `# Context
-An error is occurring, and a systematic investigation is required to identify the root cause before attempting a fix.
+## **Refactoring Target**
+${intent}
 
-## Task
-Analyze the following issue: ${intent}
+## **Refactoring Strategy**
 
-### Guidelines
-- **Use chain-of-thought reasoning**. First, outline the potential causes
-- Examine logs, component dependencies, and recent changes to isolate the problem
-- Explain the logical sequence that likely led to the error
-- Propose a single, targeted solution with a clear explanation of why it will work
-- ${context ? `Additional context: ${context}` : ''}
+### **Analysis Phase** (Do This First)
+1. **Map Current Structure**: Document existing components and their relationships
+2. **Identify Pain Points**: Find areas with code duplication or complex logic
+3. **Plan Incremental Changes**: Break refactoring into small, safe steps
+4. **Test Coverage**: Ensure existing functionality is well-tested
 
-#### Constraints
-- **Do not make any code changes yet**. This is an analysis and planning step
-- Ensure your proposed solution is evidence-based and directly addresses the identified root cause`,
+### **Implementation Approach**
+• **Component Separation**: Extract reusable components from large files
+• **Hook Extraction**: Move complex logic to custom hooks
+• **Type Safety**: Improve TypeScript usage and type definitions
+• **File Organization**: Group related components and utilities
 
-    feature_addition: `# Context
-You are implementing a new feature while maintaining existing functionality and following Lovable.dev best practices.
+### **Best Practices**
+• **Single Responsibility**: Each component should have one clear purpose
+• **Reusability**: Create components that can be used across the app
+• **Performance**: Use React.memo and useMemo where appropriate
+• **Readability**: Clear naming conventions and proper documentation
 
-## Task
-Implement the following feature: ${intent}
+### **Safety Protocol**
+🔒 **ZERO FUNCTIONALITY CHANGES**: The app must work identically after refactoring
+🔒 **Incremental Steps**: Make small changes and verify each step
+🔒 **Backup Strategy**: Maintain clear rollback options
 
-### Guidelines
-- Use React + TypeScript + Tailwind CSS patterns
-- Integrate with existing component architecture
-- Follow mobile-first responsive design principles
-- Use shadcn/ui components where appropriate
-- ${context ? `Additional context: ${context}` : ''}
+${context ? `\n### **Additional Context:**\n${context}` : ''}
 
-#### Constraints
-- **Preserve all existing functionality**. New features should not break current features
-- **Test integration points** to ensure compatibility with existing code
-- **Use incremental implementation** - build and test in small steps`,
+---
 
-    vague_ambiguous: `# Context
-The current goal is to clarify the project requirements and create a structured development plan. This is a planning session to be conducted in **Lovable's Chat Mode**.
+Let's start by analyzing the current structure before making any changes.`,
 
-## Task
-Let's collaboratively build a Project Requirements Document (PRD) for your application.
+    debugging: () => `# 🐛 **Lovable Debugging Workflow**
 
-### Guidelines
-- First, I need you to answer the following questions to help me understand your vision:
-  1. **What is the primary goal of your application? What problem does it solve?**
-  2. **Who is the target audience?**
-  3. **What are the 3-4 core features absolutely essential for the first version (MVP)?**
-- Based on your answers, I will help you outline a step-by-step implementation plan.
+Systematic approach to identify and resolve the issue with evidence-based solutions.
 
-#### Constraints
-- **Do not write any code yet**. This entire interaction is for planning and clarification
-- Our goal is to create a solid plan that we can then execute step-by-step to minimize errors`
+## **Issue Description**
+${intent}
+
+## **Debugging Methodology**
+
+### **Step 1: Information Gathering**
+• **Reproduce the Issue**: Identify exact steps to trigger the problem
+• **Environment Check**: Verify browser, device, and network conditions
+• **Console Analysis**: Review browser developer tools for errors
+• **Recent Changes**: Identify what was modified before the issue appeared
+
+### **Step 2: Root Cause Analysis**
+• **Component Tree**: Trace the error through the React component hierarchy
+• **State Flow**: Check how data flows through the application
+• **API Calls**: Verify network requests and responses
+• **Dependencies**: Check for version conflicts or missing packages
+
+### **Step 3: Solution Strategy**
+• **Minimal Fix**: Apply the smallest change that resolves the issue
+• **Error Boundaries**: Add proper error handling where needed
+• **Validation**: Improve input validation and edge case handling
+• **Testing**: Ensure the fix doesn't introduce new problems
+
+### **Prevention Measures**
+• **Error Logging**: Add comprehensive error tracking
+• **Input Validation**: Strengthen data validation at boundaries
+• **Fallback UI**: Implement graceful degradation for errors
+• **Monitoring**: Set up alerts for similar future issues
+
+${context ? `\n### **Additional Context:**\n${context}` : ''}
+
+---
+
+Let's start by gathering information about this issue before applying any fixes.`,
+
+    feature_addition: () => `# ⚡ **Lovable Feature Implementation**
+
+Add new functionality to your application with proper integration and user experience considerations.
+
+## **Feature Request**
+${intent}
+
+## **Implementation Strategy**
+
+### **Feature Planning**
+• **User Story**: Define who needs this feature and why
+• **Acceptance Criteria**: Establish what "done" looks like
+• **Integration Points**: Identify how this connects to existing features
+• **Data Requirements**: Determine what data needs to be stored or retrieved
+
+### **Technical Approach**
+• **Component Design**: Plan reusable, focused components
+• **State Management**: Choose appropriate state solution (local vs global)
+• **API Integration**: Design clean interfaces for data operations
+• **Error Handling**: Plan for edge cases and failure scenarios
+
+### **User Experience**
+• **Intuitive Interface**: Design that feels natural to existing users
+• **Progressive Enhancement**: Core functionality works, then add polish
+• **Mobile Optimization**: Ensure great experience on all devices
+• **Accessibility**: Include proper ARIA labels and keyboard navigation
+
+### **Implementation Steps**
+1. **Create Core Components**: Build basic functionality first
+2. **Add Styling**: Apply consistent design system
+3. **Integrate with Existing**: Connect to current app structure
+4. **Test Edge Cases**: Verify behavior in various scenarios
+5. **Polish and Optimize**: Add animations and performance improvements
+
+${context ? `\n### **Additional Context:**\n${context}` : ''}
+
+---
+
+Ready to build this feature with proper integration into your existing app!`,
+
+    vague_ambiguous: () => `# 🤔 **Lovable Project Discovery Session**
+
+Let's collaborate to transform your idea into a clear, actionable development plan.
+
+## **Your Initial Idea**
+"${intent}"
+
+## **Discovery Questions**
+
+To help create the perfect Lovable app for you, I need to understand your vision better:
+
+### **🎯 Core Purpose**
+1. **What problem does this solve?** What frustration or need will your app address?
+2. **Who is your target user?** Describe the person who would love this app
+3. **What's your main goal?** Is this for personal use, business, or sharing with others?
+
+### **📱 App Experience**
+4. **How should it feel?** Professional, playful, minimal, feature-rich?
+5. **Key actions?** What are the 3 most important things users will do?
+6. **Device priority?** Mobile-first, desktop-focused, or equal priority?
+
+### **🚀 Scope & Timeline**
+7. **MVP vs Full Vision?** What's essential for the first version?
+8. **Inspiration?** Any apps or websites you admire?
+9. **Special requirements?** Authentication, payments, real-time features?
+
+## **Next Steps**
+Once you answer a few of these questions, I'll create a detailed Lovable app prompt with:
+• Complete project specification
+• Technical architecture recommendations  
+• Step-by-step development plan
+• UI/UX guidelines tailored to your vision
+
+${context ? `\n### **Context You've Provided:**\n${context}` : ''}
+
+---
+
+**No coding yet** - let's nail down your vision first, then build something amazing! 
+
+What aspects of your idea are you most excited about?`
   };
 
-  return templates[detectedIntent] || templates.vague_ambiguous;
+  const templateFunction = templates[primary];
+  return templateFunction ? templateFunction() : templates.vague_ambiguous();
 }
 
 serve(async (req) => {
@@ -237,49 +511,64 @@ serve(async (req) => {
     const currentMode = MODES[mode] || MODES.general;
     console.log(`Processing request with mode: ${currentMode.name}`);
 
-    let systemPrompt;
     let result;
 
     // Handle Lovable Transformer mode with advanced processing
     if (mode === 'lovable') {
-      const detectedIntent = classifyIntent(intent);
-      console.log(`Detected intent: ${detectedIntent}`);
+      const analysis = classifyIntent(intent, context);
+      console.log(`Detected intent: ${analysis.primary}, Project type: ${analysis.projectType}`);
       
-      // Generate template-based prompt for Lovable mode
-      const templatePrompt = generateLovableTemplate(intent, context, detectedIntent);
+      // Generate sophisticated template-based prompt for Lovable mode
+      const templatePrompt = generateLovableTemplate(intent, context, analysis);
       
       result = {
         optimized_prompt: templatePrompt,
         preview_title: `Lovable-Optimized: ${intent.slice(0, 60)}${intent.length > 60 ? '...' : ''}`,
-        tags: ['lovable', 'prompt-engineering', detectedIntent.replace('_', '-')],
+        tags: ['lovable', 'prompt-engineering', analysis.primary.replace('_', '-'), analysis.projectType?.replace('_', '-') || 'general'].filter(Boolean),
         variables: [
           {
             name: 'detected_intent',
             type: 'text',
             required: true,
-            description: `Primary intent classification: ${detectedIntent}`
+            description: `Primary intent: ${analysis.primary}`
+          },
+          {
+            name: 'project_type',
+            type: 'text',
+            required: false,
+            description: `Detected project type: ${analysis.projectType || 'general'}`
+          },
+          {
+            name: 'complexity_level',
+            type: 'text',
+            required: false,
+            description: `Estimated complexity: ${analysis.complexity}`
           }
         ],
         metadata: {
-          complexity_score: 9,
+          complexity_score: analysis.complexity === 'advanced' ? 9 : analysis.complexity === 'intermediate' ? 7 : 5,
           creativity_score: 8,
           coherence_score: 10,
-          estimated_tokens: 400,
+          estimated_tokens: Math.max(400, templatePrompt.length / 4),
           mode: 'lovable',
           target_platform: 'Lovable.dev',
-          detected_intent: detectedIntent,
-          template_applied: detectedIntent
+          detected_intent: analysis.primary,
+          project_type: analysis.projectType,
+          template_applied: analysis.primary,
+          confidence_score: analysis.confidence,
+          keywords_detected: analysis.keywords.slice(0, 10)
         },
         remix_suggestions: [
-          'Apply advanced component architecture patterns',
-          'Integrate additional safety constraints',
-          'Add mobile-first responsive enhancements',
-          'Include accessibility considerations'
+          'Add advanced component architecture patterns',
+          'Integrate comprehensive error handling',
+          'Include accessibility and SEO optimizations',
+          'Add real-time features with Supabase',
+          'Implement progressive web app capabilities'
         ]
       };
     } else {
       // Handle other modes with OpenAI API
-      systemPrompt = `${currentMode.systemPromptModifier}
+      const systemPrompt = `${currentMode.systemPromptModifier}
 
 CURRENT REQUEST:
 - Intent: ${intent}
