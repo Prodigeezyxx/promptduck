@@ -48,13 +48,17 @@ serve(async (req) => {
       // Generate AI-enhanced, intelligently researched prompt for Lovable mode
       let templatePrompt = generateEnhancedLovableTemplate(intent, context, analysis, enrichment);
       
-      // Apply technical formatting to clean any remaining markdown
+      // Apply comprehensive text cleaning to ensure pseudo-technical format
       templatePrompt = templatePrompt
         .replace(/\*\*(.*?)\*\*/g, '$1')
         .replace(/\*(.*?)\*/g, '$1')
         .replace(/#{1,6}\s*/g, '')
         .replace(/•\s*/g, '')
-        .replace(/\n\s*\n\s*\n/g, '\n\n');
+        .replace(/[\-\*]\s*/g, '')
+        .replace(/\d+\.\s*/g, '')
+        .replace(/\n\s*\n\s*\n/g, '\n\n')
+        .replace(/🔧|🐛|🤔|🎯|📱|🚀/g, '')
+        .trim();
       
       result = {
         optimized_prompt: templatePrompt,

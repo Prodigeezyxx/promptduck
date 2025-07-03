@@ -72,18 +72,38 @@ Context: ${context || 'None'}
 Type: ${analysis.projectType || 'general_app'}
 Keywords: ${analysis.keywords?.slice(0, 5).join(', ') || 'None'}
 
-Provide brief, technical insights (2-3 items each, no formatting):
+Provide brief, technical insights using this exact format with plain text sections:
 
-DOMAIN_INSIGHTS: Key technical/business insights for this app category
-TARGET_AUDIENCE: User profile and core needs (1-2 sentences)  
-TECHNICAL_CONSIDERATIONS: Specific technical requirements/challenges
-MARKET_CONTEXT: Current expectations and standards (1-2 sentences)
-COMPETITIVE_INSIGHTS: Proven patterns from successful apps
-USER_FLOW_SUGGESTIONS: Core interaction patterns that work
-DESIGN_PATTERNS: Effective UI patterns for this category
-CONFIDENCE: Rate 1-10
+DOMAIN_INSIGHTS:
+Real-time communication requires WebSocket connections and optimized state management
+Users expect sub-second message delivery and reliable presence indicators
 
-Keep responses concise and technical. No bullets, headers, or formatting.`;
+TARGET_AUDIENCE:
+Users seeking instant, reliable communication with friends, family, or colleagues, prioritizing ease of use and privacy.
+
+TECHNICAL_CONSIDERATIONS:
+Real-time WebSocket connections for instant messaging
+Message encryption and secure data transmission
+
+MARKET_CONTEXT:
+Modern users expect WhatsApp-level reliability with Slack-level organization features.
+
+COMPETITIVE_INSIGHTS:
+Thread-based conversations improve organization
+Rich media sharing is now expected baseline functionality
+
+USER_FLOW_SUGGESTIONS:
+Quick message composer with smart suggestions
+Swipe gestures for message actions
+
+DESIGN_PATTERNS:
+Bubble-style message layout with timestamp grouping
+Bottom-anchored input with expanding text area
+
+CONFIDENCE:
+8
+
+Keep responses concise and technical. Use plain text sections, no bullets or formatting.`;
 }
 
 function parseEnrichmentResponse(enrichmentText: string): ContextEnrichment {
@@ -111,7 +131,7 @@ function parseEnrichmentResponse(enrichmentText: string): ContextEnrichment {
 }
 
 function extractSection(text: string, sectionName: string, asArray = true): string[] | string {
-  const regex = new RegExp(`\\*\\*${sectionName}:\\*\\*\\s*([\\s\\S]*?)(?=\\*\\*[A-Z_]+:|$)`, 'i');
+  const regex = new RegExp(`${sectionName}:\\s*([\\s\\S]*?)(?=\\n[A-Z_]+:|$)`, 'i');
   const match = text.match(regex);
   
   if (!match || !match[1]) {
@@ -121,19 +141,19 @@ function extractSection(text: string, sectionName: string, asArray = true): stri
   const content = match[1].trim();
   
   if (asArray) {
-    // Split by bullet points, numbers, or newlines and clean up
+    // Split by newlines and clean up
     return content
-      .split(/[•\-\*]|\d+\./)
+      .split(/\n/)
       .map(item => item.trim())
-      .filter(item => item.length > 5)
-      .slice(0, 4); // Limit to 4 items
+      .filter(item => item.length > 10)
+      .slice(0, 3); // Limit to 3 items
   }
   
   return content;
 }
 
 function extractConfidence(text: string): number {
-  const confidenceMatch = text.match(/\*\*CONFIDENCE:\*\*\s*(\d+)/i);
+  const confidenceMatch = text.match(/CONFIDENCE:\s*(\d+)/i);
   return confidenceMatch ? parseInt(confidenceMatch[1]) : 7;
 }
 

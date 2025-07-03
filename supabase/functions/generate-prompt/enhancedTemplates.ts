@@ -35,223 +35,177 @@ export function generateEnhancedLovableTemplate(
       );
     },
 
-    ui_design_modification: () => `**Context (AI-Enhanced)**
-You are Lovable's AI Builder with domain expertise in ${projectType || 'application'} interfaces. Execute visual design improvements for "${projectName}" with market intelligence.
+    ui_design_modification: () => `CONTEXT: Lovable AI Builder specialized in ${projectType || 'application'} interfaces. Domain intelligence indicates ${enrichment.domainInsights.slice(0, 2).join(' and ')}.
 
-**Domain Intelligence:** ${enrichment.domainInsights.slice(0, 2).join('; ')}.
+TARGET USERS: ${enrichment.targetAudienceAnalysis}
 
-**Target Users:** ${enrichment.targetAudienceAnalysis}
+MARKET REQUIREMENTS: ${enrichment.marketContext}
 
-**Market Standards:** ${enrichment.marketContext}
+TASK: ${intent}
 
-**Task**
-${intent}
+CONSTRAINTS:
+1. PRESERVE existing functionality - visual changes only
+2. Mobile-first responsive design with desktop compatibility
+3. WCAG 2.1 AA compliance requirements  
+4. Design system consistency using Tailwind + shadcn/ui
+5. Performance: maintain p95 load times <1.8s
+6. Apply proven patterns: ${enrichment.designPatterns.slice(0, 2).join(', ')}
+7. Implement flows: ${enrichment.userFlowSuggestions.slice(0, 2).join(', ')}
+8. Technical specs: ${enrichment.technicalConsiderations.slice(0, 2).join(', ')}
+9. Competitive insights: ${enrichment.competitiveInsights.slice(0, 2).join(', ')}
 
-Apply proven patterns: ${enrichment.designPatterns.slice(0, 2).join(', ')}.
-Implement user flows: ${enrichment.userFlowSuggestions.slice(0, 2).join(', ')}.
-Technical requirements: ${enrichment.technicalConsiderations.slice(0, 2).join(', ')}.
+IMPLEMENTATION PROTOCOL:
+1. Use semantic design tokens, avoid hardcoded colors
+2. Implement smooth transitions and micro-interactions
+3. Optimize touch targets for mobile (44px minimum)
+4. Test across breakpoints and validate accessibility
 
-**Constraints**
-• PRESERVE existing functionality - visual changes only
-• Mobile-first responsive design with desktop compatibility  
-• WCAG 2.1 AA compliance requirements
-• Design system consistency using Tailwind + shadcn/ui
-• Performance: maintain <1.8s p95 load times
-• Apply competitive insights: ${enrichment.competitiveInsights.slice(0, 2).join(', ')}
+${context ? `ADDITIONAL CONTEXT: ${context}` : ''}
 
-**Guidelines**
-• Use semantic design tokens, avoid hardcoded colors
-• Implement smooth transitions and micro-interactions
-• Optimize touch targets for mobile (44px minimum)
-• Test across breakpoints and validate accessibility
+GOAL: Deliver visually enhanced ${projectName} that maintains functionality while implementing research-backed design improvements proven effective for this app category.`,
 
-${context ? `\n**Additional Context**\n${context}` : ''}
+    code_refactoring: () => `CONTEXT: Lovable Code Refactoring Specialist. Domain analysis shows ${enrichment.domainInsights.slice(0, 2).join(' and ')}.
 
-**Goal**
-Deliver visually enhanced ${projectName} that maintains functionality while implementing research-backed design improvements proven effective for this app category.`,
+REFACTORING TARGET: ${intent}
 
-    code_refactoring: () => `# 🔧 **Lovable Code Refactoring Plan** (AI-Enhanced)
+DOMAIN INSIGHTS: ${enrichment.technicalConsiderations.slice(0, 3).join(', ')}
 
-Improve your codebase with patterns and practices proven effective for this type of application.
+ARCHITECTURE REQUIREMENTS: ${enrichment.competitiveInsights.slice(0, 2).join(', ')}
 
-## **Refactoring Target**
-${intent}
+USER FLOW CONSIDERATIONS: ${enrichment.userFlowSuggestions.slice(0, 2).join(', ')}
 
-## **Domain-Specific Technical Insights**
-${enrichment.technicalConsiderations.map(consideration => `• ${consideration}`).join('\n')}
+TASK SEQUENCE:
+1. Map Current Structure: Document existing components and their relationships
+2. Identify Pain Points: Find areas with code duplication or complex logic  
+3. Plan Incremental Changes: Break refactoring into small, safe steps
+4. Test Coverage: Ensure existing functionality is well-tested
 
-## **Architecture Recommendations**
-Based on analysis of successful apps in this domain:
-${enrichment.competitiveInsights.map(insight => `• Technical insight: ${insight}`).join('\n')}
+IMPLEMENTATION APPROACH:
+1. Component Separation: Extract reusable components from large files
+2. Hook Extraction: Move complex logic to custom hooks
+3. Type Safety: Improve TypeScript usage and type definitions
+4. File Organization: Group related components and utilities
 
-## **User-Centric Refactoring**
-Consider these user needs when restructuring:
-${enrichment.userFlowSuggestions.map(suggestion => `• Structure should support: ${suggestion}`).join('\n')}
+CONSTRAINTS:
+1. ZERO FUNCTIONALITY CHANGES: App must work identically after refactoring
+2. Incremental Steps: Make small changes and verify each step
+3. Backup Strategy: Maintain clear rollback options
+4. Single Responsibility: Each component should have one clear purpose
+5. Performance: Use React.memo and useMemo where appropriate
 
-## **Refactoring Strategy**
+${context ? `ADDITIONAL CONTEXT: ${context}` : ''}
 
-### **Analysis Phase** (Do This First)
-1. **Map Current Structure**: Document existing components and their relationships
-2. **Identify Pain Points**: Find areas with code duplication or complex logic
-3. **Plan Incremental Changes**: Break refactoring into small, safe steps
-4. **Test Coverage**: Ensure existing functionality is well-tested
+GOAL: Intelligent refactoring based on patterns proven effective for this application type.`,
 
-### **Implementation Approach**
-• **Component Separation**: Extract reusable components from large files
-• **Hook Extraction**: Move complex logic to custom hooks
-• **Type Safety**: Improve TypeScript usage and type definitions
-• **File Organization**: Group related components and utilities
+    debugging: () => `CONTEXT: Lovable Debugging Specialist with domain expertise in ${projectType || 'application'} systems.
 
-### **Best Practices**
-• **Single Responsibility**: Each component should have one clear purpose
-• **Reusability**: Create components that can be used across the app
-• **Performance**: Use React.memo and useMemo where appropriate
-• **Readability**: Clear naming conventions and proper documentation
+ISSUE DESCRIPTION: ${intent}
 
-### **Safety Protocol**
-🔒 **ZERO FUNCTIONALITY CHANGES**: The app must work identically after refactoring
-🔒 **Incremental Steps**: Make small changes and verify each step
-🔒 **Backup Strategy**: Maintain clear rollback options
+DOMAIN INSIGHTS: ${enrichment.technicalConsiderations.slice(0, 3).join(', ')}
 
-${context ? `\n### **Additional Context:**\n${context}` : ''}
+USER IMPACT: ${enrichment.targetAudienceAnalysis} Users expect ${enrichment.competitiveInsights.slice(0, 2).map(insight => insight.toLowerCase()).join(' and ')}.
 
----
+DEBUGGING PROTOCOL:
+1. Reproduce Issue: Identify exact steps to trigger the problem
+2. Environment Check: Verify browser, device, and network conditions
+3. Console Analysis: Review browser developer tools for errors
+4. Recent Changes: Identify what was modified before the issue appeared
 
-Let's refactor with intelligent insights about what works for this type of application.`,
+DOMAIN-SPECIFIC ANALYSIS:
+Check if issue affects: ${enrichment.userFlowSuggestions.slice(0, 2).join(', ')}
 
-    debugging: () => `# 🐛 **Lovable Debugging Workflow** (AI-Enhanced)
+ROOT CAUSE ANALYSIS:
+1. Component Tree: Trace error through React component hierarchy
+2. State Flow: Check how data flows through the application
+3. API Calls: Verify network requests and responses
+4. Dependencies: Check for version conflicts or missing packages
 
-Systematic debugging approach informed by common issues in this domain.
+SOLUTION STRATEGY:
+1. Minimal Fix: Apply smallest change that resolves the issue
+2. Error Boundaries: Add proper error handling where needed
+3. Validation: Improve input validation and edge case handling
+4. Testing: Ensure fix doesn't introduce new problems
 
-## **Issue Description**
-${intent}
+PREVENTION MEASURES:
+1. Error Logging: Add comprehensive error tracking
+2. Input Validation: Strengthen data validation at boundaries
+3. Fallback UI: Implement graceful degradation for errors
+4. Monitoring: Set up alerts for similar future issues
 
-## **Domain-Specific Debug Insights**
-Common challenges for this type of application:
-${enrichment.technicalConsiderations.map(consideration => `• Watch for: ${consideration}`).join('\n')}
+${context ? `ADDITIONAL CONTEXT: ${context}` : ''}
 
-## **User Impact Context**
-${enrichment.targetAudienceAnalysis}
+GOAL: Systematic debugging with domain expertise guiding the approach.`,
 
-This means users expect: ${enrichment.competitiveInsights.slice(0, 2).map(insight => insight.toLowerCase()).join(' and ')}.
+    feature_addition: () => `CONTEXT: Lovable AI Builder with ${projectType || 'application'} domain expertise implementing feature for "${projectName}".
 
-## **Debugging Methodology**
+DOMAIN INTELLIGENCE: ${enrichment.domainInsights.slice(0, 2).join(' and ')}.
 
-### **Step 1: Information Gathering**
-• **Reproduce the Issue**: Identify exact steps to trigger the problem
-• **Environment Check**: Verify browser, device, and network conditions
-• **Console Analysis**: Review browser developer tools for errors
-• **Recent Changes**: Identify what was modified before the issue appeared
+USER PROFILE: ${enrichment.targetAudienceAnalysis}
 
-### **Step 2: Domain-Specific Analysis**
-${enrichment.userFlowSuggestions.map(suggestion => `• Check if issue affects: ${suggestion}`).join('\n')}
+MARKET STANDARDS: ${enrichment.marketContext}
 
-### **Step 3: Root Cause Analysis**
-• **Component Tree**: Trace the error through the React component hierarchy
-• **State Flow**: Check how data flows through the application
-• **API Calls**: Verify network requests and responses
-• **Dependencies**: Check for version conflicts or missing packages
+TASK: ${intent}
 
-### **Step 4: Solution Strategy**
-• **Minimal Fix**: Apply the smallest change that resolves the issue
-• **Error Boundaries**: Add proper error handling where needed
-• **Validation**: Improve input validation and edge case handling
-• **Testing**: Ensure the fix doesn't introduce new problems
+TECHNICAL APPROACH:
+1. Apply domain patterns: ${enrichment.technicalConsiderations.slice(0, 2).join(', ')}
+2. Implement proven flows: ${enrichment.userFlowSuggestions.slice(0, 2).join(', ')}
+3. Use effective patterns: ${enrichment.designPatterns.slice(0, 2).join(', ')}
+4. Leverage insights: ${enrichment.competitiveInsights.slice(0, 2).join(', ')}
 
-### **Prevention Measures**
-• **Error Logging**: Add comprehensive error tracking
-• **Input Validation**: Strengthen data validation at boundaries
-• **Fallback UI**: Implement graceful degradation for errors
-• **Monitoring**: Set up alerts for similar future issues
-
-${context ? `\n### **Additional Context:**\n${context}` : ''}
-
----
-
-Let's debug this systematically with domain expertise guiding our approach.`,
-
-    feature_addition: () => `**Context (AI-Enhanced)**
-You are Lovable's AI Builder with ${projectType || 'application'} domain expertise. Implement feature for "${projectName}" using proven market patterns.
-
-**Domain Intelligence:** ${enrichment.domainInsights.slice(0, 2).join('; ')}.
-
-**User Profile:** ${enrichment.targetAudienceAnalysis}
-
-**Market Standards:** ${enrichment.marketContext}
-
-**Task**
-${intent}
-
-**Technical Approach**
-Apply domain patterns: ${enrichment.technicalConsiderations.slice(0, 2).join(', ')}.
-Implement proven flows: ${enrichment.userFlowSuggestions.slice(0, 2).join(', ')}.
-Use effective patterns: ${enrichment.designPatterns.slice(0, 2).join(', ')}.
-Leverage insights: ${enrichment.competitiveInsights.slice(0, 2).join(', ')}.
-
-**Implementation Protocol**
+IMPLEMENTATION PROTOCOL:
 1. Create core components with single responsibility
-2. Integrate with existing app architecture  
+2. Integrate with existing app architecture
 3. Apply consistent design system (Tailwind + shadcn/ui)
 4. Implement proper error boundaries and validation
 5. Add responsive mobile-first design
 6. Test edge cases and user scenarios
 
-**Constraints**
-• Tech stack: React, TypeScript, Tailwind CSS, Supabase integration
-• Performance: <1.8s p95 load, <100ms backend response
-• Accessibility: WCAG 2.1 AA compliance
-• Mobile-first responsive design
-• Security: proper data validation and sanitization
+CONSTRAINTS:
+1. Tech stack: React, TypeScript, Tailwind CSS, Supabase integration
+2. Performance: p95 load <1.8s, backend response <100ms
+3. Accessibility: WCAG 2.1 AA compliance
+4. Mobile-first responsive design
+5. Security: proper data validation and sanitization
 
-${context ? `\n**Additional Context**\n${context}` : ''}
+${context ? `ADDITIONAL CONTEXT: ${context}` : ''}
 
-**Goal**
-Deliver production-ready feature that integrates seamlessly with ${projectName} while implementing research-backed patterns proven effective for this app category.`,
+GOAL: Production-ready feature that integrates seamlessly with ${projectName} while implementing research-backed patterns proven effective for this app category.`,
 
-    vague_ambiguous: () => `# 🤔 **Lovable Project Discovery Session** (AI-Enhanced)
+    vague_ambiguous: () => `CONTEXT: Lovable Project Discovery Session using insights about successful apps in this domain.
 
-Let's transform your idea using insights about what makes apps successful in this space.
+INITIAL IDEA: "${intent}"
 
-## **Your Initial Idea**
-"${intent}"
+DOMAIN INSIGHTS: ${enrichment.domainInsights.slice(0, 3).join(', ')}
 
-## **Domain Insights We've Discovered**
-${enrichment.domainInsights.map(insight => `• ${insight}`).join('\n')}
+MARKET CONTEXT: ${enrichment.marketContext}
 
-## **Market Context**
-${enrichment.marketContext}
+DISCOVERY PROTOCOL:
 
-## **Discovery Questions**
+CORE PURPOSE ANALYSIS:
+1. What problem does this solve? What frustration or need will your app address?
+2. Who is your target user? ${enrichment.targetAudienceAnalysis}
+3. What's your main goal? Is this for personal use, business, or sharing with others?
 
-To help create the perfect Lovable app for you, I need to understand your vision better:
+APP EXPERIENCE REQUIREMENTS:
+4. How should it feel? Professional, playful, minimal, feature-rich?
+5. Key actions? Consider these proven patterns: ${enrichment.userFlowSuggestions.slice(0, 2).join(', ')}
+6. Device priority? Mobile-first, desktop-focused, or equal priority?
 
-### **🎯 Core Purpose**
-1. **What problem does this solve?** What frustration or need will your app address?
-2. **Who is your target user?** ${enrichment.targetAudienceAnalysis}
-3. **What's your main goal?** Is this for personal use, business, or sharing with others?
+SCOPE AND TIMELINE:
+7. MVP vs Full Vision? What's essential for the first version?
+8. Inspiration? Any apps or websites you admire?
+9. Special requirements? ${enrichment.technicalConsiderations.slice(0, 2).join(', ')}
 
-### **📱 App Experience**
-4. **How should it feel?** Professional, playful, minimal, feature-rich?
-5. **Key actions?** Consider these proven patterns: ${enrichment.userFlowSuggestions.slice(0, 2).join(', ')}
-6. **Device priority?** Mobile-first, desktop-focused, or equal priority?
+NEXT STEPS:
+Once you answer these questions, I'll create a detailed Lovable app prompt with:
+1. Complete project specification informed by domain research
+2. Technical architecture recommendations based on proven patterns
+3. Step-by-step development plan
+4. UI/UX guidelines tailored to your vision and user expectations
 
-### **🚀 Scope & Timeline**
-7. **MVP vs Full Vision?** What's essential for the first version?
-8. **Inspiration?** Any apps or websites you admire?
-9. **Special requirements?** ${enrichment.technicalConsiderations.slice(0, 2).join(', ')}
+${context ? `CONTEXT PROVIDED: ${context}` : ''}
 
-## **Next Steps**
-Once you answer a few of these questions, I'll create a detailed Lovable app prompt with:
-• Complete project specification informed by domain research
-• Technical architecture recommendations based on proven patterns
-• Step-by-step development plan
-• UI/UX guidelines tailored to your vision and user expectations
-
-${context ? `\n### **Context You've Provided:**\n${context}` : ''}
-
----
-
-**Research Confidence:** ${enrichment.confidence}/10 - These insights come from analyzing successful patterns in your domain.
+RESEARCH CONFIDENCE: ${enrichment.confidence}/10 - These insights come from analyzing successful patterns in your domain.
 
 What aspects of your idea are you most excited about?`
   };
@@ -300,43 +254,41 @@ function generateEnhancedRoleTaskConstraintsFormatGoalTemplate(
 
   const appDescription = baseDescriptions[projectType] || 'a modern web application';
 
-  return `**Context (AI-Enhanced)**
-You are Lovable's AI Builder with deep ${projectType || 'application'} domain expertise. Create an MVP for ${appDescription} named "${projectName}."
+  return `CONTEXT: Lovable AI Builder with deep ${projectType || 'application'} domain expertise. Create MVP for ${appDescription} named "${projectName}".
 
-**Domain Intelligence:** ${enrichment.domainInsights.slice(0, 3).join('; ')}.
+DOMAIN INTELLIGENCE: ${enrichment.domainInsights.slice(0, 3).join(', ')}.
 
-**Target Users:** ${enrichment.targetAudienceAnalysis}
+TARGET USERS: ${enrichment.targetAudienceAnalysis}
 
-**Market Standards:** ${enrichment.marketContext}
+MARKET STANDARDS: ${enrichment.marketContext}
 
-**Task**
+TASK SEQUENCE:
 1. Generate project skeleton for ${projectName}
 2. Implement core features with domain-informed patterns:
-   • Email-based auth (Supabase) with onboarding flow
-   • ${enrichment.userFlowSuggestions.slice(0, 3).join(', ')}
-   • ${enrichment.designPatterns.slice(0, 2).join(', ')}
+   - Email-based auth (Supabase) with onboarding flow
+   - ${enrichment.userFlowSuggestions.slice(0, 3).join(', ')}
+   - ${enrichment.designPatterns.slice(0, 2).join(', ')}
 3. Apply competitive insights: ${enrichment.competitiveInsights.slice(0, 2).join(', ')}
 4. Seed database with 10 realistic user profiles and test data
 
-**Constraints (Domain-Optimized)**
-• Tech stack: React, TypeScript, Tailwind CSS, shadcn/ui, Supabase (auth + Postgres + realtime)
-• Technical requirements: ${enrichment.technicalConsiderations.slice(0, 2).join(', ')}
-• Performance: p95 page load <1.8s on 3G, backend p95 response <100ms
-• Build: ≤60 files, open-source libraries only
-• Accessibility: WCAG-AA compliance (semantic HTML, ARIA, focus states)
-• Security: proper data validation, RLS policies, privacy controls
+CONSTRAINTS:
+1. Tech stack: React, TypeScript, Tailwind CSS, shadcn/ui, Supabase (auth + Postgres + realtime)
+2. Technical requirements: ${enrichment.technicalConsiderations.slice(0, 2).join(', ')}
+3. Performance: p95 page load <1.8s on 3G, backend p95 response <100ms
+4. Build: ≤60 files, open-source libraries only
+5. Accessibility: WCAG-AA compliance (semantic HTML, ARIA, focus states)
+6. Security: proper data validation, RLS policies, privacy controls
 
-**Output Format**
+OUTPUT FORMAT:
 1. Plan: Numbered build steps (max 10) with domain research integration
-2. Schema: Optimized Prisma/Supabase SQL for this app type  
+2. Schema: Optimized Prisma/Supabase SQL for this app type
 3. Components: File tree with domain-specific architecture
 4. SeedScript: Realistic ${projectName} test data with proper variety
 5. README: Setup and deployment instructions
 
-**Goal**
-Production-ready ${projectName} MVP with exceptional UX informed by domain expertise and competitive analysis. Must compile, pass tests, and run seed script successfully.
+${context ? `ADDITIONAL CONTEXT: ${context}` : ''}
 
-${context ? `\n**Additional Context**\n${context}` : ''}
+GOAL: Production-ready ${projectName} MVP with exceptional UX informed by domain expertise and competitive analysis. Must compile, pass tests, and run seed script successfully.
 
-**Research Confidence:** ${enrichment.confidence}/10 - Ready to build ${projectName} with intelligent, market-proven features.`;
+RESEARCH CONFIDENCE: ${enrichment.confidence}/10 - Ready to build ${projectName} with intelligent, market-proven features.`;
 }
