@@ -5,7 +5,10 @@ export class OptimizedTextCleaner {
     [/\*(.*?)\*/g, '$1'],               // *italic*
     [/#{1,6}\s*/g, ''],                 // headers
     [/`([^`]*)`/g, '$1'],               // inline code
-    [/\[([^\]]*)\]\([^)]*\)/g, '$1']    // links
+    [/\[([^\]]*)\]\([^)]*\)/g, '$1'],   // links
+    [/•\s*/g, ''],                      // bullet points
+    [/\-\s*/g, ''],                     // dashes
+    [/\d+\.\s*/g, '']                   // numbered lists
   ] as const;
 
   static fastClean(text: string): string {
@@ -30,6 +33,16 @@ export class OptimizedTextCleaner {
     return text
       .replace(/\*\*(.*?)\*\*/g, '$1')
       .replace(/\*(.*?)\*/g, '$1')
+      .replace(/•\s*/g, '')
+      .replace(/#{1,6}\s*/g, '')
+      .trim();
+  }
+
+  static technicalFormat(text: string): string {
+    // Convert to technical specification format
+    return this.fastClean(text)
+      .replace(/\n\s*\n/g, '\n')
+      .replace(/^\s*[\-•]\s*/gm, '')
       .trim();
   }
 }

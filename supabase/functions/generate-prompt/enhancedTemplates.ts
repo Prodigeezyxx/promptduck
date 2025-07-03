@@ -35,51 +35,40 @@ export function generateEnhancedLovableTemplate(
       );
     },
 
-    ui_design_modification: () => `# 🎨 **Lovable UI Enhancement Prompt** (AI-Enhanced)
+    ui_design_modification: () => `**Context (AI-Enhanced)**
+You are Lovable's AI Builder with domain expertise in ${projectType || 'application'} interfaces. Execute visual design improvements for "${projectName}" with market intelligence.
 
-Transform your application's visual design with research-backed improvements tailored to your specific use case.
+**Domain Intelligence:** ${enrichment.domainInsights.slice(0, 2).join('; ')}.
 
-## **Current Task**
+**Target Users:** ${enrichment.targetAudienceAnalysis}
+
+**Market Standards:** ${enrichment.marketContext}
+
+**Task**
 ${intent}
 
-## **Domain-Specific Design Insights**
-${enrichment.domainInsights.map(insight => `• ${insight}`).join('\n')}
+Apply proven patterns: ${enrichment.designPatterns.slice(0, 2).join(', ')}.
+Implement user flows: ${enrichment.userFlowSuggestions.slice(0, 2).join(', ')}.
+Technical requirements: ${enrichment.technicalConsiderations.slice(0, 2).join(', ')}.
 
-## **Target Audience Context**
-${enrichment.targetAudienceAnalysis}
+**Constraints**
+• PRESERVE existing functionality - visual changes only
+• Mobile-first responsive design with desktop compatibility  
+• WCAG 2.1 AA compliance requirements
+• Design system consistency using Tailwind + shadcn/ui
+• Performance: maintain <1.8s p95 load times
+• Apply competitive insights: ${enrichment.competitiveInsights.slice(0, 2).join(', ')}
 
-**Market Expectations:** ${enrichment.marketContext}
+**Guidelines**
+• Use semantic design tokens, avoid hardcoded colors
+• Implement smooth transitions and micro-interactions
+• Optimize touch targets for mobile (44px minimum)
+• Test across breakpoints and validate accessibility
 
-## **Design Enhancement Strategy**
+${context ? `\n**Additional Context**\n${context}` : ''}
 
-### **Industry-Specific Patterns**
-${enrichment.designPatterns.map(pattern => `• ${pattern}`).join('\n')}
-
-### **User Experience Focus**
-${enrichment.userFlowSuggestions.map(suggestion => `• ${suggestion}`).join('\n')}
-
-### **Technical Implementation**
-${enrichment.technicalConsiderations.map(consideration => `• Design consideration: ${consideration}`).join('\n')}
-
-### **Competitive Best Practices**
-${enrichment.competitiveInsights.map(insight => `• ${insight}`).join('\n')}
-
-### **Implementation Guidelines**
-• **Mobile-First Approach**: Design for mobile, then enhance for desktop
-• **Accessibility**: Ensure WCAG 2.1 AA compliance
-• **Performance**: Maintain fast load times and smooth animations
-• **Consistency**: Use design tokens for colors, spacing, and typography
-
-### **Safety Constraints**
-⚠️ **CRITICAL**: Preserve all existing functionality and data flows
-⚠️ **Visual Only**: Make no changes to business logic or state management
-⚠️ **Testing**: Verify the app works exactly as before after changes
-
-${context ? `\n### **Additional Context:**\n${context}` : ''}
-
----
-
-Ready to enhance your app with intelligent, research-backed design improvements!`,
+**Goal**
+Deliver visually enhanced ${projectName} that maintains functionality while implementing research-backed design improvements proven effective for this app category.`,
 
     code_refactoring: () => `# 🔧 **Lovable Code Refactoring Plan** (AI-Enhanced)
 
@@ -181,53 +170,43 @@ ${context ? `\n### **Additional Context:**\n${context}` : ''}
 
 Let's debug this systematically with domain expertise guiding our approach.`,
 
-    feature_addition: () => `# ⚡ **Lovable Feature Implementation** (AI-Enhanced)
+    feature_addition: () => `**Context (AI-Enhanced)**
+You are Lovable's AI Builder with ${projectType || 'application'} domain expertise. Implement feature for "${projectName}" using proven market patterns.
 
-Add new functionality with insights from successful apps in your domain.
+**Domain Intelligence:** ${enrichment.domainInsights.slice(0, 2).join('; ')}.
 
-## **Feature Request**
+**User Profile:** ${enrichment.targetAudienceAnalysis}
+
+**Market Standards:** ${enrichment.marketContext}
+
+**Task**
 ${intent}
 
-## **Domain Intelligence**
-${enrichment.domainInsights.map(insight => `• ${insight}`).join('\n')}
+**Technical Approach**
+Apply domain patterns: ${enrichment.technicalConsiderations.slice(0, 2).join(', ')}.
+Implement proven flows: ${enrichment.userFlowSuggestions.slice(0, 2).join(', ')}.
+Use effective patterns: ${enrichment.designPatterns.slice(0, 2).join(', ')}.
+Leverage insights: ${enrichment.competitiveInsights.slice(0, 2).join(', ')}.
 
-## **User Context & Expectations**
-**Target Users:** ${enrichment.targetAudienceAnalysis}
+**Implementation Protocol**
+1. Create core components with single responsibility
+2. Integrate with existing app architecture  
+3. Apply consistent design system (Tailwind + shadcn/ui)
+4. Implement proper error boundaries and validation
+5. Add responsive mobile-first design
+6. Test edge cases and user scenarios
 
-**Market Context:** ${enrichment.marketContext}
+**Constraints**
+• Tech stack: React, TypeScript, Tailwind CSS, Supabase integration
+• Performance: <1.8s p95 load, <100ms backend response
+• Accessibility: WCAG 2.1 AA compliance
+• Mobile-first responsive design
+• Security: proper data validation and sanitization
 
-## **Implementation Strategy**
+${context ? `\n**Additional Context**\n${context}` : ''}
 
-### **Feature Planning**
-• **User Story**: Define who needs this feature and why
-• **Acceptance Criteria**: Establish what "done" looks like
-• **Integration Points**: Identify how this connects to existing features
-• **Data Requirements**: Determine what data needs to be stored or retrieved
-
-### **Technical Approach (Domain-Informed)**
-${enrichment.technicalConsiderations.map(consideration => `• Consider: ${consideration}`).join('\n')}
-
-### **User Experience (Research-Backed)**
-${enrichment.userFlowSuggestions.map(suggestion => `• Implement: ${suggestion}`).join('\n')}
-
-### **Design Patterns (Proven Effective)**
-${enrichment.designPatterns.map(pattern => `• Apply: ${pattern}`).join('\n')}
-
-### **Competitive Insights**
-${enrichment.competitiveInsights.map(insight => `• Learn from: ${insight}`).join('\n')}
-
-### **Implementation Steps**
-1. **Create Core Components**: Build basic functionality first
-2. **Add Styling**: Apply consistent design system
-3. **Integrate with Existing**: Connect to current app structure
-4. **Test Edge Cases**: Verify behavior in various scenarios
-5. **Polish and Optimize**: Add animations and performance improvements
-
-${context ? `\n### **Additional Context:**\n${context}` : ''}
-
----
-
-Ready to build this feature with intelligent insights from the domain!`,
+**Goal**
+Deliver production-ready feature that integrates seamlessly with ${projectName} while implementing research-backed patterns proven effective for this app category.`,
 
     vague_ambiguous: () => `# 🤔 **Lovable Project Discovery Session** (AI-Enhanced)
 
@@ -308,7 +287,6 @@ function generateEnhancedRoleTaskConstraintsFormatGoalTemplate(
   intent: string, 
   enrichment: ContextEnrichment
 ): string {
-  // Get base description from project type
   const baseDescriptions = {
     'messaging_app': 'a modern messaging and communication platform',
     'e_commerce': 'a comprehensive e-commerce and shopping platform',
@@ -323,53 +301,42 @@ function generateEnhancedRoleTaskConstraintsFormatGoalTemplate(
   const appDescription = baseDescriptions[projectType] || 'a modern web application';
 
   return `**Context (AI-Enhanced)**
-You are Lovable's AI Builder with deep domain expertise. Create an MVP for ${appDescription} named "${projectName}."
+You are Lovable's AI Builder with deep ${projectType || 'application'} domain expertise. Create an MVP for ${appDescription} named "${projectName}."
 
-**Domain Intelligence:**
-${enrichment.domainInsights.map(insight => `• ${insight}`).join('\n')}
+**Domain Intelligence:** ${enrichment.domainInsights.slice(0, 3).join('; ')}.
 
 **Target Users:** ${enrichment.targetAudienceAnalysis}
 
-**Market Context:** ${enrichment.marketContext}
+**Market Standards:** ${enrichment.marketContext}
 
 **Task**
-1. Generate the project skeleton for ${projectName}.
-2. Implement research-backed core features:
-   • Email-based sign-up / login (Supabase auth).
-   • Onboarding flow collecting user preferences and profile information.
-   ${enrichment.userFlowSuggestions.map(suggestion => `   • ${suggestion}.`).join('\n')}
-3. Apply proven design patterns:
-   ${enrichment.designPatterns.map(pattern => `   • ${pattern}.`).join('\n')}
-4. Seed the database with 10 realistic ${projectName} user profiles and test data.
+1. Generate project skeleton for ${projectName}
+2. Implement core features with domain-informed patterns:
+   • Email-based auth (Supabase) with onboarding flow
+   • ${enrichment.userFlowSuggestions.slice(0, 3).join(', ')}
+   • ${enrichment.designPatterns.slice(0, 2).join(', ')}
+3. Apply competitive insights: ${enrichment.competitiveInsights.slice(0, 2).join(', ')}
+4. Seed database with 10 realistic user profiles and test data
 
-**Guidelines (Domain-Informed)**
-• Tech stack: Next.js 14 (App Router), React Server Components, TypeScript, Prisma ORM, Supabase (auth + Postgres + realtime), Tailwind CSS, shadcn/ui.
-• Mobile-first responsive layout; maintain desktop compatibility.
-• Apply competitive insights: ${enrichment.competitiveInsights.slice(0, 2).join(', ')}.
-• Technical considerations: ${enrichment.technicalConsiderations.slice(0, 2).join(', ')}.
-• Use CLEAR code comments and clean file structure.
-• All code must pass ESLint + Prettier validation.
+**Constraints (Domain-Optimized)**
+• Tech stack: React, TypeScript, Tailwind CSS, shadcn/ui, Supabase (auth + Postgres + realtime)
+• Technical requirements: ${enrichment.technicalConsiderations.slice(0, 2).join(', ')}
+• Performance: p95 page load <1.8s on 3G, backend p95 response <100ms
+• Build: ≤60 files, open-source libraries only
+• Accessibility: WCAG-AA compliance (semantic HTML, ARIA, focus states)
+• Security: proper data validation, RLS policies, privacy controls
 
-**Constraints**
-• Use only open-source or free-tier libraries—no paid APIs or proprietary SDKs.
-• Initial build ≤ 60 files; p95 page load < 1.8 s on 3G; backend p95 response < 100 ms.
-• WCAG-AA accessibility compliance (semantic HTML, ARIA labels, focus states).
-• Store user data securely with proper privacy controls.
-
-**Output**
-Return exactly these sections:
-1. ## Plan – numbered build plan (max 10 steps) informed by domain research.
-2. ## Schema – Prisma schema + Supabase SQL optimized for this app type.
-3. ## Components – file tree showing pages, components, utils with domain-specific architecture.
-4. ## SeedScript – script to load realistic ${projectName} data with proper variety.
-5. ## README – local setup + deployment instructions.
+**Output Format**
+1. Plan: Numbered build steps (max 10) with domain research integration
+2. Schema: Optimized Prisma/Supabase SQL for this app type  
+3. Components: File tree with domain-specific architecture
+4. SeedScript: Realistic ${projectName} test data with proper variety
+5. README: Setup and deployment instructions
 
 **Goal**
-Deliver a production-ready ${projectName} MVP that compiles, runs seed script, passes all tests, and provides an exceptional user experience informed by domain expertise and competitive analysis.
+Production-ready ${projectName} MVP with exceptional UX informed by domain expertise and competitive analysis. Must compile, pass tests, and run seed script successfully.
 
 ${context ? `\n**Additional Context**\n${context}` : ''}
 
-**Research Confidence:** ${enrichment.confidence}/10
-
-**Ready to build ${projectName}?** Let's create something amazing with intelligent, research-backed features that users will love!`;
+**Research Confidence:** ${enrichment.confidence}/10 - Ready to build ${projectName} with intelligent, market-proven features.`;
 }

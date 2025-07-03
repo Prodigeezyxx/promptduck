@@ -65,40 +65,25 @@ export async function enrichContextWithAI(
 }
 
 function buildContextEnrichmentPrompt(intent: string, context: string, analysis: any): string {
-  return `Analyze this app development request and provide intelligent context research:
+  return `Analyze this app request and provide concise technical insights for prompt enhancement:
 
-**User Request:** "${intent}"
-**Additional Context:** ${context || 'None provided'}
-**Detected Project Type:** ${analysis.projectType || 'general_app'}
-**Keywords:** ${analysis.keywords?.slice(0, 10).join(', ') || 'None'}
+Request: "${intent}"
+Context: ${context || 'None'}
+Type: ${analysis.projectType || 'general_app'}
+Keywords: ${analysis.keywords?.slice(0, 5).join(', ') || 'None'}
 
-Research and provide insights for each area below. Be specific and actionable:
+Provide brief, technical insights (2-3 items each, no formatting):
 
-**DOMAIN_INSIGHTS:** 
-3-4 key insights about this app category/industry that would inform development decisions
+DOMAIN_INSIGHTS: Key technical/business insights for this app category
+TARGET_AUDIENCE: User profile and core needs (1-2 sentences)  
+TECHNICAL_CONSIDERATIONS: Specific technical requirements/challenges
+MARKET_CONTEXT: Current expectations and standards (1-2 sentences)
+COMPETITIVE_INSIGHTS: Proven patterns from successful apps
+USER_FLOW_SUGGESTIONS: Core interaction patterns that work
+DESIGN_PATTERNS: Effective UI patterns for this category
+CONFIDENCE: Rate 1-10
 
-**TARGET_AUDIENCE:** 
-Detailed analysis of who would use this app, their pain points, and motivations (2-3 sentences)
-
-**TECHNICAL_CONSIDERATIONS:** 
-3-4 specific technical challenges or requirements for this type of app
-
-**MARKET_CONTEXT:** 
-Current trends and user expectations in this domain (2-3 sentences)
-
-**COMPETITIVE_INSIGHTS:** 
-3-4 insights from successful apps in this space (without naming specific apps)
-
-**USER_FLOW_SUGGESTIONS:** 
-3-4 specific user interaction patterns that work well for this app type
-
-**DESIGN_PATTERNS:** 
-3-4 UI/UX patterns that are effective for this category
-
-**CONFIDENCE:** 
-Rate your confidence in these insights from 1-10
-
-Format your response EXACTLY as shown above with those section headers.`;
+Keep responses concise and technical. No bullets, headers, or formatting.`;
 }
 
 function parseEnrichmentResponse(enrichmentText: string): ContextEnrichment {

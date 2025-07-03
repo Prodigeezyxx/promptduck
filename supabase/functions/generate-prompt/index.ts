@@ -46,7 +46,15 @@ serve(async (req) => {
       console.log(`Context enrichment completed with confidence: ${enrichment.confidence}/10`);
       
       // Generate AI-enhanced, intelligently researched prompt for Lovable mode
-      const templatePrompt = generateEnhancedLovableTemplate(intent, context, analysis, enrichment);
+      let templatePrompt = generateEnhancedLovableTemplate(intent, context, analysis, enrichment);
+      
+      // Apply technical formatting to clean any remaining markdown
+      templatePrompt = templatePrompt
+        .replace(/\*\*(.*?)\*\*/g, '$1')
+        .replace(/\*(.*?)\*/g, '$1')
+        .replace(/#{1,6}\s*/g, '')
+        .replace(/•\s*/g, '')
+        .replace(/\n\s*\n\s*\n/g, '\n\n');
       
       result = {
         optimized_prompt: templatePrompt,
