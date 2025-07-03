@@ -210,27 +210,21 @@ What aspects of your idea are you most excited about?`
 
 // Extract app name from user intent using pattern matching
 function extractAppNameFromIntent(intent: string): string | null {
-  // Better patterns for scheduling app detection
-  const patterns = [
-    /(?:scheduling|calendar|appointment|booking)\s+app(?:\s+called\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?)?/i,
-    /(?:make|build|create)\s+(?:a|an)?\s*([a-zA-Z][a-zA-Z0-9\s]{1,20})\s+app/i,
+  // Extract explicit app names
+  const explicitPatterns = [
     /app\s+called\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?/i,
-    /named\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?/i
+    /named\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?/i,
+    /(?:make|build|create)\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?\s+app/i
   ];
   
-  for (const pattern of patterns) {
+  for (const pattern of explicitPatterns) {
     const match = intent.match(pattern);
-    if (match && match[1]) {
+    if (match && match[1] && match[1].length > 2) {
       return match[1].trim();
     }
   }
   
-  // If scheduling-related but no specific name, generate appropriate name
-  if (/schedul|calendar|appointment|booking|meeting/i.test(intent)) {
-    return null; // Let generateProjectName handle it
-  }
-  
-  return null;
+  return null; // Let generateProjectName handle it based on project type
 }
 
 // Simple enhanced template for robust generation

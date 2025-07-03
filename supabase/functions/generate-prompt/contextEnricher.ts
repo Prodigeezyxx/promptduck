@@ -65,21 +65,42 @@ export async function enrichContextWithAI(
 }
 
 function buildContextEnrichmentPrompt(intent: string, context: string, analysis: any): string {
-  return `Analyze this request and provide concise technical points (1-2 per section):
+  return `Analyze this ${analysis.projectType || 'application'} request and provide specific technical insights:
 
-Request: "${intent}"
-Context: ${context || 'None'}
-Type: ${analysis.projectType || 'general_app'}
+REQUEST: "${intent}"
+CONTEXT: ${context || 'None provided'}
+PROJECT TYPE: ${analysis.projectType || 'general_app'}
 
-Provide brief, technical insights:
+Return exactly this format with concise technical points:
 
-Database requirements for ${analysis.projectType || 'this app'}
-Authentication needs and user management approach  
-Core technical features required for functionality
-Performance and scalability considerations
-Essential UI components and user interactions
+DOMAIN_INSIGHTS:
+- Database schema requirements
+- Key integration needs
 
-Keep responses under 10 words per insight. Focus on implementation specifics.`;
+TARGET_AUDIENCE:
+Users who need ${analysis.projectType?.replace('_', ' ') || 'application'} functionality
+
+TECHNICAL_CONSIDERATIONS:
+- Primary database tables needed
+- Authentication requirements
+- Performance considerations
+
+MARKET_CONTEXT:
+Modern users expect ${analysis.projectType?.replace('_', ' ') || 'application'} with mobile-first design
+
+COMPETITIVE_INSIGHTS:
+- Essential features for this app type
+- User experience patterns
+
+USER_FLOW_SUGGESTIONS:
+- Main user journey steps
+- Key interaction patterns
+
+DESIGN_PATTERNS:
+- UI component requirements
+- Layout considerations
+
+CONFIDENCE: 8`;
 }
 
 function getBasicInsight(projectType: string, category: string): string {
@@ -119,14 +140,28 @@ function parseEnrichmentResponse(enrichmentText: string): ContextEnrichment {
     confidence: extractConfidence(enrichmentText)
   };
 
+  // Ensure we have valid arrays and strings, with fallbacks
   return {
-    domainInsights: Array.isArray(sections.domainInsights) ? sections.domainInsights : [sections.domainInsights],
-    targetAudienceAnalysis: Array.isArray(sections.targetAudienceAnalysis) ? sections.targetAudienceAnalysis.join(' ') : sections.targetAudienceAnalysis,
-    technicalConsiderations: Array.isArray(sections.technicalConsiderations) ? sections.technicalConsiderations : [sections.technicalConsiderations],
-    marketContext: Array.isArray(sections.marketContext) ? sections.marketContext.join(' ') : sections.marketContext,
-    competitiveInsights: Array.isArray(sections.competitiveInsights) ? sections.competitiveInsights : [sections.competitiveInsights],
-    userFlowSuggestions: Array.isArray(sections.userFlowSuggestions) ? sections.userFlowSuggestions : [sections.userFlowSuggestions],
-    designPatterns: Array.isArray(sections.designPatterns) ? sections.designPatterns : [sections.designPatterns],
+    domainInsights: Array.isArray(sections.domainInsights) ? sections.domainInsights.filter(s => s.length > 5) : 
+                   [sections.domainInsights].filter(s => s && s.length > 5),
+    targetAudienceAnalysis: Array.isArray(sections.targetAudienceAnalysis) ? 
+                           sections.targetAudienceAnalysis.join(' ') : 
+                           (sections.targetAudienceAnalysis || 'Target users seeking efficient solutions'),
+    technicalConsiderations: Array.isArray(sections.technicalConsiderations) ? 
+                            sections.technicalConsiderations.filter(s => s.length > 5) : 
+                            [sections.technicalConsiderations].filter(s => s && s.length > 5),
+    marketContext: Array.isArray(sections.marketContext) ? 
+                  sections.marketContext.join(' ') : 
+                  (sections.marketContext || 'Modern users expect fast, intuitive applications'),
+    competitiveInsights: Array.isArray(sections.competitiveInsights) ? 
+                        sections.competitiveInsights.filter(s => s.length > 5) : 
+                        [sections.competitiveInsights].filter(s => s && s.length > 5),
+    userFlowSuggestions: Array.isArray(sections.userFlowSuggestions) ? 
+                        sections.userFlowSuggestions.filter(s => s.length > 5) : 
+                        [sections.userFlowSuggestions].filter(s => s && s.length > 5),
+    designPatterns: Array.isArray(sections.designPatterns) ? 
+                   sections.designPatterns.filter(s => s.length > 5) : 
+                   [sections.designPatterns].filter(s => s && s.length > 5),
     confidence: sections.confidence
   };
 }
@@ -136,21 +171,27 @@ function extractSection(text: string, sectionName: string, asArray = true): stri
   const match = text.match(regex);
   
   if (!match || !match[1]) {
-    return asArray ? ['No insights available'] : 'No insights available';
+    // Return meaningful fallbacks based on section
+    if (asArray) {
+      return [`Essential ${sectionName.toLowerCase().replace('_', ' ')} for this application`];
+    }
+    return `Standard ${sectionName.toLowerCase().replace('_', ' ')} requirements`;
   }
 
   const content = match[1].trim();
   
   if (asArray) {
-    // Split by newlines and clean up
-    return content
+    // Split by newlines and clean up, removing bullet points
+    const items = content
       .split(/\n/)
-      .map(item => item.trim())
-      .filter(item => item.length > 10)
-      .slice(0, 3); // Limit to 3 items
+      .map(item => item.replace(/^[-•*]\s*/, '').trim())
+      .filter(item => item.length > 5)
+      .slice(0, 3);
+    
+    return items.length > 0 ? items : [`Essential ${sectionName.toLowerCase().replace('_', ' ')}`];
   }
   
-  return content;
+  return content.length > 5 ? content : `Standard ${sectionName.toLowerCase().replace('_', ' ')} requirements`;
 }
 
 function extractConfidence(text: string): number {
