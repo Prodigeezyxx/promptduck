@@ -38,6 +38,21 @@ export interface GenerationResult {
     template_used?: string;
     intent_detected?: string;
     heuristics_applied?: string[];
+    // Lovable mode specific metadata
+    project_type?: string;
+    template_applied?: string;
+    detected_intent?: string;
+    ai_confidence?: number;
+    domain_research?: boolean;
+    domain_insights?: string | string[];
+    target_audience_analysis?: string;
+    technical_considerations?: string | string[];
+    market_context?: string;
+    competitive_insights?: string | string[];
+    user_flow_suggestions?: string | string[];
+    design_patterns?: string | string[];
+    project_name?: string;
+    [key: string]: any; // Allow additional metadata properties
   };
   optimized_prompt?: string;
   preview_title?: string;

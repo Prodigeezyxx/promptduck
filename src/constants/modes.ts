@@ -34,7 +34,7 @@ export const MODES: ModeConfiguration = {
   },
   lovable: {
     id: 'lovable',
-    name: 'Lovable Transformer',
+    name: 'Lovable Mode',
     description: 'Advanced R-T-C-F-G prompt engineering for first-run app creation and smart intent classification',
     icon: '🧠',
     color: 'bg-purple-500',
