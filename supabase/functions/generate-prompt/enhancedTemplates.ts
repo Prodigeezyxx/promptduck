@@ -18,7 +18,7 @@ export function generateEnhancedLovableTemplate(
   analysis: any, 
   enrichment: ContextEnrichment
 ): string {
-  const { primary, projectType, complexity, keywords } = analysis;
+  const { primary, projectType } = analysis;
   
   // Smart app name extraction
   const extractedAppName = extractAppNameFromIntent(intent);
@@ -26,13 +26,7 @@ export function generateEnhancedLovableTemplate(
 
   const templates = {
     new_project_scaffolding: () => {
-      return generateEnhancedRoleTaskConstraintsFormatGoalTemplate(
-        projectName, 
-        projectType || 'general_app',
-        context, 
-        intent, 
-        enrichment
-      );
+      return generateSimpleProjectTemplate(projectName, projectType || 'general_app', context, intent, enrichment);
     },
 
     ui_design_modification: () => `CONTEXT: Lovable AI Builder specialized in ${projectType || 'application'} interfaces. Domain intelligence indicates ${enrichment.domainInsights.slice(0, 2).join(' and ')}.
@@ -233,62 +227,54 @@ function extractAppNameFromIntent(intent: string): string | null {
   return null;
 }
 
-// Generate AI-enhanced R-T-C-F-G structured template
-function generateEnhancedRoleTaskConstraintsFormatGoalTemplate(
+// Simple enhanced template for robust generation
+function generateSimpleProjectTemplate(
   projectName: string, 
   projectType: string,
   context: string, 
   intent: string, 
   enrichment: ContextEnrichment
 ): string {
-  const baseDescriptions = {
-    'messaging_app': 'a modern messaging and communication platform',
-    'e_commerce': 'a comprehensive e-commerce and shopping platform',
-    'government_services': 'a streamlined government services and application platform',
-    'travel_planning': 'a comprehensive travel planning and booking platform',
-    'productivity': 'a productivity and task management application',
-    'creative': 'a creative platform for artists and content creators',
-    'health': 'a comprehensive mental health and wellness platform',
-    'dating_social': 'a modern dating and social connection platform'
+  const appTypes = {
+    'messaging_app': 'messaging platform',
+    'e_commerce': 'e-commerce platform', 
+    'productivity': 'productivity application',
+    'health': 'health and wellness platform',
+    'dating_social': 'social connection platform'
   };
 
-  const appDescription = baseDescriptions[projectType] || 'a modern web application';
+  const appDescription = appTypes[projectType] || 'web application';
 
-  return `CONTEXT: Lovable AI Builder with deep ${projectType || 'application'} domain expertise. Create MVP for ${appDescription} named "${projectName}".
+  return `CONTEXT: Lovable AI Builder creating ${appDescription} named "${projectName}".
 
-DOMAIN INTELLIGENCE: ${enrichment.domainInsights.slice(0, 3).join(', ')}.
+DOMAIN REQUIREMENTS: ${enrichment.domainInsights[0] || 'Focus on user needs and technical feasibility'}
 
-TARGET USERS: ${enrichment.targetAudienceAnalysis}
-
-MARKET STANDARDS: ${enrichment.marketContext}
+TARGET USERS: ${enrichment.targetAudienceAnalysis || 'Users seeking efficient solutions to their problems'}
 
 TASK SEQUENCE:
 1. Generate project skeleton for ${projectName}
-2. Implement core features with domain-informed patterns:
-   - Email-based auth (Supabase) with onboarding flow
-   - ${enrichment.userFlowSuggestions.slice(0, 3).join(', ')}
-   - ${enrichment.designPatterns.slice(0, 2).join(', ')}
-3. Apply competitive insights: ${enrichment.competitiveInsights.slice(0, 2).join(', ')}
-4. Seed database with 10 realistic user profiles and test data
+2. Implement core authentication and user management
+3. Build primary features based on user requirements: ${intent}
+4. Apply modern design patterns: ${enrichment.designPatterns[0] || 'Clean, modern interface design'}
+5. Implement technical requirements: ${enrichment.technicalConsiderations[0] || 'Responsive design for all devices'}
+6. Add user flow optimizations: ${enrichment.userFlowSuggestions[0] || 'Minimal steps to core functionality'}
+7. Seed database with realistic test data
 
 CONSTRAINTS:
-1. Tech stack: React, TypeScript, Tailwind CSS, shadcn/ui, Supabase (auth + Postgres + realtime)
-2. Technical requirements: ${enrichment.technicalConsiderations.slice(0, 2).join(', ')}
-3. Performance: p95 page load <1.8s on 3G, backend p95 response <100ms
-4. Build: ≤60 files, open-source libraries only
-5. Accessibility: WCAG-AA compliance (semantic HTML, ARIA, focus states)
-6. Security: proper data validation, RLS policies, privacy controls
+1. Tech stack: React, TypeScript, Tailwind CSS, shadcn/ui, Supabase
+2. Performance: Fast loading and responsive design
+3. Build: Focused, maintainable code structure
+4. Accessibility: WCAG compliance with semantic HTML
+5. Security: Proper data validation and privacy controls
 
 OUTPUT FORMAT:
-1. Plan: Numbered build steps (max 10) with domain research integration
-2. Schema: Optimized Prisma/Supabase SQL for this app type
-3. Components: File tree with domain-specific architecture
-4. SeedScript: Realistic ${projectName} test data with proper variety
-5. README: Setup and deployment instructions
+1. Plan: Clear numbered build steps (max 10)
+2. Schema: Database design for ${projectName}
+3. Components: Organized file structure
+4. SeedScript: Realistic test data
+5. README: Setup instructions
 
 ${context ? `ADDITIONAL CONTEXT: ${context}` : ''}
 
-GOAL: Production-ready ${projectName} MVP with exceptional UX informed by domain expertise and competitive analysis. Must compile, pass tests, and run seed script successfully.
-
-RESEARCH CONFIDENCE: ${enrichment.confidence}/10 - Ready to build ${projectName} with intelligent, market-proven features.`;
+GOAL: Production-ready ${projectName} MVP that compiles and runs successfully with excellent user experience.`;
 }

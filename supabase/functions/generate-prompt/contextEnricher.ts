@@ -65,45 +65,62 @@ export async function enrichContextWithAI(
 }
 
 function buildContextEnrichmentPrompt(intent: string, context: string, analysis: any): string {
-  return `Analyze this app request and provide concise technical insights for prompt enhancement:
+  return `Analyze this request and provide short technical insights:
 
 Request: "${intent}"
 Context: ${context || 'None'}
 Type: ${analysis.projectType || 'general_app'}
-Keywords: ${analysis.keywords?.slice(0, 5).join(', ') || 'None'}
 
-Provide brief, technical insights using this exact format with plain text sections:
+Return 2-3 short technical insights per section:
 
 DOMAIN_INSIGHTS:
-Real-time communication requires WebSocket connections and optimized state management
-Users expect sub-second message delivery and reliable presence indicators
+${getBasicInsight(analysis.projectType, 'domain')}
 
-TARGET_AUDIENCE:
-Users seeking instant, reliable communication with friends, family, or colleagues, prioritizing ease of use and privacy.
+TARGET_AUDIENCE:  
+${getBasicInsight(analysis.projectType, 'audience')}
 
 TECHNICAL_CONSIDERATIONS:
-Real-time WebSocket connections for instant messaging
-Message encryption and secure data transmission
+${getBasicInsight(analysis.projectType, 'technical')}
 
 MARKET_CONTEXT:
-Modern users expect WhatsApp-level reliability with Slack-level organization features.
+${getBasicInsight(analysis.projectType, 'market')}
 
 COMPETITIVE_INSIGHTS:
-Thread-based conversations improve organization
-Rich media sharing is now expected baseline functionality
+${getBasicInsight(analysis.projectType, 'competitive')}
 
 USER_FLOW_SUGGESTIONS:
-Quick message composer with smart suggestions
-Swipe gestures for message actions
+${getBasicInsight(analysis.projectType, 'userflow')}
 
 DESIGN_PATTERNS:
-Bubble-style message layout with timestamp grouping
-Bottom-anchored input with expanding text area
+${getBasicInsight(analysis.projectType, 'design')}
 
 CONFIDENCE:
-8
+8`;
+}
 
-Keep responses concise and technical. Use plain text sections, no bullets or formatting.`;
+function getBasicInsight(projectType: string, category: string): string {
+  const insights = {
+    'messaging_app': {
+      domain: 'Real-time communication with low latency requirements',
+      audience: 'Users seeking instant reliable messaging',
+      technical: 'WebSocket connections for real-time messaging',
+      market: 'Users expect WhatsApp-level reliability',
+      competitive: 'Thread organization improves user experience',
+      userflow: 'Quick message composition with smart suggestions',
+      design: 'Bubble-style messages with timestamp grouping'
+    },
+    'e_commerce': {
+      domain: 'Trust and conversion optimization are critical',
+      audience: 'Online shoppers seeking convenient purchasing',
+      technical: 'Payment gateway integration with security',
+      market: 'Users expect Amazon-level convenience',
+      competitive: 'One-click checkout reduces abandonment',
+      userflow: 'Quick product discovery and checkout',
+      design: 'Grid-based product displays with clear CTAs'
+    }
+  };
+  
+  return insights[projectType]?.[category] || `${category} considerations for ${projectType || 'general'} applications`;
 }
 
 function parseEnrichmentResponse(enrichmentText: string): ContextEnrichment {
