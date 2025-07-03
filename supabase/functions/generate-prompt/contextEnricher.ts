@@ -1,4 +1,3 @@
-
 // AI Context Enrichment Service for Lovable Mode
 // Provides intelligent, researched context to enhance template generation
 
@@ -120,23 +119,9 @@ Be specific to the domain - avoid generic app development advice.`;
 
 function getEnhancedFallbackEnrichment(intent: string, analysis: any): ContextEnrichment {
   const projectType = analysis.projectType || 'general_app';
-  const primaryIntent = analysis.primary || 'general';
   
-  // Detect music/lyrics domain from intent
-  const isMusicDomain = intent.toLowerCase().includes('lyric') || 
-                       intent.toLowerCase().includes('music') || 
-                       intent.toLowerCase().includes('song') ||
-                       intent.toLowerCase().includes('rhyme') ||
-                       intent.toLowerCase().includes('beat') ||
-                       intent.toLowerCase().includes('audio') ||
-                       intent.toLowerCase().includes('sound');
-
-  if (isMusicDomain) {
-    return getMusicDomainEnrichment(intent);
-  }
-
-  // Enhanced fallbacks for other domains
-  const enhancedFallbacks = {
+  // Comprehensive domain-specific enrichments
+  const domainEnrichments = {
     'messaging_app': {
       domainInsights: [
         'Real-time messaging requires WebSocket connections with automatic reconnection handling',
@@ -152,18 +137,15 @@ function getEnhancedFallbackEnrichment(intent: string, analysis: any): ContextEn
       marketContext: 'Users expect WhatsApp-level reliability with Discord-level community features and Slack-level organization.',
       competitiveInsights: [
         'Thread-based organization significantly improves conversation management',
-        'Rich media sharing with preview generation drives engagement',
-        'Status indicators and read receipts reduce communication uncertainty'
+        'Rich media sharing with preview generation drives engagement'
       ],
       userFlowSuggestions: [
         'Quick message composition with emoji reactions and typing indicators',
-        'Swipe gestures for message actions and quick replies',
-        'Voice message recording with waveform visualization'
+        'Swipe gestures for message actions and quick replies'
       ],
       designPatterns: [
         'Bubble-style message layout with smart timestamp grouping',
-        'Bottom-anchored input with expanding text area and attachment options',
-        'Smooth slide animations for conversation navigation and message actions'
+        'Bottom-anchored input with expanding text area and attachment options'
       ]
     },
     'e_commerce': {
@@ -176,61 +158,259 @@ function getEnhancedFallbackEnrichment(intent: string, analysis: any): ContextEn
       technicalConsiderations: [
         'Payment gateway integration with multiple payment methods and PCI compliance',
         'Advanced product search with filters, sorting, and intelligent recommendations',
-        'Real-time inventory management with low-stock alerts and backorder handling'
+        'Real-time inventory management with low-stock alerts'
       ],
       marketContext: 'Users expect Amazon-level convenience combined with personalized service and values-based shopping experiences.',
       competitiveInsights: [
         'One-click checkout and guest checkout options reduce cart abandonment significantly',
-        'High-quality product images with zoom and 360-degree views drive purchase decisions',
-        'Social proof through reviews, ratings, and user-generated content builds trust'
+        'High-quality product images with zoom and 360-degree views drive purchase decisions'
       ],
       userFlowSuggestions: [
         'Quick product discovery through visual search and barcode scanning',
-        'Wishlist and save-for-later functionality with price drop notifications',
         'Streamlined checkout with address autofill and payment method storage'
       ],
       designPatterns: [
         'Grid-based product displays with consistent card layouts and hover effects',
-        'Sticky cart summary during checkout with progress indicators',
-        'Progressive disclosure for product specifications and detailed information'
+        'Sticky cart summary during checkout with progress indicators'
+      ]
+    },
+    'music_audio': {
+      domainInsights: [
+        'Music creation apps require low-latency audio processing and real-time collaboration features',
+        'Lyric writing tools benefit from rhyme suggestion engines and syllable counting for rhythm matching',
+        'Audio apps need robust file format support and cloud sync for cross-device workflows'
+      ],
+      targetAudienceAnalysis: 'Musicians, songwriters, and music enthusiasts seeking creative tools that enhance their writing process with intelligent suggestions and collaboration features.',
+      technicalConsiderations: [
+        'Web Audio API integration for real-time audio processing and effects',
+        'Cloud storage for audio files with efficient streaming and caching',
+        'Real-time collaboration features using WebSockets for shared editing sessions'
+      ],
+      marketContext: 'Musicians expect professional-grade tools with intuitive interfaces, similar to how Figma revolutionized design collaboration.',
+      competitiveInsights: [
+        'Rhyme suggestion and word association features significantly improve songwriting speed',
+        'Voice recording integration allows for quick idea capture and melody development'
+      ],
+      userFlowSuggestions: [
+        'Quick lyric input with smart rhyme suggestions and synonym recommendations',
+        'Voice memo recording with automatic transcription and lyric extraction'
+      ],
+      designPatterns: [
+        'Split-pane layout with lyrics editor and rhyme suggestions panel',
+        'Waveform visualization for audio tracks with playback controls'
+      ]
+    },
+    'fitness_tracking': {
+      domainInsights: [
+        'Fitness apps need seamless integration with wearable devices and health platforms',
+        'Social features and gamification significantly improve user retention and motivation',
+        'Progress visualization and goal-setting are crucial for long-term engagement'
+      ],
+      targetAudienceAnalysis: 'Health-conscious individuals seeking motivation, progress tracking, and community support to achieve their fitness goals consistently.',
+      technicalConsiderations: [
+        'Integration with fitness APIs like Apple HealthKit, Google Fit, and Strava',
+        'Real-time data synchronization from various fitness devices and sensors',
+        'Local data storage for offline workout tracking with cloud sync'
+      ],
+      marketContext: 'Users expect MyFitnessPal-level tracking with Strava-level social features and Peloton-level engagement.',
+      competitiveInsights: [
+        'Social challenges and leaderboards drive consistent app usage',
+        'Personalized workout recommendations based on past performance increase satisfaction'
+      ],
+      userFlowSuggestions: [
+        'Quick workout logging with pre-defined exercises and custom routines',
+        'Social sharing of achievements with privacy controls'
+      ],
+      designPatterns: [
+        'Dashboard with key metrics and progress charts prominently displayed',
+        'Swipe-based exercise logging with voice commands for hands-free operation'
+      ]
+    },
+    'dating_social': {
+      domainInsights: [
+        'Trust and safety features are paramount, including photo verification and reporting systems',
+        'Algorithm-based matching with user preference learning improves match quality over time',
+        'Location-based features require careful privacy balance and user control'
+      ],
+      targetAudienceAnalysis: 'Singles seeking meaningful connections through technology, valuing both discovery features and safety measures in online dating.',
+      technicalConsiderations: [
+        'Advanced matching algorithms with machine learning for compatibility scoring',
+        'Real-time messaging with safety features like image moderation',
+        'Location services with privacy controls and radius-based matching'
+      ],
+      marketContext: 'Users expect Tinder-level ease of use with Bumble-level safety features and Hinge-level relationship focus.',
+      competitiveInsights: [
+        'Conversation starters and icebreaker prompts significantly improve match engagement',
+        'Video chat integration has become essential for building trust before meeting'
+      ],
+      userFlowSuggestions: [
+        'Intuitive profile creation with guided prompts and photo verification',
+        'Seamless transition from matching to messaging with safety controls'
+      ],
+      designPatterns: [
+        'Card-based profile browsing with gesture-based interactions',
+        'Clean messaging interface with media sharing and safety reporting'
+      ]
+    },
+    'productivity': {
+      domainInsights: [
+        'Task management apps succeed through simplicity and powerful organization features',
+        'Cross-platform synchronization is essential for modern productivity workflows',
+        'Integration with calendar and email systems drives daily usage adoption'
+      ],
+      targetAudienceAnalysis: 'Busy professionals and students seeking to organize tasks, manage time effectively, and boost productivity across personal and work contexts.',
+      technicalConsiderations: [
+        'Real-time sync across multiple devices with conflict resolution',
+        'Integration APIs for calendar, email, and workplace tools like Slack',
+        'Offline functionality with automatic sync when connection is restored'
+      ],
+      marketContext: 'Users expect Notion-level flexibility with Todoist-level simplicity and Asana-level collaboration features.',
+      competitiveInsights: [
+        'Natural language processing for task creation improves user adoption',
+        'Smart scheduling suggestions based on task priority and deadlines increase completion rates'
+      ],
+      userFlowSuggestions: [
+        'Quick task capture with voice input and smart categorization',
+        'Project organization with drag-and-drop functionality and nested subtasks'
+      ],
+      designPatterns: [
+        'Clean list views with customizable sorting and filtering options',
+        'Dashboard showing daily agenda with progress indicators'
+      ]
+    },
+    'gaming': {
+      domainInsights: [
+        'Mobile gaming requires optimized performance and battery usage consideration',
+        'Social features and leaderboards significantly increase player retention',
+        'Monetization through in-app purchases requires careful balance with gameplay enjoyment'
+      ],
+      targetAudienceAnalysis: 'Gamers seeking entertainment, challenge, and social interaction through digital gameplay experiences across various skill levels and time commitments.',
+      technicalConsiderations: [
+        'Optimized rendering and animation performance for smooth gameplay',
+        'Real-time multiplayer functionality with low-latency networking',
+        'Save game synchronization across devices with cloud storage'
+      ],
+      marketContext: 'Players expect console-quality experiences on mobile with PC-level social features and fair monetization models.',
+      competitiveInsights: [
+        'Progressive difficulty scaling keeps players engaged without frustration',
+        'Social guilds and team features create strong community bonds'
+      ],
+      userFlowSuggestions: [
+        'Intuitive onboarding with interactive tutorials and gradual feature introduction',
+        'Quick match finding with skill-based matchmaking systems'
+      ],
+      designPatterns: [
+        'Responsive touch controls optimized for various screen sizes',
+        'Clear UI hierarchy that doesn\'t interfere with gameplay visibility'
+      ]
+    },
+    'health': {
+      domainInsights: [
+        'Health apps require HIPAA compliance and robust data privacy protections',
+        'Integration with medical devices and EMR systems improves clinical utility',
+        'User education and behavioral change features are key to health outcomes'
+      ],
+      targetAudienceAnalysis: 'Health-conscious individuals and patients seeking to monitor, understand, and improve their health through technology-assisted tracking and insights.',
+      technicalConsiderations: [
+        'HIPAA-compliant data storage and transmission with end-to-end encryption',
+        'Integration with medical devices, labs, and healthcare provider systems',
+        'Reliable data accuracy with validation and anomaly detection'
+      ],
+      marketContext: 'Users expect MyChart-level medical integration with Fitbit-level consumer experience and clinical-grade accuracy.',
+      competitiveInsights: [
+        'Personalized insights and recommendations drive long-term engagement',
+        'Healthcare provider collaboration features improve patient outcomes'
+      ],
+      userFlowSuggestions: [
+        'Simple symptom and vital sign logging with trend analysis',
+        'Medication reminders with adherence tracking and provider sharing'
+      ],
+      designPatterns: [
+        'Dashboard with key health metrics and trend visualizations',
+        'Privacy-first design with granular data sharing controls'
+      ]
+    },
+    'finance': {
+      domainInsights: [
+        'Financial apps require bank-level security with multi-factor authentication',
+        'Real-time transaction monitoring and fraud detection are essential features',
+        'Regulatory compliance varies by region and requires ongoing updates'
+      ],
+      targetAudienceAnalysis: 'Individuals and businesses seeking better financial management, budgeting tools, and investment tracking with security and regulatory compliance.',
+      technicalConsiderations: [
+        'Bank-grade encryption and security with PCI DSS compliance',
+        'Open banking API integration for account aggregation and transactions',
+        'Real-time fraud detection with machine learning algorithms'
+      ],
+      marketContext: 'Users expect Mint-level budgeting with Robinhood-level investing and traditional banking security standards.',
+      competitiveInsights: [
+        'Automated categorization and spending insights improve financial awareness',
+        'Goal-based saving and investment features drive user engagement'
+      ],
+      userFlowSuggestions: [
+        'Secure account linking with immediate transaction categorization',
+        'Budget creation with automated alerts and spending recommendations'
+      ],
+      designPatterns: [
+        'Clear financial dashboard with spending breakdowns and trend analysis',
+        'Security-focused design with biometric authentication options'
+      ]
+    },
+    'education': {
+      domainInsights: [
+        'Educational apps benefit from adaptive learning algorithms that adjust to user pace',
+        'Progress tracking and achievement systems improve learning motivation',
+        'Multi-modal content delivery accommodates different learning styles'
+      ],
+      targetAudienceAnalysis: 'Students, educators, and lifelong learners seeking effective, engaging educational experiences through interactive and personalized learning platforms.',
+      technicalConsiderations: [
+        'Adaptive learning algorithms that adjust content difficulty based on performance',
+        'Multimedia content delivery with offline download capabilities',
+        'Progress analytics and learning outcome measurement systems'
+      ],
+      marketContext: 'Users expect Khan Academy-level content quality with Duolingo-level engagement and Coursera-level credentialing.',
+      competitiveInsights: [
+        'Gamification elements like streaks and badges significantly improve completion rates',
+        'Social learning features and peer interaction enhance understanding'
+      ],
+      userFlowSuggestions: [
+        'Personalized learning path creation based on goals and current knowledge',
+        'Interactive lessons with immediate feedback and progress tracking'
+      ],
+      designPatterns: [
+        'Progress-driven interface with clear learning milestones and achievements',
+        'Multi-format content presentation with accessibility considerations'
+      ]
+    },
+    'travel_planning': {
+      domainInsights: [
+        'Travel apps require real-time data integration for flights, hotels, and local services',
+        'Offline functionality is crucial for international travelers with limited connectivity',
+        'Personalized recommendations based on preferences and past trips improve satisfaction'
+      ],
+      targetAudienceAnalysis: 'Travelers seeking convenient trip planning, booking, and management tools that work seamlessly across destinations and travel styles.',
+      technicalConsiderations: [
+        'Integration with booking APIs for flights, hotels, and activities',
+        'Offline map and itinerary access with periodic data synchronization',
+        'Multi-currency support with real-time exchange rate updates'
+      ],
+      marketContext: 'Users expect Expedia-level booking with TripAdvisor-level reviews and Google Maps-level navigation integration.',
+      competitiveInsights: [
+        'Collaborative trip planning with shared itineraries increases user engagement',
+        'Local recommendations and hidden gem discovery differentiate premium services'
+      ],
+      userFlowSuggestions: [
+        'Trip creation with intelligent suggestions based on preferences and budget',
+        'Real-time updates and notifications for flight changes and local events'
+      ],
+      designPatterns: [
+        'Timeline-based itinerary view with drag-and-drop scheduling',
+        'Map-centric interface with layered information and booking integration'
       ]
     }
   };
 
-  return enhancedFallbacks[projectType] || getDefaultEnrichment();
-}
-
-function getMusicDomainEnrichment(intent: string): ContextEnrichment {
-  return {
-    domainInsights: [
-      'Music creation apps require low-latency audio processing and real-time collaboration features',
-      'Lyric writing tools benefit from rhyme suggestion engines and syllable counting for rhythm matching',
-      'Audio apps need robust file format support and cloud sync for cross-device workflows'
-    ],
-    targetAudienceAnalysis: 'Musicians, songwriters, and music enthusiasts seeking creative tools that enhance their writing process with intelligent suggestions and collaboration features.',
-    technicalConsiderations: [
-      'Web Audio API integration for real-time audio processing and effects',
-      'Cloud storage for audio files with efficient streaming and caching',
-      'Real-time collaboration features using WebSockets for shared editing sessions'
-    ],
-    marketContext: 'Musicians expect professional-grade tools with intuitive interfaces, similar to how Figma revolutionized design collaboration.',
-    competitiveInsights: [
-      'Rhyme suggestion and word association features significantly improve songwriting speed',
-      'Voice recording integration allows for quick idea capture and melody development',
-      'Collaborative editing with version control helps teams work together on projects'
-    ],
-    userFlowSuggestions: [
-      'Quick lyric input with smart rhyme suggestions and synonym recommendations',
-      'Voice memo recording with automatic transcription and lyric extraction',
-      'Project sharing with real-time collaborative editing and comment threads'
-    ],
-    designPatterns: [
-      'Split-pane layout with lyrics editor and rhyme suggestions panel',
-      'Waveform visualization for audio tracks with playback controls',
-      'Drag-and-drop interface for arranging verses, choruses, and song sections'
-    ],
-    confidence: 8
-  };
+  return domainEnrichments[projectType] || getDefaultEnrichment();
 }
 
 function parseEnrichmentResponse(enrichmentText: string): ContextEnrichment | null {

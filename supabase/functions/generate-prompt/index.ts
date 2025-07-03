@@ -1,3 +1,4 @@
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { MODES } from './modes.ts';
@@ -222,28 +223,8 @@ Required structure:
 
 function generateDomainSpecificRemix(intent: string, analysis: any, enrichment: ContextEnrichment): string[] {
   const projectType = analysis.projectType || 'general_app';
-  const primaryIntent = analysis.primary || 'general';
   
-  // Detect music/lyrics domain
-  const isMusicDomain = intent.toLowerCase().includes('lyric') || 
-                       intent.toLowerCase().includes('music') || 
-                       intent.toLowerCase().includes('song') ||
-                       intent.toLowerCase().includes('rhyme') ||
-                       intent.toLowerCase().includes('beat') ||
-                       intent.toLowerCase().includes('audio') ||
-                       intent.toLowerCase().includes('sound');
-
-  if (isMusicDomain) {
-    return [
-      'Add rhyme suggestion engine with syllable counting for rhythm matching',
-      'Include voice recording feature for quick melody and lyric capture',
-      'Implement real-time collaboration for co-writing sessions with other musicians',
-      'Add beat/tempo integration to help match lyrics with musical timing',
-      'Include chord progression suggestions based on lyrical mood and key'
-    ];
-  }
-
-  // Domain-specific suggestions based on project type
+  // Comprehensive domain-specific remix suggestions
   const domainRemixSuggestions = {
     'messaging_app': [
       'Add voice message support with waveform visualization',
@@ -279,6 +260,55 @@ function generateDomainSpecificRemix(intent: string, analysis: any, enrichment: 
       'Include gamification elements with badges and achievements',
       'Add peer collaboration and study group features',
       'Include adaptive learning paths based on performance'
+    ],
+    'fitness_tracking': [
+      'Add social challenges and leaderboards for motivation',
+      'Implement wearable device integration for automatic tracking',
+      'Include personalized workout recommendations',
+      'Add nutrition tracking with barcode scanning',
+      'Include virtual personal trainer with AI coaching'
+    ],
+    'dating_social': [
+      'Add video chat integration for safe virtual dating',
+      'Implement AI-powered conversation starters and icebreakers',
+      'Include personality matching with compatibility scoring',
+      'Add group dating and social event organization features',
+      'Include safety features like photo verification and reporting'
+    ],
+    'gaming': [
+      'Add multiplayer tournaments and competitive leagues',
+      'Implement social guilds and team formation features',
+      'Include live streaming and spectator modes',
+      'Add achievement system with rare collectible rewards',
+      'Include cross-platform play and progression sync'
+    ],
+    'health': [
+      'Add telemedicine integration for virtual consultations',
+      'Implement medication reminders with adherence tracking',
+      'Include symptom checker with AI-powered health insights',
+      'Add family health tracking and sharing features',
+      'Include integration with wearable devices and health monitors'
+    ],
+    'finance': [
+      'Add automated savings goals with smart recommendations',
+      'Implement investment portfolio tracking with performance analytics',
+      'Include bill reminder and automatic payment scheduling',
+      'Add financial education with personalized learning paths',
+      'Include expense categorization with receipt scanning'
+    ],
+    'music_audio': [
+      'Add rhyme suggestion engine with syllable counting for rhythm matching',
+      'Include voice recording feature for quick melody and lyric capture',
+      'Implement real-time collaboration for co-writing sessions with other musicians',
+      'Add beat/tempo integration to help match lyrics with musical timing',
+      'Include chord progression suggestions based on lyrical mood and key'
+    ],
+    'travel_planning': [
+      'Add real-time flight and hotel price tracking with alerts',
+      'Implement collaborative trip planning with shared itineraries',
+      'Include local recommendations and hidden gem discovery',
+      'Add expense tracking and budget management for trips',
+      'Include offline map access and itinerary synchronization'
     ]
   };
 
