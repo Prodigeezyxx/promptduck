@@ -1,6 +1,6 @@
 
 import { AIGeneratorInputPanel } from './AIGeneratorInputPanel';
-import { EnhancedAIGeneratorOutputPanel } from './EnhancedAIGeneratorOutputPanel';
+import { AIGeneratorOutputPanel } from './AIGeneratorOutputPanel';
 import { GenerationResult, HeuristicType, ModeType } from '@/types';
 import { selectHeuristics } from '@/utils/heuristicSelector';
 
@@ -62,16 +62,12 @@ export function StreamlinedGeneratorLayout({
 
       {/* Output Panel */}
       <div className="order-2">
-        <EnhancedAIGeneratorOutputPanel
+        <AIGeneratorOutputPanel
           isGenerating={isGenerating}
           lastResult={lastResult}
-          selectedMode={selectedMode}
-          originalIntent={intent}
-          originalContext={context}
           onCopyPrompt={onCopyPrompt}
           onSavePrompt={onSavePrompt}
           onRemixSuggestion={onRemixSuggestion}
-          onStartNewPrompt={onStartNewPrompt}
         />
       </div>
     </div>

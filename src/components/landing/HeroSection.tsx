@@ -2,7 +2,6 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { VariableProximity } from '@/components/VariableProximity';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { AnimatedPromptDisplay } from './AnimatedPromptDisplay';
 import { memo, useState } from 'react';
@@ -77,10 +76,7 @@ export function HeroSection() {
           </div>
           
           <h1 className="text-fluid-6xl md:text-fluid-7xl lg:text-fluid-8xl font-bold bg-gradient-to-r from-primaryText via-accent to-accent/80 bg-clip-text text-transparent leading-tight">
-            <VariableProximity 
-              text="prompt like a PRO" 
-              className="text-inherit"
-            />
+            prompt like a PRO
           </h1>
           
           <motion.p 
