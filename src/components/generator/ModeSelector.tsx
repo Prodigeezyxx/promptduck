@@ -28,7 +28,7 @@ export function ModeSelector({ selectedMode, onModeChange, className }: ModeSele
             <span className="text-2xl">{currentMode.icon}</span>
             <div>
               <h3 className="font-semibold text-base flex items-center gap-2">
-                {currentMode.name} Mode
+                {currentMode.name.endsWith('Mode') ? currentMode.name : `${currentMode.name} Mode`}
                 {currentMode.isComingSoon && (
                   <Badge variant="secondary" className="text-xs">
                     Coming Soon
@@ -101,7 +101,7 @@ export function ModeSelector({ selectedMode, onModeChange, className }: ModeSele
             </div>
 
             <div className="bg-surface/50 rounded-lg p-3 text-sm">
-              <h4 className="font-medium mb-2">Benefits of {currentMode.name} Mode:</h4>
+              <h4 className="font-medium mb-2">Benefits of {currentMode.name.endsWith('Mode') ? currentMode.name : `${currentMode.name} Mode`}:</h4>
               <ul className="space-y-1">
                 {currentMode.benefits.map((benefit, index) => (
                   <li key={index} className="flex items-center space-x-2">

@@ -76,24 +76,12 @@ export function HeroSection() {
             Cognitive prompt engineering
           </div>
           
-          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 lg:gap-4">
+          <h1 className="text-fluid-6xl md:text-fluid-7xl lg:text-fluid-8xl font-bold bg-gradient-to-r from-primaryText via-accent to-accent/80 bg-clip-text text-transparent leading-tight">
             <VariableProximity 
-              text="prompt" 
-              className="text-fluid-6xl md:text-fluid-7xl lg:text-fluid-8xl font-bold bg-gradient-to-r from-primaryText via-accent to-accent/80 bg-clip-text text-transparent leading-tight" 
+              text="prompt like a PRO" 
+              className="text-inherit"
             />
-            <VariableProximity 
-              text="like" 
-              className="text-fluid-6xl md:text-fluid-7xl lg:text-fluid-8xl font-bold bg-gradient-to-r from-primaryText via-accent to-accent/80 bg-clip-text text-transparent leading-tight" 
-            />
-            <VariableProximity 
-              text="a" 
-              className="text-fluid-6xl md:text-fluid-7xl lg:text-fluid-8xl font-bold bg-gradient-to-r from-primaryText via-accent to-accent/80 bg-clip-text text-transparent leading-tight" 
-            />
-            <VariableProximity 
-              text="PRO" 
-              className="text-fluid-6xl md:text-fluid-7xl lg:text-fluid-8xl font-bold bg-gradient-to-r from-primaryText via-accent to-accent/80 bg-clip-text text-transparent leading-tight" 
-            />
-          </div>
+          </h1>
           
           <motion.p 
             initial={{ opacity: 0 }} 
