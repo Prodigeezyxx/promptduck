@@ -210,11 +210,12 @@ What aspects of your idea are you most excited about?`
 
 // Extract app name from user intent using pattern matching
 function extractAppNameFromIntent(intent: string): string | null {
+  // Better patterns for scheduling app detection
   const patterns = [
-    /called\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?/i,
-    /named\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?/i,
-    /app\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?/i,
-    /for\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?/i
+    /(?:scheduling|calendar|appointment|booking)\s+app(?:\s+called\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?)?/i,
+    /(?:make|build|create)\s+(?:a|an)?\s*([a-zA-Z][a-zA-Z0-9\s]{1,20})\s+app/i,
+    /app\s+called\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?/i,
+    /named\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?/i
   ];
   
   for (const pattern of patterns) {
@@ -222,6 +223,11 @@ function extractAppNameFromIntent(intent: string): string | null {
     if (match && match[1]) {
       return match[1].trim();
     }
+  }
+  
+  // If scheduling-related but no specific name, generate appropriate name
+  if (/schedul|calendar|appointment|booking|meeting/i.test(intent)) {
+    return null; // Let generateProjectName handle it
   }
   
   return null;
@@ -235,46 +241,47 @@ function generateSimpleProjectTemplate(
   intent: string, 
   enrichment: ContextEnrichment
 ): string {
-  const appTypes = {
-    'messaging_app': 'messaging platform',
-    'e_commerce': 'e-commerce platform', 
-    'productivity': 'productivity application',
-    'health': 'health and wellness platform',
-    'dating_social': 'social connection platform'
-  };
+  return `CONTEXT: Lovable Development Environment. Building ${projectType.replace('_', ' ')} application named "${projectName}".
 
-  const appDescription = appTypes[projectType] || 'web application';
+TASK: ${intent}
 
-  return `CONTEXT: Lovable AI Builder creating ${appDescription} named "${projectName}".
+DATABASE REQUIREMENTS:
+1. ${enrichment.technicalConsiderations[0] || 'Standard user authentication and data storage'}
+2. ${enrichment.technicalConsiderations[1] || 'Efficient data retrieval and updates'}
+3. Supabase integration with Row Level Security policies
 
-DOMAIN REQUIREMENTS: ${enrichment.domainInsights[0] || 'Focus on user needs and technical feasibility'}
+AUTHENTICATION SYSTEM:
+1. Supabase Auth implementation with email/password
+2. Protected routes and user session management
+3. ${enrichment.domainInsights[0] || 'Secure user data handling'}
 
-TARGET USERS: ${enrichment.targetAudienceAnalysis || 'Users seeking efficient solutions to their problems'}
+CORE FEATURES:
+1. ${enrichment.userFlowSuggestions[0] || 'Main application functionality'}
+2. ${enrichment.userFlowSuggestions[1] || 'User interaction patterns'}
+3. ${enrichment.designPatterns[0] || 'Modern UI components'}
 
-TASK SEQUENCE:
-1. Generate project skeleton for ${projectName}
-2. Implement core authentication and user management
-3. Build primary features based on user requirements: ${intent}
-4. Apply modern design patterns: ${enrichment.designPatterns[0] || 'Clean, modern interface design'}
-5. Implement technical requirements: ${enrichment.technicalConsiderations[0] || 'Responsive design for all devices'}
-6. Add user flow optimizations: ${enrichment.userFlowSuggestions[0] || 'Minimal steps to core functionality'}
-7. Seed database with realistic test data
+TECHNICAL IMPLEMENTATION:
+1. React TypeScript component architecture
+2. Tailwind CSS with shadcn/ui component library
+3. Responsive mobile-first design approach
+4. ${enrichment.technicalConsiderations[0] || 'Performance optimized code structure'}
+
+BUILD SEQUENCE:
+1. Initialize project structure and authentication
+2. Design database schema and setup Supabase tables
+3. Create core UI components and navigation
+4. Implement main application features
+5. Add data validation and error handling
+6. Test functionality and optimize performance
+7. Deploy MVP with realistic test data
 
 CONSTRAINTS:
-1. Tech stack: React, TypeScript, Tailwind CSS, shadcn/ui, Supabase
-2. Performance: Fast loading and responsive design
-3. Build: Focused, maintainable code structure
-4. Accessibility: WCAG compliance with semantic HTML
-5. Security: Proper data validation and privacy controls
+- Tech Stack: React, TypeScript, Tailwind CSS, shadcn/ui, Supabase
+- Performance: Sub-2s load times, responsive design
+- Security: Input validation, secure authentication
+- Accessibility: WCAG 2.1 AA compliance
 
-OUTPUT FORMAT:
-1. Plan: Clear numbered build steps (max 10)
-2. Schema: Database design for ${projectName}
-3. Components: Organized file structure
-4. SeedScript: Realistic test data
-5. README: Setup instructions
+${context ? `CONTEXT: ${context}` : ''}
 
-${context ? `ADDITIONAL CONTEXT: ${context}` : ''}
-
-GOAL: Production-ready ${projectName} MVP that compiles and runs successfully with excellent user experience.`;
+DELIVERABLE: Fully functional ${projectName} MVP with complete feature set and database integration.`;
 }

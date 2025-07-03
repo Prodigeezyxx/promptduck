@@ -65,37 +65,21 @@ export async function enrichContextWithAI(
 }
 
 function buildContextEnrichmentPrompt(intent: string, context: string, analysis: any): string {
-  return `Analyze this request and provide short technical insights:
+  return `Analyze this request and provide concise technical points (1-2 per section):
 
 Request: "${intent}"
 Context: ${context || 'None'}
 Type: ${analysis.projectType || 'general_app'}
 
-Return 2-3 short technical insights per section:
+Provide brief, technical insights:
 
-DOMAIN_INSIGHTS:
-${getBasicInsight(analysis.projectType, 'domain')}
+Database requirements for ${analysis.projectType || 'this app'}
+Authentication needs and user management approach  
+Core technical features required for functionality
+Performance and scalability considerations
+Essential UI components and user interactions
 
-TARGET_AUDIENCE:  
-${getBasicInsight(analysis.projectType, 'audience')}
-
-TECHNICAL_CONSIDERATIONS:
-${getBasicInsight(analysis.projectType, 'technical')}
-
-MARKET_CONTEXT:
-${getBasicInsight(analysis.projectType, 'market')}
-
-COMPETITIVE_INSIGHTS:
-${getBasicInsight(analysis.projectType, 'competitive')}
-
-USER_FLOW_SUGGESTIONS:
-${getBasicInsight(analysis.projectType, 'userflow')}
-
-DESIGN_PATTERNS:
-${getBasicInsight(analysis.projectType, 'design')}
-
-CONFIDENCE:
-8`;
+Keep responses under 10 words per insight. Focus on implementation specifics.`;
 }
 
 function getBasicInsight(projectType: string, category: string): string {
