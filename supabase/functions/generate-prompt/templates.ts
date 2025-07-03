@@ -1,12 +1,16 @@
 import { generateProjectName } from './projectNames.ts';
 
-// Generate sophisticated Lovable templates
+// Enhanced Lovable templates with R-T-C-F-G structure
 export function generateLovableTemplate(intent: string, context: string, analysis: any): string {
   const { primary, projectType, complexity, keywords } = analysis;
-  const projectName = generateProjectName(intent, projectType || 'general_app');
+  
+  // Smart app name extraction
+  const extractedAppName = extractAppNameFromIntent(intent);
+  const projectName = extractedAppName || generateProjectName(intent, projectType || 'general_app');
 
   const templates = {
     new_project_scaffolding: () => {
+      // Enhanced app type descriptions with R-T-C-F-G structure
       const appTypeDescriptions = {
         'messaging_app': {
           description: 'a modern messaging and communication platform',
@@ -79,6 +83,30 @@ export function generateLovableTemplate(intent: string, context: string, analysi
             'Social sharing and engagement'
           ],
           designNotes: 'Visual focus, inspiring layouts, and creative freedom'
+        },
+        'health': {
+          description: 'a comprehensive mental health and wellness platform',
+          audience: '• Individuals seeking mental health support\n  • Healthcare professionals and therapists\n  • Users interested in community-based healing',
+          features: [
+            'Secure 1-on-1 video therapy sessions with end-to-end encryption',
+            'Community discussion boards for peer support',
+            'Crisis intervention tools and hotline integration',
+            'Progress tracking and mood journaling',
+            'Therapist matching and appointment scheduling'
+          ],
+          designNotes: 'Calming, trustworthy design with strong privacy indicators'
+        },
+        'dating_social': {
+          description: 'a modern dating and social connection platform',
+          audience: '• Singles looking for meaningful relationships\n  • Young professionals seeking connections\n  • Users who value authentic interactions',
+          features: [
+            'Swipe-style profile browsing with smart matching',
+            'Real-time chat for matched users',
+            'Video call integration for virtual dates',
+            'Interest-based matching and compatibility scoring',
+            'Safety features and reporting tools'
+          ],
+          designNotes: 'Engaging, vibrant design with smooth animations and intuitive gestures'
         }
       };
 
@@ -95,83 +123,8 @@ export function generateLovableTemplate(intent: string, context: string, analysi
         designNotes: 'Clean, modern design with excellent user experience'
       };
 
-      return `### 💡 **Lovable App Prompt: ${projectName.toUpperCase()}**
-
-I want to build **${appInfo.description}** that delivers an exceptional user experience. The app should feel **modern, intuitive, and performant**, optimized for both **web and mobile** platforms.
-
----
-
-### **Project Name:**
-${projectName}
-
----
-
-### **Target Audience:**
-${appInfo.audience}
-
----
-
-### **Core Features and Pages:**
-
-#### ✅ **Homepage / Landing**
-• Clean, engaging welcome page with clear value proposition
-• Call-to-action buttons for key user flows
-• Mobile-responsive hero section and navigation
-
-#### ✅ **Main Application Interface**
-${appInfo.features.map(feature => `• ${feature}`).join('\n')}
-
-#### ✅ **User Management**
-• User registration and authentication
-• Profile management and settings
-• Account dashboard and preferences
-
-#### ✅ **Data Management**
-• Efficient data storage and retrieval
-• Real-time updates where appropriate
-• Export and backup capabilities
-
----
-
-### **Tech Stack (Lovable Optimized):**
-• **Frontend:** React + TypeScript + Tailwind CSS
-• **UI Components:** shadcn/ui for consistent design
-• **Backend & Storage:** Supabase for seamless integration
-• **Authentication:** Supabase Auth with social login options
-• **Deployment:** Automated through Lovable platform
-
----
-
-### **Design Preferences:**
-• **Typography:** Inter font family for readability
-• **Color Scheme:**
-  - Primary: Modern, accessible color palette
-  - Accent: Complementary highlight colors
-  - Backgrounds: Clean whites and subtle grays
-• **Layout:** ${appInfo.designNotes}
-• **Mobile-First:** Responsive design prioritizing mobile experience
-
----
-
-### **Development Guidelines:**
-• Component-driven architecture with reusable elements
-• TypeScript for type safety and better development experience
-• Tailwind CSS for rapid, consistent styling
-• Accessibility-first approach (WCAG compliance)
-• Performance optimization and lazy loading
-
----
-
-### **Next Steps:**
-1. **Start with core MVP features** - Focus on essential functionality first
-2. **Design system setup** - Establish colors, typography, and component patterns  
-3. **User authentication** - Implement secure login and registration
-4. **Core feature development** - Build main application functionality iteratively
-5. **Testing and polish** - Ensure smooth user experience across devices
-
-${context ? `\n---\n\n### **Additional Context:**\n${context}` : ''}
-
-Ready to start building? Let's begin with the homepage and core navigation structure!`;
+      // Enhanced R-T-C-F-G template structure
+      return generateRoleTaskConstraintsFormatGoalTemplate(projectName, appInfo, context, intent);
     },
 
     ui_design_modification: () => `# 🎨 **Lovable UI Enhancement Prompt**
@@ -373,4 +326,70 @@ What aspects of your idea are you most excited about?`
 
   const templateFunction = templates[primary];
   return templateFunction ? templateFunction() : templates.new_project_scaffolding();
+}
+
+// Extract app name from user intent using pattern matching
+function extractAppNameFromIntent(intent: string): string | null {
+  const patterns = [
+    /called\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?/i,
+    /named\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?/i,
+    /app\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?/i,
+    /for\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?/i
+  ];
+  
+  for (const pattern of patterns) {
+    const match = intent.match(pattern);
+    if (match && match[1]) {
+      return match[1].trim();
+    }
+  }
+  
+  return null;
+}
+
+// Generate R-T-C-F-G structured template
+function generateRoleTaskConstraintsFormatGoalTemplate(
+  projectName: string, 
+  appInfo: any, 
+  context: string, 
+  intent: string
+): string {
+  return `**Context**
+You are Lovable's AI Builder. Create an MVP for ${appInfo.description} named "${projectName}."
+
+**Task**
+1. Generate the project skeleton for ${projectName}.
+2. Implement core features:
+   • Email-based sign-up / login (Supabase auth).
+   • Onboarding flow collecting user preferences and profile information.
+   ${appInfo.features.map((feature: string) => `   • ${feature}.`).join('\n')}
+3. Seed the database with 10 sample ${projectName} user profiles and test data.
+
+**Guidelines**
+• Tech stack: Next.js 14 (App Router), React Server Components, TypeScript, Prisma ORM, Supabase (auth + Postgres + realtime), Tailwind CSS, shadcn/ui.
+• Mobile-first responsive layout; maintain desktop compatibility.
+• ${appInfo.designNotes} with modern UI patterns.
+• Use CLEAR code comments and clean file structure.
+• All code must pass ESLint + Prettier validation.
+
+**Constraints**
+• Use only open-source or free-tier libraries—no paid APIs or proprietary SDKs.
+• Initial build ≤ 60 files; p95 page load < 1.8 s on 3G; backend p95 response < 100 ms.
+• WCAG-AA accessibility compliance (semantic HTML, ARIA labels, focus states).
+• Store user data securely with proper privacy controls.
+
+**Output**
+Return exactly these sections:
+1. ## Plan – numbered build plan (max 10 steps).
+2. ## Schema – Prisma schema + Supabase SQL.
+3. ## Components – file tree showing pages, components, utils.
+4. ## SeedScript – script to load sample ${projectName} data.
+5. ## README – local setup + deployment instructions.
+
+**Goal**
+Deliver a production-ready ${projectName} MVP that compiles, runs seed script, passes all tests, and provides an exceptional user experience.
+
+${context ? `\n**Additional Context**\n${context}` : ''}
+
+**Ready to build ${projectName}?** Let's create something amazing that users will love!`;
 }

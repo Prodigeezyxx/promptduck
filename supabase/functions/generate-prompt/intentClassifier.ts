@@ -58,14 +58,18 @@ export function classifyIntent(intent: string, context: string = ''): {
     }
   });
 
-  // Enhanced new project detection - more flexible patterns
+  // Enhanced new project detection with R-T-C-F-G patterns
   const newProjectIndicators = [
     'build', 'create app', 'start project', 'new project', 'develop', 'make',
     'an app for', 'app that', 'application for', 'application that',
     'platform for', 'system for', 'tool for', 'website for', 'site for',
     'make an app', 'need an app', 'want to build', 'want to create',
     'like uber', 'like airbnb', 'like tinder', 'like instagram', 'like spotify',
-    'similar to', 'inspired by', 'clone of', 'version of'
+    'similar to', 'inspired by', 'clone of', 'version of',
+    // Enhanced first-run app patterns
+    'i want to create', 'i want to make', 'i need a', 'i need an',
+    'mental health app', 'dating app', 'telepresence', 'community app',
+    'called', 'named', 'mvp for', 'prototype for'
   ];
 
   const hasNewProjectIndicator = newProjectIndicators.some(indicator => 

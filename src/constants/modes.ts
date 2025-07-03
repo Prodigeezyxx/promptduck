@@ -35,64 +35,67 @@ export const MODES: ModeConfiguration = {
   lovable: {
     id: 'lovable',
     name: 'Lovable Transformer',
-    description: 'Advanced prompt engineering engine for Lovable.dev with intelligent intent classification',
+    description: 'Advanced R-T-C-F-G prompt engineering for first-run app creation and smart intent classification',
     icon: '🧠',
     color: 'bg-purple-500',
     targetPlatform: 'Lovable.dev',
     heuristics: ['universal_clarity', 'format_optimization', 'quality_enhancement', 'self_repairing', 'multi_role_collision'],
     contextInjection: [
-      'Apply intelligent intent classification (New Project, UI/Design, Code Refactoring, Debugging, Feature Addition)',
-      'Use template augmentation based on detected intent',
-      'Focus on React + TypeScript + Tailwind CSS patterns',
-      'Emphasize responsive, mobile-first design',
-      'Include component structure and shadcn/ui usage',
-      'Apply safety rails to prevent breaking functionality',
-      'Generate structured, copy-paste-ready markdown blocks'
+      'Apply Role → Task → Constraints → Format → Goal structure for maximum effectiveness',
+      'Smart app name extraction from natural language (e.g., "called Fren")',
+      'Dynamic template generation for 25+ app categories',
+      'First-run optimization for phrases like "I want to create a [type] app"',
+      'Professional tech stack specifications (Next.js 14, Supabase, TypeScript)',
+      'Complete project scaffolding with schemas, components, and seed data',
+      'Production-ready constraints including performance and accessibility'
     ],
     formatRules: [
-      'Classify user intent before generating prompts',
-      'Apply corresponding best-practice templates',
-      'Structure output as actionable, self-contained blocks',
-      'Include clear constraints and guidelines',
-      'Separate planning from implementation phases',
-      'Use chain-of-thought reasoning for debugging tasks'
+      'Detect app creation patterns and extract project names automatically',
+      'Generate complete Context → Task → Guidelines → Constraints → Output blocks',
+      'Include numbered build plans, database schemas, and component trees',
+      'Apply specialized templates for dating, health, e-commerce, and other app types',
+      'Ensure copy-paste-ready prompts that work perfectly in Lovable',
+      'Add smart project naming and feature specification based on user intent'
     ],
-    systemPromptModifier: `You are the Lovable Prompt Transformer. Apply advanced prompt engineering:
+    systemPromptModifier: `You are the Lovable Prompt Transformer with R-T-C-F-G engineering:
 
-INTENT CLASSIFICATION ENGINE:
-- New Project Scaffolding: Keywords like "build," "create app," "start project"
-- UI/Design Modification: Keywords like "style," "responsive," "colors," "layout"  
-- Code Refactoring: Keywords like "clean up," "refactor," "organize"
-- Debugging: Keywords like "error," "fix," "not working," "bug"
-- Feature Addition: Keywords like "add feature," "implement," "change how X works"
-- Vague/Ambiguous: Input too broad to be actionable
+ENHANCED APP DETECTION:
+- Mental health apps: "telepresence," "therapy," "wellness," "community support"
+- Dating apps: "dating," "matching," "swipe," "relationships," "social connection"
+- E-commerce: "shopping," "marketplace," "products," "payments," "store"
+- Government services: "visa," "applications," "legal," "official processes"
+- And 20+ other specialized categories with intelligent pattern matching
 
-TEMPLATE AUGMENTATION SYSTEM:
-For each intent type, apply structured templates with:
-- Context setting and safety constraints
-- Step-by-step guidelines with clear objectives
-- Lovable-specific best practices (React/TypeScript/Tailwind)
-- Risk mitigation and functionality preservation
-- Evidence-based solutions with clear explanations
+SMART NAME EXTRACTION:
+- Automatically detect app names from patterns: "called X," "named Y," "app Z"
+- Generate contextually appropriate names when none provided
+- Adapt templates dynamically based on detected app type and name
 
-OUTPUT STRUCTURE:
-Generate complete, copy-paste-ready prompts with:
-- Clear context and task definition
-- Specific guidelines tailored to Lovable.dev
-- Explicit constraints to prevent breaking changes
-- Mobile-first, component-driven approach
-- Integration with shadcn/ui and modern patterns`,
+R-T-C-F-G TEMPLATE STRUCTURE:
+Context: Define role as Lovable's AI Builder and project scope
+Task: Numbered implementation steps with specific technical requirements
+Guidelines: Tech stack, design principles, and development standards
+Constraints: Performance, accessibility, and resource limitations
+Output: Structured deliverables (Plan, Schema, Components, SeedScript, README)
+Goal: Production-ready MVP that compiles and provides exceptional UX
+
+LOVABLE OPTIMIZATION:
+- Next.js 14 App Router with React Server Components
+- Supabase for auth, database, and real-time features
+- TypeScript, Tailwind CSS, and shadcn/ui integration
+- Mobile-first responsive design with WCAG-AA compliance
+- Complete project scaffolding from first user input`,
     examples: [
-      'Transform "build an e-commerce site" into structured project scaffolding',
-      'Convert "make it look better" into safe UI enhancement prompts',
-      'Turn "fix this bug" into systematic debugging workflows'
+      'Transform "I want to create a mental health app called Fren" into complete R-T-C-F-G template',
+      'Convert "dating app with swipe features" into professional project specification',
+      'Generate full MVP prompts from brief ideas like "productivity tool for teams"'
     ],
     benefits: [
-      'Intelligent intent detection',
-      'Template-based prompt engineering',
-      'Safety-first approach',
-      'Lovable-optimized workflows',
-      'Structured, actionable outputs'
+      'R-T-C-F-G structured templates for maximum clarity',
+      'Smart app name and type detection from natural language',
+      'First-run optimization for immediate app creation',
+      'Professional project scaffolding with complete tech specifications',
+      'Production-ready constraints and quality standards'
     ]
   },
   cursor: {
