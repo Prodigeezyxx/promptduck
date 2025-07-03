@@ -65,42 +65,45 @@ export async function enrichContextWithAI(
 }
 
 function buildContextEnrichmentPrompt(intent: string, context: string, analysis: any): string {
-  return `Analyze this ${analysis.projectType || 'application'} request and provide specific technical insights:
+  return `As an expert product strategist, analyze this request and provide specific, actionable insights:
 
 REQUEST: "${intent}"
-CONTEXT: ${context || 'None provided'}
-PROJECT TYPE: ${analysis.projectType || 'general_app'}
+CONTEXT: ${context || 'No additional context provided'}
+PROJECT TYPE: ${analysis.projectType || 'general application'}
 
-Return exactly this format with concise technical points:
+Provide detailed analysis in this exact format:
 
 DOMAIN_INSIGHTS:
-- Database schema requirements
-- Key integration needs
+- [Specific insight about this domain/industry]
+- [Key challenge or opportunity in this space]
+- [Technical or business consideration unique to this type of app]
 
 TARGET_AUDIENCE:
-Users who need ${analysis.projectType?.replace('_', ' ') || 'application'} functionality
+[2-3 sentences about who would use this and their key needs/motivations]
 
 TECHNICAL_CONSIDERATIONS:
-- Primary database tables needed
-- Authentication requirements
-- Performance considerations
+- [Database/backend requirement specific to this use case]
+- [Authentication or security need]
+- [Performance or scalability consideration]
 
 MARKET_CONTEXT:
-Modern users expect ${analysis.projectType?.replace('_', ' ') || 'application'} with mobile-first design
+[1-2 sentences about current market trends and user expectations for this type of app]
 
 COMPETITIVE_INSIGHTS:
-- Essential features for this app type
-- User experience patterns
+- [What successful apps in this space do well]
+- [Common pain point this app could address]
 
 USER_FLOW_SUGGESTIONS:
-- Main user journey steps
-- Key interaction patterns
+- [Key user journey or workflow]
+- [Important interaction pattern]
 
 DESIGN_PATTERNS:
-- UI component requirements
-- Layout considerations
+- [UI component or layout pattern for this app type]
+- [Visual design consideration]
 
-CONFIDENCE: 8`;
+CONFIDENCE: [number 1-10]
+
+Be specific and actionable, not generic.`;
 }
 
 function getBasicInsight(projectType: string, category: string): string {
@@ -140,28 +143,29 @@ function parseEnrichmentResponse(enrichmentText: string): ContextEnrichment {
     confidence: extractConfidence(enrichmentText)
   };
 
-  // Ensure we have valid arrays and strings, with fallbacks
+  // If we get empty sections, fall back to basic enrichment
+  const hasValidContent = (
+    (Array.isArray(sections.domainInsights) && sections.domainInsights.length > 0) ||
+    (typeof sections.targetAudienceAnalysis === 'string' && sections.targetAudienceAnalysis.length > 10)
+  );
+
+  if (!hasValidContent) {
+    console.log('AI enrichment failed, using basic enrichment');
+    return getBasicEnrichment({ projectType: 'general_app' });
+  }
+
   return {
-    domainInsights: Array.isArray(sections.domainInsights) ? sections.domainInsights.filter(s => s.length > 5) : 
-                   [sections.domainInsights].filter(s => s && s.length > 5),
+    domainInsights: Array.isArray(sections.domainInsights) ? sections.domainInsights : [sections.domainInsights],
     targetAudienceAnalysis: Array.isArray(sections.targetAudienceAnalysis) ? 
                            sections.targetAudienceAnalysis.join(' ') : 
-                           (sections.targetAudienceAnalysis || 'Target users seeking efficient solutions'),
-    technicalConsiderations: Array.isArray(sections.technicalConsiderations) ? 
-                            sections.technicalConsiderations.filter(s => s.length > 5) : 
-                            [sections.technicalConsiderations].filter(s => s && s.length > 5),
+                           (sections.targetAudienceAnalysis || 'Users seeking efficient solutions'),
+    technicalConsiderations: Array.isArray(sections.technicalConsiderations) ? sections.technicalConsiderations : [sections.technicalConsiderations],
     marketContext: Array.isArray(sections.marketContext) ? 
                   sections.marketContext.join(' ') : 
-                  (sections.marketContext || 'Modern users expect fast, intuitive applications'),
-    competitiveInsights: Array.isArray(sections.competitiveInsights) ? 
-                        sections.competitiveInsights.filter(s => s.length > 5) : 
-                        [sections.competitiveInsights].filter(s => s && s.length > 5),
-    userFlowSuggestions: Array.isArray(sections.userFlowSuggestions) ? 
-                        sections.userFlowSuggestions.filter(s => s.length > 5) : 
-                        [sections.userFlowSuggestions].filter(s => s && s.length > 5),
-    designPatterns: Array.isArray(sections.designPatterns) ? 
-                   sections.designPatterns.filter(s => s.length > 5) : 
-                   [sections.designPatterns].filter(s => s && s.length > 5),
+                  (sections.marketContext || 'Modern users expect intuitive applications'),
+    competitiveInsights: Array.isArray(sections.competitiveInsights) ? sections.competitiveInsights : [sections.competitiveInsights],
+    userFlowSuggestions: Array.isArray(sections.userFlowSuggestions) ? sections.userFlowSuggestions : [sections.userFlowSuggestions],
+    designPatterns: Array.isArray(sections.designPatterns) ? sections.designPatterns : [sections.designPatterns],
     confidence: sections.confidence
   };
 }
@@ -171,11 +175,11 @@ function extractSection(text: string, sectionName: string, asArray = true): stri
   const match = text.match(regex);
   
   if (!match || !match[1]) {
-    // Return meaningful fallbacks based on section
+    // Only use fallbacks if we really can't extract anything
     if (asArray) {
-      return [`Essential ${sectionName.toLowerCase().replace('_', ' ')} for this application`];
+      return [];
     }
-    return `Standard ${sectionName.toLowerCase().replace('_', ' ')} requirements`;
+    return '';
   }
 
   const content = match[1].trim();
@@ -185,13 +189,13 @@ function extractSection(text: string, sectionName: string, asArray = true): stri
     const items = content
       .split(/\n/)
       .map(item => item.replace(/^[-•*]\s*/, '').trim())
-      .filter(item => item.length > 5)
+      .filter(item => item.length > 10 && !item.includes('No insights'))
       .slice(0, 3);
     
-    return items.length > 0 ? items : [`Essential ${sectionName.toLowerCase().replace('_', ' ')}`];
+    return items;
   }
   
-  return content.length > 5 ? content : `Standard ${sectionName.toLowerCase().replace('_', ' ')} requirements`;
+  return content.length > 10 ? content : '';
 }
 
 function extractConfidence(text: string): number {
