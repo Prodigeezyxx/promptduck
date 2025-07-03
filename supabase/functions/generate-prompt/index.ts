@@ -60,6 +60,9 @@ serve(async (req) => {
         .replace(/🔧|🐛|🤔|🎯|📱|🚀/g, '')
         .trim();
       
+      // Generate domain-specific remix suggestions
+      const remixSuggestions = generateDomainSpecificRemix(intent, analysis, enrichment);
+      
       result = {
         optimized_prompt: templatePrompt,
         preview_title: `Lovable-Optimized: ${intent.slice(0, 60)}${intent.length > 60 ? '...' : ''}`,
@@ -113,11 +116,7 @@ serve(async (req) => {
           domain_research: enrichment.domainInsights.length > 1,
           market_context_analyzed: enrichment.marketContext.length > 10
         },
-        remix_suggestions: [
-          ...enrichment.competitiveInsights.slice(0, 2).map(insight => `Apply insight: ${insight}`),
-          ...enrichment.userFlowSuggestions.slice(0, 2).map(flow => `Enhance user flow: ${flow}`),
-          'Add real-time features with Supabase'
-        ]
+        remix_suggestions: remixSuggestions
       };
     } else {
       // Handle other modes with OpenAI API
@@ -220,3 +219,80 @@ Required structure:
     });
   }
 });
+
+function generateDomainSpecificRemix(intent: string, analysis: any, enrichment: ContextEnrichment): string[] {
+  const projectType = analysis.projectType || 'general_app';
+  const primaryIntent = analysis.primary || 'general';
+  
+  // Detect music/lyrics domain
+  const isMusicDomain = intent.toLowerCase().includes('lyric') || 
+                       intent.toLowerCase().includes('music') || 
+                       intent.toLowerCase().includes('song') ||
+                       intent.toLowerCase().includes('rhyme') ||
+                       intent.toLowerCase().includes('beat') ||
+                       intent.toLowerCase().includes('audio') ||
+                       intent.toLowerCase().includes('sound');
+
+  if (isMusicDomain) {
+    return [
+      'Add rhyme suggestion engine with syllable counting for rhythm matching',
+      'Include voice recording feature for quick melody and lyric capture',
+      'Implement real-time collaboration for co-writing sessions with other musicians',
+      'Add beat/tempo integration to help match lyrics with musical timing',
+      'Include chord progression suggestions based on lyrical mood and key'
+    ];
+  }
+
+  // Domain-specific suggestions based on project type
+  const domainRemixSuggestions = {
+    'messaging_app': [
+      'Add voice message support with waveform visualization',
+      'Implement message reactions and emoji responses',
+      'Include thread-based conversation organization',
+      'Add real-time typing indicators and presence status',
+      'Include message encryption for privacy'
+    ],
+    'e_commerce': [
+      'Add product recommendation engine based on browsing history',
+      'Implement wishlist functionality with price drop notifications',
+      'Include social proof with customer reviews and ratings',
+      'Add one-click checkout with saved payment methods',
+      'Include AR/VR product preview capabilities'
+    ],
+    'social_media': [
+      'Add story/timeline functionality with rich media support',
+      'Implement hashtag and mention systems for content discovery',
+      'Include live streaming and real-time interaction features',
+      'Add content moderation and reporting tools',
+      'Include analytics dashboard for content creators'
+    ],
+    'productivity': [
+      'Add smart task prioritization using AI suggestions',
+      'Implement team collaboration with shared workspaces',
+      'Include time tracking and productivity analytics',
+      'Add calendar integration with smart scheduling',
+      'Include automation workflows for repetitive tasks'
+    ],
+    'education': [
+      'Add interactive quizzes and assessment tools',
+      'Implement progress tracking and learning analytics',
+      'Include gamification elements with badges and achievements',
+      'Add peer collaboration and study group features',
+      'Include adaptive learning paths based on performance'
+    ]
+  };
+
+  const suggestions = domainRemixSuggestions[projectType] || [];
+  
+  // If we have domain-specific suggestions, use them
+  if (suggestions.length > 0) {
+    return suggestions.slice(0, 3);
+  }
+
+  // Fallback to enrichment-based suggestions
+  return [
+    ...enrichment.competitiveInsights.slice(0, 2).map(insight => `Apply competitive insight: ${insight}`),
+    ...enrichment.userFlowSuggestions.slice(0, 2).map(flow => `Enhance with user flow: ${flow}`),
+    'Add real-time features using Supabase subscriptions'
+  ].slice(0, 3);
+}

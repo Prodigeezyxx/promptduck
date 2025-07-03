@@ -1,3 +1,4 @@
+
 // AI Context Enrichment Service for Lovable Mode
 // Provides intelligent, researched context to enhance template generation
 
@@ -20,8 +21,8 @@ export async function enrichContextWithAI(
   analysis: any
 ): Promise<ContextEnrichment> {
   if (!openAIApiKey) {
-    console.log('No OpenAI API key - returning basic enrichment');
-    return getBasicEnrichment(analysis);
+    console.log('No OpenAI API key - returning enhanced fallback enrichment');
+    return getEnhancedFallbackEnrichment(intent, analysis);
   }
 
   try {
@@ -36,7 +37,7 @@ export async function enrichContextWithAI(
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: 'You are an expert product strategist and UX researcher. Provide deep, actionable insights about user requests for app development.' },
+          { role: 'system', content: 'You are an expert product strategist and UX researcher specializing in app development domains. Provide specific, actionable insights.' },
           { role: 'user', content: enrichmentPrompt }
         ],
         max_tokens: 800,
@@ -46,128 +47,233 @@ export async function enrichContextWithAI(
 
     if (!response.ok) {
       console.error('OpenAI API error:', response.statusText);
-      return getBasicEnrichment(analysis);
+      return getEnhancedFallbackEnrichment(intent, analysis);
     }
 
     const data = await response.json();
     const enrichmentText = data.choices[0]?.message?.content;
 
     if (!enrichmentText) {
-      return getBasicEnrichment(analysis);
+      return getEnhancedFallbackEnrichment(intent, analysis);
     }
 
-    return parseEnrichmentResponse(enrichmentText);
+    const parsedEnrichment = parseEnrichmentResponse(enrichmentText);
+    
+    // If parsing fails or produces empty results, use enhanced fallback
+    if (!parsedEnrichment || parsedEnrichment.domainInsights.length === 0) {
+      console.log('AI enrichment parsing failed, using enhanced fallback');
+      return getEnhancedFallbackEnrichment(intent, analysis);
+    }
+
+    return parsedEnrichment;
 
   } catch (error) {
     console.error('Context enrichment error:', error);
-    return getBasicEnrichment(analysis);
+    return getEnhancedFallbackEnrichment(intent, analysis);
   }
 }
 
 function buildContextEnrichmentPrompt(intent: string, context: string, analysis: any): string {
-  return `As an expert product strategist, analyze this request and provide specific, actionable insights:
+  return `As an expert product strategist, analyze this app development request and provide specific, actionable insights:
 
 REQUEST: "${intent}"
 CONTEXT: ${context || 'No additional context provided'}
 PROJECT TYPE: ${analysis.projectType || 'general application'}
+DETECTED DOMAIN: ${analysis.primary || 'general'}
+
+Focus on the specific domain and provide practical, implementable advice. Avoid generic responses.
 
 Provide detailed analysis in this exact format:
 
 DOMAIN_INSIGHTS:
-- [Specific insight about this domain/industry]
-- [Key challenge or opportunity in this space]
-- [Technical or business consideration unique to this type of app]
+- [Specific technical or business insight about this exact domain/industry]
+- [Key challenge or opportunity unique to this type of app]
+- [Domain-specific best practice or consideration]
 
 TARGET_AUDIENCE:
-[2-3 sentences about who would use this and their key needs/motivations]
+[2-3 sentences about who would use this specific app and their key needs/motivations]
 
 TECHNICAL_CONSIDERATIONS:
 - [Database/backend requirement specific to this use case]
-- [Authentication or security need]
-- [Performance or scalability consideration]
+- [Performance or technical need unique to this domain]
+- [Integration or API consideration for this app type]
 
 MARKET_CONTEXT:
-[1-2 sentences about current market trends and user expectations for this type of app]
+[1-2 sentences about current trends and user expectations for this specific app category]
 
 COMPETITIVE_INSIGHTS:
-- [What successful apps in this space do well]
-- [Common pain point this app could address]
+- [What successful apps in this exact space do well]
+- [Common pain point this app could solve better than existing solutions]
 
 USER_FLOW_SUGGESTIONS:
-- [Key user journey or workflow]
-- [Important interaction pattern]
+- [Key user journey specific to this app type]
+- [Important interaction pattern for this domain]
 
 DESIGN_PATTERNS:
-- [UI component or layout pattern for this app type]
-- [Visual design consideration]
+- [UI component or layout pattern effective for this app type]
+- [UX consideration specific to this domain]
 
 CONFIDENCE: [number 1-10]
 
-Be specific and actionable, not generic.`;
+Be specific to the domain - avoid generic app development advice.`;
 }
 
-function getBasicInsight(projectType: string, category: string): string {
-  const insights = {
-    'messaging_app': {
-      domain: 'Real-time communication with low latency requirements',
-      audience: 'Users seeking instant reliable messaging',
-      technical: 'WebSocket connections for real-time messaging',
-      market: 'Users expect WhatsApp-level reliability',
-      competitive: 'Thread organization improves user experience',
-      userflow: 'Quick message composition with smart suggestions',
-      design: 'Bubble-style messages with timestamp grouping'
-    },
-    'e_commerce': {
-      domain: 'Trust and conversion optimization are critical',
-      audience: 'Online shoppers seeking convenient purchasing',
-      technical: 'Payment gateway integration with security',
-      market: 'Users expect Amazon-level convenience',
-      competitive: 'One-click checkout reduces abandonment',
-      userflow: 'Quick product discovery and checkout',
-      design: 'Grid-based product displays with clear CTAs'
-    }
-  };
+function getEnhancedFallbackEnrichment(intent: string, analysis: any): ContextEnrichment {
+  const projectType = analysis.projectType || 'general_app';
+  const primaryIntent = analysis.primary || 'general';
   
-  return insights[projectType]?.[category] || `${category} considerations for ${projectType || 'general'} applications`;
-}
+  // Detect music/lyrics domain from intent
+  const isMusicDomain = intent.toLowerCase().includes('lyric') || 
+                       intent.toLowerCase().includes('music') || 
+                       intent.toLowerCase().includes('song') ||
+                       intent.toLowerCase().includes('rhyme') ||
+                       intent.toLowerCase().includes('beat') ||
+                       intent.toLowerCase().includes('audio') ||
+                       intent.toLowerCase().includes('sound');
 
-function parseEnrichmentResponse(enrichmentText: string): ContextEnrichment {
-  const sections = {
-    domainInsights: extractSection(enrichmentText, 'DOMAIN_INSIGHTS'),
-    targetAudienceAnalysis: extractSection(enrichmentText, 'TARGET_AUDIENCE', false),
-    technicalConsiderations: extractSection(enrichmentText, 'TECHNICAL_CONSIDERATIONS'),
-    marketContext: extractSection(enrichmentText, 'MARKET_CONTEXT', false),
-    competitiveInsights: extractSection(enrichmentText, 'COMPETITIVE_INSIGHTS'),
-    userFlowSuggestions: extractSection(enrichmentText, 'USER_FLOW_SUGGESTIONS'),
-    designPatterns: extractSection(enrichmentText, 'DESIGN_PATTERNS'),
-    confidence: extractConfidence(enrichmentText)
-  };
-
-  // If we get empty sections, fall back to basic enrichment
-  const hasValidContent = (
-    (Array.isArray(sections.domainInsights) && sections.domainInsights.length > 0) ||
-    (typeof sections.targetAudienceAnalysis === 'string' && sections.targetAudienceAnalysis.length > 10)
-  );
-
-  if (!hasValidContent) {
-    console.log('AI enrichment failed, using basic enrichment');
-    return getBasicEnrichment({ projectType: 'general_app' });
+  if (isMusicDomain) {
+    return getMusicDomainEnrichment(intent);
   }
 
-  return {
-    domainInsights: Array.isArray(sections.domainInsights) ? sections.domainInsights : [sections.domainInsights],
-    targetAudienceAnalysis: Array.isArray(sections.targetAudienceAnalysis) ? 
-                           sections.targetAudienceAnalysis.join(' ') : 
-                           (sections.targetAudienceAnalysis || 'Users seeking efficient solutions'),
-    technicalConsiderations: Array.isArray(sections.technicalConsiderations) ? sections.technicalConsiderations : [sections.technicalConsiderations],
-    marketContext: Array.isArray(sections.marketContext) ? 
-                  sections.marketContext.join(' ') : 
-                  (sections.marketContext || 'Modern users expect intuitive applications'),
-    competitiveInsights: Array.isArray(sections.competitiveInsights) ? sections.competitiveInsights : [sections.competitiveInsights],
-    userFlowSuggestions: Array.isArray(sections.userFlowSuggestions) ? sections.userFlowSuggestions : [sections.userFlowSuggestions],
-    designPatterns: Array.isArray(sections.designPatterns) ? sections.designPatterns : [sections.designPatterns],
-    confidence: sections.confidence
+  // Enhanced fallbacks for other domains
+  const enhancedFallbacks = {
+    'messaging_app': {
+      domainInsights: [
+        'Real-time messaging requires WebSocket connections with automatic reconnection handling',
+        'Message encryption and secure data transmission are critical for user trust',
+        'Offline message queuing ensures reliability when network connectivity is poor'
+      ],
+      targetAudienceAnalysis: 'Users seeking instant, reliable communication who prioritize both ease of use and privacy, often switching between devices throughout the day.',
+      technicalConsiderations: [
+        'WebSocket connections for real-time messaging with presence indicators',
+        'Message encryption using end-to-end protocols',
+        'Push notifications integration for mobile engagement'
+      ],
+      marketContext: 'Users expect WhatsApp-level reliability with Discord-level community features and Slack-level organization.',
+      competitiveInsights: [
+        'Thread-based organization significantly improves conversation management',
+        'Rich media sharing with preview generation drives engagement',
+        'Status indicators and read receipts reduce communication uncertainty'
+      ],
+      userFlowSuggestions: [
+        'Quick message composition with emoji reactions and typing indicators',
+        'Swipe gestures for message actions and quick replies',
+        'Voice message recording with waveform visualization'
+      ],
+      designPatterns: [
+        'Bubble-style message layout with smart timestamp grouping',
+        'Bottom-anchored input with expanding text area and attachment options',
+        'Smooth slide animations for conversation navigation and message actions'
+      ]
+    },
+    'e_commerce': {
+      domainInsights: [
+        'Trust signals like verified reviews and security badges directly impact conversion rates',
+        'Mobile-first design is essential as mobile commerce dominates online shopping',
+        'Personalized product recommendations can increase average order value by 15-30%'
+      ],
+      targetAudienceAnalysis: 'Online shoppers seeking convenient, trustworthy purchasing experiences with clear product information, competitive pricing, and reliable delivery.',
+      technicalConsiderations: [
+        'Payment gateway integration with multiple payment methods and PCI compliance',
+        'Advanced product search with filters, sorting, and intelligent recommendations',
+        'Real-time inventory management with low-stock alerts and backorder handling'
+      ],
+      marketContext: 'Users expect Amazon-level convenience combined with personalized service and values-based shopping experiences.',
+      competitiveInsights: [
+        'One-click checkout and guest checkout options reduce cart abandonment significantly',
+        'High-quality product images with zoom and 360-degree views drive purchase decisions',
+        'Social proof through reviews, ratings, and user-generated content builds trust'
+      ],
+      userFlowSuggestions: [
+        'Quick product discovery through visual search and barcode scanning',
+        'Wishlist and save-for-later functionality with price drop notifications',
+        'Streamlined checkout with address autofill and payment method storage'
+      ],
+      designPatterns: [
+        'Grid-based product displays with consistent card layouts and hover effects',
+        'Sticky cart summary during checkout with progress indicators',
+        'Progressive disclosure for product specifications and detailed information'
+      ]
+    }
   };
+
+  return enhancedFallbacks[projectType] || getDefaultEnrichment();
+}
+
+function getMusicDomainEnrichment(intent: string): ContextEnrichment {
+  return {
+    domainInsights: [
+      'Music creation apps require low-latency audio processing and real-time collaboration features',
+      'Lyric writing tools benefit from rhyme suggestion engines and syllable counting for rhythm matching',
+      'Audio apps need robust file format support and cloud sync for cross-device workflows'
+    ],
+    targetAudienceAnalysis: 'Musicians, songwriters, and music enthusiasts seeking creative tools that enhance their writing process with intelligent suggestions and collaboration features.',
+    technicalConsiderations: [
+      'Web Audio API integration for real-time audio processing and effects',
+      'Cloud storage for audio files with efficient streaming and caching',
+      'Real-time collaboration features using WebSockets for shared editing sessions'
+    ],
+    marketContext: 'Musicians expect professional-grade tools with intuitive interfaces, similar to how Figma revolutionized design collaboration.',
+    competitiveInsights: [
+      'Rhyme suggestion and word association features significantly improve songwriting speed',
+      'Voice recording integration allows for quick idea capture and melody development',
+      'Collaborative editing with version control helps teams work together on projects'
+    ],
+    userFlowSuggestions: [
+      'Quick lyric input with smart rhyme suggestions and synonym recommendations',
+      'Voice memo recording with automatic transcription and lyric extraction',
+      'Project sharing with real-time collaborative editing and comment threads'
+    ],
+    designPatterns: [
+      'Split-pane layout with lyrics editor and rhyme suggestions panel',
+      'Waveform visualization for audio tracks with playback controls',
+      'Drag-and-drop interface for arranging verses, choruses, and song sections'
+    ],
+    confidence: 8
+  };
+}
+
+function parseEnrichmentResponse(enrichmentText: string): ContextEnrichment | null {
+  try {
+    const sections = {
+      domainInsights: extractSection(enrichmentText, 'DOMAIN_INSIGHTS'),
+      targetAudienceAnalysis: extractSection(enrichmentText, 'TARGET_AUDIENCE', false),
+      technicalConsiderations: extractSection(enrichmentText, 'TECHNICAL_CONSIDERATIONS'),
+      marketContext: extractSection(enrichmentText, 'MARKET_CONTEXT', false),
+      competitiveInsights: extractSection(enrichmentText, 'COMPETITIVE_INSIGHTS'),
+      userFlowSuggestions: extractSection(enrichmentText, 'USER_FLOW_SUGGESTIONS'),
+      designPatterns: extractSection(enrichmentText, 'DESIGN_PATTERNS'),
+      confidence: extractConfidence(enrichmentText)
+    };
+
+    // Validate that we got meaningful content
+    const hasValidContent = (
+      (Array.isArray(sections.domainInsights) && sections.domainInsights.length > 0) ||
+      (typeof sections.targetAudienceAnalysis === 'string' && sections.targetAudienceAnalysis.length > 20)
+    );
+
+    if (!hasValidContent) {
+      return null;
+    }
+
+    return {
+      domainInsights: Array.isArray(sections.domainInsights) ? sections.domainInsights : [sections.domainInsights],
+      targetAudienceAnalysis: Array.isArray(sections.targetAudienceAnalysis) ? 
+                             sections.targetAudienceAnalysis.join(' ') : 
+                             (sections.targetAudienceAnalysis || ''),
+      technicalConsiderations: Array.isArray(sections.technicalConsiderations) ? sections.technicalConsiderations : [sections.technicalConsiderations],
+      marketContext: Array.isArray(sections.marketContext) ? 
+                    sections.marketContext.join(' ') : 
+                    (sections.marketContext || ''),
+      competitiveInsights: Array.isArray(sections.competitiveInsights) ? sections.competitiveInsights : [sections.competitiveInsights],
+      userFlowSuggestions: Array.isArray(sections.userFlowSuggestions) ? sections.userFlowSuggestions : [sections.userFlowSuggestions],
+      designPatterns: Array.isArray(sections.designPatterns) ? sections.designPatterns : [sections.designPatterns],
+      confidence: sections.confidence
+    };
+  } catch (error) {
+    console.error('Error parsing enrichment response:', error);
+    return null;
+  }
 }
 
 function extractSection(text: string, sectionName: string, asArray = true): string[] | string {
@@ -175,24 +281,19 @@ function extractSection(text: string, sectionName: string, asArray = true): stri
   const match = text.match(regex);
   
   if (!match || !match[1]) {
-    // Only use fallbacks if we really can't extract anything
-    if (asArray) {
-      return [];
-    }
-    return '';
+    return asArray ? [] : '';
   }
 
   const content = match[1].trim();
   
   if (asArray) {
-    // Split by newlines and clean up, removing bullet points
     const items = content
       .split(/\n/)
       .map(item => item.replace(/^[-•*]\s*/, '').trim())
-      .filter(item => item.length > 10 && !item.includes('No insights'))
+      .filter(item => item.length > 10)
       .slice(0, 3);
     
-    return items;
+    return items.length > 0 ? items : [];
   }
   
   return content.length > 10 ? content : '';
@@ -203,78 +304,30 @@ function extractConfidence(text: string): number {
   return confidenceMatch ? parseInt(confidenceMatch[1]) : 7;
 }
 
-function getBasicEnrichment(analysis: any): ContextEnrichment {
-  // Fallback enrichment based on project type
-  const projectType = analysis.projectType || 'general_app';
-  
-  const basicEnrichments = {
-    'messaging_app': {
-      domainInsights: [
-        'Real-time communication requires WebSocket connections and optimized state management',
-        'Users expect sub-second message delivery and reliable presence indicators',
-        'Privacy and security are top concerns for messaging platforms'
-      ],
-      targetAudienceAnalysis: 'Users seeking instant, reliable communication with friends, family, or colleagues, prioritizing ease of use and privacy.',
-      technicalConsiderations: [
-        'Real-time WebSocket connections for instant messaging',
-        'Message encryption and secure data transmission',
-        'Offline support and message synchronization'
-      ],
-      marketContext: 'Modern users expect WhatsApp-level reliability with Slack-level organization features.',
-      competitiveInsights: [
-        'Thread-based conversations improve organization',
-        'Rich media sharing is now expected baseline functionality',
-        'Status indicators reduce communication uncertainty'
-      ],
-      userFlowSuggestions: [
-        'Quick message composer with smart suggestions',
-        'Swipe gestures for message actions',
-        'Voice message recording with visual feedback'
-      ],
-      designPatterns: [
-        'Bubble-style message layout with timestamp grouping',
-        'Bottom-anchored input with expanding text area',
-        'Smooth slide animations for conversation navigation'
-      ]
-    },
-    'e_commerce': {
-      domainInsights: [
-        'Trust signals like reviews and security badges significantly impact conversion',
-        'Mobile commerce now represents majority of online shopping',
-        'Personalized recommendations increase average order value by 15-30%'
-      ],
-      targetAudienceAnalysis: 'Online shoppers seeking convenient, trustworthy purchasing experiences with clear product information and secure checkout.',
-      technicalConsiderations: [
-        'Payment gateway integration with PCI compliance',
-        'Product search and filtering with performance optimization',
-        'Inventory management and real-time stock updates'
-      ],
-      marketContext: 'Users expect Amazon-level convenience with local business personal touch and values.',
-      competitiveInsights: [
-        'One-click checkout reduces cart abandonment significantly',
-        'High-quality product images with zoom functionality are essential',
-        'Social proof through reviews drives purchase decisions'
-      ],
-      userFlowSuggestions: [
-        'Quick product scanning with image search',
-        'Save-for-later functionality with wishlist management',
-        'Guest checkout option with account creation incentive'
-      ],
-      designPatterns: [
-        'Grid-based product displays with hover interactions',
-        'Sticky cart summary during checkout process',
-        'Progressive disclosure for product specifications'
-      ]
-    }
-  };
-
-  return basicEnrichments[projectType] || {
-    domainInsights: ['Focus on user needs and technical feasibility', 'Consider scalability from the start'],
-    targetAudienceAnalysis: 'Users seeking efficient solutions to specific problems or needs.',
-    technicalConsiderations: ['Responsive design for all devices', 'Performance optimization'],
-    marketContext: 'Modern web users expect fast, intuitive applications.',
-    competitiveInsights: ['Simple onboarding increases user retention', 'Clear value proposition is essential'],
-    userFlowSuggestions: ['Minimal steps to core functionality', 'Clear navigation patterns'],
-    designPatterns: ['Clean, modern interface design', 'Consistent component patterns']
+function getDefaultEnrichment(): ContextEnrichment {
+  return {
+    domainInsights: [
+      'User-centered design principles drive successful app adoption',
+      'Performance optimization and fast loading times are critical for user retention'
+    ],
+    targetAudienceAnalysis: 'Users seeking efficient, reliable solutions to specific problems with intuitive interfaces.',
+    technicalConsiderations: [
+      'Responsive design across all device types and screen sizes',
+      'Secure data handling with proper validation and error handling'
+    ],
+    marketContext: 'Modern users expect fast, intuitive applications with seamless user experiences.',
+    competitiveInsights: [
+      'Simple onboarding processes significantly improve user retention',
+      'Clear value proposition and feature discovery drive user engagement'
+    ],
+    userFlowSuggestions: [
+      'Streamlined user journey with minimal steps to core functionality',
+      'Intuitive navigation patterns that users can quickly understand'
+    ],
+    designPatterns: [
+      'Clean, modern interface design with consistent visual hierarchy',
+      'Responsive component patterns that work across all devices'
+    ],
+    confidence: 6
   };
 }
