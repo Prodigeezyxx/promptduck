@@ -3,6 +3,8 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { MODES } from './modes.ts';
 import { classifyIntent } from './intentClassifier.ts';
 import { generateLovableTemplate } from './templates.ts';
+import { enrichContextWithAI } from './contextEnricher.ts';
+import { generateEnhancedLovableTemplate } from './enhancedTemplates.ts';
 
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 
@@ -38,8 +40,13 @@ serve(async (req) => {
       const analysis = classifyIntent(intent, context);
       console.log(`Detected intent: ${analysis.primary}, Project type: ${analysis.projectType}`);
       
-      // Generate sophisticated template-based prompt for Lovable mode
-      const templatePrompt = generateLovableTemplate(intent, context, analysis);
+      // AI Context Enrichment - Research and enhance the request with domain intelligence
+      console.log('Starting AI context enrichment...');
+      const enrichment = await enrichContextWithAI(intent, context, analysis);
+      console.log(`Context enrichment completed with confidence: ${enrichment.confidence}/10`);
+      
+      // Generate AI-enhanced, intelligently researched prompt for Lovable mode
+      const templatePrompt = generateEnhancedLovableTemplate(intent, context, analysis, enrichment);
       
       result = {
         optimized_prompt: templatePrompt,
@@ -63,11 +70,23 @@ serve(async (req) => {
             type: 'text',
             required: false,
             description: `Estimated complexity: ${analysis.complexity}`
+          },
+          {
+            name: 'ai_confidence',
+            type: 'text',
+            required: false,
+            description: `AI research confidence: ${enrichment.confidence}/10`
+          },
+          {
+            name: 'domain_insights',
+            type: 'text',
+            required: false,
+            description: `Key domain insights: ${enrichment.domainInsights.slice(0, 2).join('; ')}`
           }
         ],
         metadata: {
           complexity_score: analysis.complexity === 'advanced' ? 9 : analysis.complexity === 'intermediate' ? 7 : 5,
-          creativity_score: 8,
+          creativity_score: Math.min(10, 7 + Math.floor(enrichment.confidence / 3)),
           coherence_score: 10,
           estimated_tokens: Math.max(400, templatePrompt.length / 4),
           mode: 'lovable',
@@ -76,14 +95,16 @@ serve(async (req) => {
           project_type: analysis.projectType,
           template_applied: analysis.primary,
           confidence_score: analysis.confidence,
-          keywords_detected: analysis.keywords.slice(0, 10)
+          keywords_detected: analysis.keywords.slice(0, 10),
+          ai_enhanced: true,
+          ai_confidence: enrichment.confidence,
+          domain_research: enrichment.domainInsights.length > 1,
+          market_context_analyzed: enrichment.marketContext.length > 10
         },
         remix_suggestions: [
-          'Add advanced component architecture patterns',
-          'Integrate comprehensive error handling',
-          'Include accessibility and SEO optimizations',
-          'Add real-time features with Supabase',
-          'Implement progressive web app capabilities'
+          ...enrichment.competitiveInsights.slice(0, 2).map(insight => `Apply insight: ${insight}`),
+          ...enrichment.userFlowSuggestions.slice(0, 2).map(flow => `Enhance user flow: ${flow}`),
+          'Add real-time features with Supabase'
         ]
       };
     } else {
