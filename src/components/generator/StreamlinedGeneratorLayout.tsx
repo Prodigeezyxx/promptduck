@@ -19,6 +19,8 @@ interface StreamlinedGeneratorLayoutProps {
   onRemixSuggestion: (suggestion: string) => void;
   onStartNewPrompt: () => void;
   onClearTemplate: () => void;
+  originalIntent?: string;
+  originalContext?: string;
 }
 
 export function StreamlinedGeneratorLayout({
@@ -35,7 +37,9 @@ export function StreamlinedGeneratorLayout({
   onSavePrompt,
   onRemixSuggestion,
   onStartNewPrompt,
-  onClearTemplate
+  onClearTemplate,
+  originalIntent,
+  originalContext
 }: StreamlinedGeneratorLayoutProps) {
   // Get selected heuristics for display
   const selectedHeuristics = selectHeuristics(intent, context) as HeuristicType[];
@@ -66,8 +70,8 @@ export function StreamlinedGeneratorLayout({
           isGenerating={isGenerating}
           lastResult={lastResult}
           selectedMode={selectedMode}
-          originalIntent={intent}
-          originalContext={context}
+          originalIntent={originalIntent || intent}
+          originalContext={originalContext || context}
           onCopyPrompt={onCopyPrompt}
           onSavePrompt={onSavePrompt}
           onRemixSuggestion={onRemixSuggestion}
