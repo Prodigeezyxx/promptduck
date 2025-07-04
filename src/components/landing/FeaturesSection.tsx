@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { memo } from 'react';
@@ -12,7 +11,7 @@ const features = [
   {
     icon: '🔄',
     title: 'Dynamic Modes',
-    description: 'Switch between Lovable, midjorney, and Default.',
+    description: 'Switch between Default, Lovable, Cursor and 10+ modes.',
   },
   {
     icon: '📦',
