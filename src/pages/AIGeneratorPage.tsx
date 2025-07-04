@@ -1,8 +1,7 @@
-
 import { useState } from 'react';
 import { ApiKeyRequired } from '@/components/ApiKeyRequired';
 import { GeneratorPageHeader } from '@/components/generator/GeneratorPageHeader';
-import { StreamlinedGeneratorLayout } from '@/components/generator/StreamlinedGeneratorLayout';
+import { CompactGeneratorLayout } from '@/components/generator/CompactGeneratorLayout';
 import { GeneratorHistoryDrawer } from '@/components/generator/GeneratorHistoryDrawer';
 import { useGeneratorLogic } from '@/hooks/useGeneratorLogic';
 import { useAnalytics } from '@/hooks/useAnalytics';
@@ -82,11 +81,11 @@ export default function AIGeneratorPage() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="p-4 lg:p-6 max-w-full mx-auto"
+      className="min-h-screen bg-background"
     >
       <GeneratorPageHeader onHistoryOpen={() => setHistoryOpen(true)} />
 
-      <StreamlinedGeneratorLayout
+      <CompactGeneratorLayout
         intent={intent}
         context={context}
         selectedMode={selectedMode}
@@ -101,7 +100,6 @@ export default function AIGeneratorPage() {
         onRemixSuggestion={handleRemixSuggestion}
         onStartNewPrompt={handleStartNewPrompt}
         onClearTemplate={handleClearTemplate}
-        // Pass original intent and context for optimistic loading
         originalIntent={intent}
         originalContext={context}
       />
