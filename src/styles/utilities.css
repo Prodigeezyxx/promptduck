@@ -28,12 +28,16 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .gradient-text {
-    background: linear-gradient(45deg, #7E84F9, #8b5cf6, #06b6d4);
+  /* Fixed gradient text utility - removed to prevent conflicts */
+  .gradient-text-safe {
+    background: linear-gradient(45deg, #E5E5E5, #7E84F9, rgba(126, 132, 249, 0.8));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    padding: 0.1em 0.05em; /* Add padding to prevent clipping */
+    padding: 0.1em 0.05em;
+    /* Ensure text remains visible during animations */
+    will-change: auto;
+    backface-visibility: visible;
   }
 
   /* Enhanced responsive text utilities with improved line-heights */
@@ -58,6 +62,12 @@
     
     motion-span {
       animation: none !important;
+    }
+    
+    /* Ensure text remains visible when animations are disabled */
+    .gradient-text-safe {
+      -webkit-text-fill-color: rgb(229, 229, 229);
+      color: rgb(229, 229, 229);
     }
   }
 

@@ -77,10 +77,17 @@ export function HeroSection() {
           
           <div className="px-2 py-4">
             <motion.h1 
-              className="text-fluid-6xl md:text-fluid-7xl lg:text-fluid-8xl font-bold bg-gradient-to-r from-primaryText via-accent to-accent/80 bg-clip-text text-transparent leading-tight gradient-text"
+              className="text-fluid-6xl md:text-fluid-7xl lg:text-fluid-8xl font-bold leading-tight"
               initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: 0.3, duration: 0.6 }}
+              style={{
+                background: 'linear-gradient(to right, rgb(229, 229, 229), rgb(126, 132, 249), rgba(126, 132, 249, 0.8))',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                padding: '0.1em 0.05em'
+              }}
             >
               <motion.span
                 className="inline-block"
@@ -95,7 +102,9 @@ export function HeroSection() {
                   delay: 1.5
                 }}
                 style={{
-                  transformOrigin: 'center center'
+                  transformOrigin: 'center center',
+                  display: 'inline-block',
+                  willChange: 'transform'
                 }}
               >
                 prompt like a PRO
