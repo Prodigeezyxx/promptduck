@@ -75,9 +75,11 @@ export function HeroSection() {
             Cognitive prompt engineering
           </div>
           
-          <h1 className="text-fluid-6xl md:text-fluid-7xl lg:text-fluid-8xl font-bold bg-gradient-to-r from-primaryText via-accent to-accent/80 bg-clip-text text-transparent leading-tight">
-            prompt like a PRO
-          </h1>
+          <div className="px-2 py-4">
+            <h1 className="text-fluid-6xl md:text-fluid-7xl lg:text-fluid-8xl font-bold bg-gradient-to-r from-primaryText via-accent to-accent/80 bg-clip-text text-transparent leading-tight gradient-text">
+              prompt like a PRO
+            </h1>
+          </div>
           
           <motion.p 
             initial={{ opacity: 0 }} 
