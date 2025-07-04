@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -48,8 +47,12 @@ export function EnhancedAIGeneratorOutputPanel({
   if (isGenerating) {
     return (
       <Card className="h-full">
-        <CardContent className="flex items-center justify-center h-full">
-          <LoadingState />
+        <CardContent className="flex items-center justify-center h-full p-6">
+          <LoadingState 
+            intent={originalIntent} 
+            context={originalContext} 
+            mode={selectedMode as any}
+          />
         </CardContent>
       </Card>
     );

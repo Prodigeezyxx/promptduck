@@ -101,6 +101,9 @@ export default function AIGeneratorPage() {
         onRemixSuggestion={handleRemixSuggestion}
         onStartNewPrompt={handleStartNewPrompt}
         onClearTemplate={handleClearTemplate}
+        // Pass original intent and context for optimistic loading
+        originalIntent={intent}
+        originalContext={context}
       />
 
       <GeneratorHistoryDrawer
