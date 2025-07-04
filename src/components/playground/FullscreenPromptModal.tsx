@@ -41,7 +41,7 @@ export function FullscreenPromptModal({
         </DialogHeader>
         
         <div className="flex-1 overflow-auto bg-muted/30 rounded-lg p-4 min-h-0">
-          <div className="whitespace-pre-wrap text-sm leading-relaxed">
+          <div className="whitespace-pre-wrap text-sm leading-relaxed break-words max-w-none">
             {content}
           </div>
         </div>

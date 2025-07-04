@@ -11,17 +11,12 @@ const features = [
   {
     icon: '🔄',
     title: 'Dynamic Modes',
-    description: 'Switch between Default, Lovable, Cursor and 10+ modes.',
+    description: 'Switch between Default, Lovable, Midjourney, and 10+ modes.',
   },
   {
     icon: '📦',
     title: 'Reusable Templates',
     description: 'Save & clone your best prompts in one click.',
-  },
-  {
-    icon: '📊',
-    title: 'Token Savings Tracker',
-    description: 'Average prompt length ↓ 32%, tokens saved ↓ 40%.',
   },
   {
     icon: '💾',

@@ -45,22 +45,19 @@ export function ChatInput({
     }
   };
 
-  // Auto-resize textarea with responsive max height and mobile optimization
+  // Enhanced auto-resize with better mobile handling
   useEffect(() => {
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = 'auto';
-      // Responsive max height based on viewport with better mobile handling
-      const maxHeight = window.innerWidth < 768 ? 120 : 180;
+      // Better responsive max height with improved mobile experience
+      const isMobile = window.innerWidth < 768;
+      const maxHeight = isMobile ? 100 : 150; // Reduced max heights
       const newHeight = Math.min(textarea.scrollHeight, maxHeight);
       textarea.style.height = newHeight + 'px';
       
-      // Enhanced scrollbar handling for mobile
-      if (textarea.scrollHeight <= 80) { // Approximate min-height
-        textarea.style.overflowY = 'hidden';
-      } else {
-        textarea.style.overflowY = 'auto';
-      }
+      // Improved scrolling behavior
+      textarea.style.overflowY = textarea.scrollHeight > maxHeight ? 'auto' : 'hidden';
     }
   }, [value]);
 
@@ -68,7 +65,7 @@ export function ChatInput({
     <div className="chat-input-container mobile-safe-bottom">
       <div className="w-full max-w-none mx-auto p-fluid-md">
         <div className="chat-input-wrapper flex items-end gap-3 p-fluid-sm surface-style rounded-xl focus-within:ring-2 focus-within:ring-accent shadow-sm">
-          {/* Enhanced Textarea */}
+          {/* Enhanced Textarea with better scroll handling */}
           <Textarea
             ref={textareaRef}
             value={value}
@@ -79,14 +76,14 @@ export function ChatInput({
             className={cn(
               "flex-1 resize-none border-0 bg-transparent px-0 py-3 text-fluid-base text-primaryText",
               "focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-secondaryText",
-              "min-h-[48px] max-h-[120px] sm:max-h-[180px]",
-              "mobile-scroll mobile-text"
+              "min-h-[48px] max-h-[100px] sm:max-h-[150px]", // Reduced max heights
+              "mobile-scroll mobile-text scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
             )}
             rows={1}
             aria-label="Message input"
             style={{ 
-              overflowY: 'hidden',
-              fontSize: '16px' // Prevents zoom on iOS
+              fontSize: '16px', // Prevents zoom on iOS
+              lineHeight: '1.5'
             }}
           />
 
