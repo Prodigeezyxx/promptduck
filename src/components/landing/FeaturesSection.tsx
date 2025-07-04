@@ -1,33 +1,38 @@
 
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
-import { Brain, Layers, Zap, Target } from 'lucide-react';
 import { memo } from 'react';
 
 const features = [
   {
-    icon: Brain,
-    title: 'Smart Thinking Tools',
-    description: 'Advanced techniques that help you think deeper and solve problems more effectively.',
-    color: 'text-blue-500'
+    icon: '⚙️',
+    title: 'Smart Heuristics',
+    description: 'Applies 120+ cognitive rules to refine prompts.',
   },
   {
-    icon: Layers,
-    title: 'Choose Your Prompt Style',
-    description: 'Pick from different writing styles to match your goal and get better results.',
-    color: 'text-purple-500'
+    icon: '🔄',
+    title: 'Dynamic Modes',
+    description: 'Switch between Lovable, midjorney, and Default.',
   },
   {
-    icon: Zap,
-    title: 'Smart AI That Delivers',
-    description: 'Our optimized AI engine gives you the best responses every time.',
-    color: 'text-yellow-500'
+    icon: '📦',
+    title: 'Reusable Templates',
+    description: 'Save & clone your best prompts in one click.',
   },
   {
-    icon: Target,
-    title: 'Keeps Prompts On Track',
-    description: 'Clear structure that makes your prompts easy to understand and remember.',
-    color: 'text-red-500'
+    icon: '📊',
+    title: 'Token Savings Tracker',
+    description: 'Average prompt length ↓ 32%, tokens saved ↓ 40%.',
+  },
+  {
+    icon: '💾',
+    title: 'Export Anywhere',
+    description: 'Download as JSON, Markdown, or CSV.',
+  },
+  {
+    icon: '🚀',
+    title: 'Instant Playground',
+    description: 'Generate your first prompt in under 2 s.',
   }
 ];
 
@@ -41,8 +46,8 @@ const FeatureCard = memo(({ feature, index }: { feature: typeof features[0], ind
     <Card className="floating-card h-full will-change-transform">
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-start space-x-3 sm:space-x-4">
-          <div className={`p-2 sm:p-3 rounded-lg bg-muted ${feature.color} shrink-0`}>
-            <feature.icon className="w-5 h-5 sm:w-6 sm:h-6" />
+          <div className="text-2xl sm:text-3xl shrink-0">
+            {feature.icon}
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">{feature.title}</h3>
@@ -77,7 +82,7 @@ export function FeaturesSection() {
           </p>
         </motion.div>
         
-        <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 max-w-4xl mx-auto">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto">
           {features.map((feature, index) => (
             <FeatureCard key={feature.title} feature={feature} index={index} />
           ))}
