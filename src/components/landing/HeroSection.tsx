@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
@@ -76,9 +75,31 @@ export function HeroSection() {
           </div>
           
           <div className="px-2 py-4">
-            <h1 className="text-fluid-6xl md:text-fluid-7xl lg:text-fluid-8xl font-bold bg-gradient-to-r from-primaryText via-accent to-accent/80 bg-clip-text text-transparent leading-tight gradient-text">
-              prompt like a PRO
-            </h1>
+            <motion.h1 
+              className="text-fluid-6xl md:text-fluid-7xl lg:text-fluid-8xl font-bold bg-gradient-to-r from-primaryText via-accent to-accent/80 bg-clip-text text-transparent leading-tight gradient-text"
+              initial={{ opacity: 0, y: 20 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ delay: 0.3, duration: 0.6 }}
+            >
+              <motion.span
+                className="inline-block"
+                animate={{ 
+                  rotate: [0, 0.5, 0, -0.5, 0],
+                  scale: [1, 1.01, 1, 1.01, 1]
+                }}
+                transition={{
+                  duration: 2.5,
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                  delay: 1.5
+                }}
+                style={{
+                  transformOrigin: 'center center'
+                }}
+              >
+                prompt like a PRO
+              </motion.span>
+            </motion.h1>
           </div>
           
           <motion.p 

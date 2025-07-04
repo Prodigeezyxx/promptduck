@@ -212,6 +212,21 @@ export default {
 						opacity: '0.5'
 					}
 				},
+				// New text wobble animation
+				'text-wobble': {
+					'0%, 100%': {
+						transform: 'rotate(0deg) scale(1)'
+					},
+					'25%': {
+						transform: 'rotate(0.5deg) scale(1.01)'
+					},
+					'50%': {
+						transform: 'rotate(0deg) scale(1)'
+					},
+					'75%': {
+						transform: 'rotate(-0.5deg) scale(1.01)'
+					}
+				},
 				// Mobile-optimized animations
 				'mobile-slide-in': {
 					'0%': {
@@ -243,6 +258,8 @@ export default {
 				'float': 'float 3s ease-in-out infinite',
 				'glow': 'glow 2s ease-in-out infinite',
 				'pulse-accent': 'pulse-accent 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+				// New text wobble animation
+				'text-wobble': 'text-wobble 2.5s ease-in-out infinite',
 				// Mobile-optimized animations
 				'mobile-slide-in': 'mobile-slide-in 0.3s ease-out',
 				'mobile-bounce': 'mobile-bounce 1s ease-in-out',
