@@ -2,7 +2,8 @@
 import { useState } from 'react';
 import { ApiKeyRequired } from '@/components/ApiKeyRequired';
 import { GeneratorPageHeader } from '@/components/generator/GeneratorPageHeader';
-import { StreamlinedGeneratorLayout } from '@/components/generator/StreamlinedGeneratorLayout';
+import { TabbedGeneratorLayout } from '@/components/generator/TabbedGeneratorLayout';
+import { FloatingCreditCounter } from '@/components/generator/FloatingCreditCounter';
 import { GeneratorHistoryDrawer } from '@/components/generator/GeneratorHistoryDrawer';
 import { useGeneratorLogic } from '@/hooks/useGeneratorLogic';
 import { useAnalytics } from '@/hooks/useAnalytics';
@@ -19,6 +20,7 @@ export default function AIGeneratorPage() {
     selectedMode,
     isGenerating,
     lastResult,
+    history,
     apiKey,
     // Handlers
     handleIntentChange,
@@ -78,39 +80,43 @@ export default function AIGeneratorPage() {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="p-4 lg:p-6 max-w-full mx-auto"
-    >
-      <GeneratorPageHeader onHistoryOpen={() => setHistoryOpen(true)} />
+    <div className="min-h-screen bg-background">
+      <FloatingCreditCounter />
+      
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="p-4 lg:p-6"
+      >
+        <GeneratorPageHeader onHistoryOpen={() => setHistoryOpen(true)} />
 
-      <StreamlinedGeneratorLayout
-        intent={intent}
-        context={context}
-        selectedMode={selectedMode}
-        isGenerating={isGenerating}
-        lastResult={lastResult}
-        onIntentChange={handleIntentChange}
-        onContextChange={handleContextChange}
-        onModeChange={handleModeChange}
-        onGenerate={handleGenerateWithAnalytics}
-        onCopyPrompt={handleCopyPromptWithAnalytics}
-        onSavePrompt={handleSavePromptWithAnalytics}
-        onRemixSuggestion={handleRemixSuggestion}
-        onStartNewPrompt={handleStartNewPrompt}
-        onClearTemplate={handleClearTemplate}
-        // Pass original intent and context for optimistic loading
-        originalIntent={intent}
-        originalContext={context}
-      />
+        <div className="mt-6">
+          <TabbedGeneratorLayout
+            intent={intent}
+            context={context}
+            selectedMode={selectedMode}
+            isGenerating={isGenerating}
+            lastResult={lastResult}
+            history={history}
+            onIntentChange={handleIntentChange}
+            onContextChange={handleContextChange}
+            onModeChange={handleModeChange}
+            onGenerate={handleGenerateWithAnalytics}
+            onCopyPrompt={handleCopyPromptWithAnalytics}
+            onSavePrompt={handleSavePromptWithAnalytics}
+            onRemixSuggestion={handleRemixSuggestion}
+            onStartNewPrompt={handleStartNewPrompt}
+            onSelectHistoryResult={handleSelectHistoryResult}
+          />
+        </div>
 
-      <GeneratorHistoryDrawer
-        open={historyOpen}
-        onOpenChange={setHistoryOpen}
-        onSelectResult={handleSelectHistoryResult}
-      />
-    </motion.div>
+        <GeneratorHistoryDrawer
+          open={historyOpen}
+          onOpenChange={setHistoryOpen}
+          onSelectResult={handleSelectHistoryResult}
+        />
+      </motion.div>
+    </div>
   );
 }

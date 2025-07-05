@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -248,6 +249,17 @@ export default {
 					'60%': {
 						transform: 'translateY(-4px)'
 					}
+				},
+				// Smooth tab switching
+				'tab-slide-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateX(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateX(0)'
+					}
 				}
 			},
 			animation: {
@@ -263,6 +275,8 @@ export default {
 				// Mobile-optimized animations
 				'mobile-slide-in': 'mobile-slide-in 0.3s ease-out',
 				'mobile-bounce': 'mobile-bounce 1s ease-in-out',
+				// Tab animations
+				'tab-slide-in': 'tab-slide-in 0.2s ease-out',
 			},
 			fontFamily: {
 				sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -277,8 +291,37 @@ export default {
 			},
 			backdropBlur: {
 				xs: '2px',
+			},
+			// Container queries support
+			supports: {
+				'container-queries': 'container-type: inline-size',
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [
+		require("tailwindcss-animate"),
+		// Add line-clamp support
+		function({ addUtilities }) {
+			addUtilities({
+				'.line-clamp-1': {
+					display: '-webkit-box',
+					'-webkit-line-clamp': '1',
+					'-webkit-box-orient': 'vertical',
+					overflow: 'hidden',
+				},
+				'.line-clamp-2': {
+					display: '-webkit-box',
+					'-webkit-line-clamp': '2',
+					'-webkit-box-orient': 'vertical',
+					overflow: 'hidden',
+				},
+				'.line-clamp-3': {
+					display: '-webkit-box',
+					'-webkit-line-clamp': '3',
+					'-webkit-box-orient': 'vertical',
+					overflow: 'hidden',
+				},
+			})
+		}
+	],
 } satisfies Config;
