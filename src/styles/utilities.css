@@ -1,4 +1,3 @@
-
 @tailwind utilities;
 
 @layer utilities {
@@ -26,23 +25,6 @@
     background: rgba(42, 42, 46, 0.8);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  /* Container query utilities for responsive design */
-  .container-query-sm {
-    container-type: inline-size;
-  }
-
-  @container (min-width: 400px) {
-    .cq-sm\:block { display: block; }
-    .cq-sm\:flex { display: flex; }
-    .cq-sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
-
-  @container (min-width: 600px) {
-    .cq-md\:block { display: block; }
-    .cq-md\:flex { display: flex; }
-    .cq-md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
 
   /* Enhanced responsive text utilities with improved line-heights */
@@ -106,12 +88,11 @@
     touch-action: manipulation;
   }
 
-  /* Mobile-optimized scrolling with improved performance */
+  /* Mobile-optimized scrolling */
   .mobile-scroll {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     scrollbar-color: rgb(var(--secondary-text)) transparent;
-    overscroll-behavior: contain;
   }
 
   .mobile-scroll::-webkit-scrollbar {
@@ -126,52 +107,6 @@
   .mobile-scroll::-webkit-scrollbar-thumb {
     background-color: rgb(var(--secondary-text));
     border-radius: 2px;
-  }
-
-  /* Chat-specific scrolling optimizations */
-  .chat-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
-    scroll-behavior: smooth;
-  }
-
-  .chat-scrollbar::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .chat-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .chat-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(156, 163, 175, 0.5);
-    border-radius: 3px;
-  }
-
-  .chat-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(156, 163, 175, 0.7);
-  }
-
-  /* Line clamping utilities */
-  .line-clamp-1 {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
   }
 
   /* Mobile-specific utilities */
@@ -298,43 +233,4 @@
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
   }
-
-  /* Tabbed interface utilities */
-  .tab-content-scroll {
-    scroll-behavior: smooth;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
-
-  /* Floating action bar */
-  .floating-action-bar {
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    background: rgba(var(--background), 0.95);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-}
-
-/* CSS Custom Properties for responsive design */
-:root {
-  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-  --text-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
-  --text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
-  --text-lg: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
-  --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
-  --text-2xl: clamp(1.5rem, 1.3rem + 1vw, 1.875rem);
-  --text-3xl: clamp(1.875rem, 1.6rem + 1.375vw, 2.25rem);
-  --text-4xl: clamp(2.25rem, 1.9rem + 1.75vw, 3rem);
-  --text-5xl: clamp(3rem, 2.5rem + 2.5vw, 3.75rem);
-  --text-6xl: clamp(3.75rem, 3rem + 3.75vw, 4.5rem);
-  --text-7xl: clamp(4.5rem, 3.5rem + 5vw, 6rem);
-  --text-8xl: clamp(6rem, 4.5rem + 7.5vw, 8rem);
-
-  --space-xs: clamp(0.25rem, 0.2rem + 0.25vw, 0.5rem);
-  --space-sm: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
-  --space-md: clamp(0.75rem, 0.6rem + 0.75vw, 1rem);
-  --space-lg: clamp(1rem, 0.8rem + 1vw, 1.5rem);
-  --space-xl: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
-  --space-2xl: clamp(2rem, 1.6rem + 2vw, 3rem);
-  --space-3xl: clamp(3rem, 2.4rem + 3vw, 4rem);
 }
