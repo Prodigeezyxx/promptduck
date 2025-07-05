@@ -212,13 +212,13 @@ export function TabbedGeneratorLayout({
                     >
                       <CardContent className="p-4">
                         <div className="text-sm text-muted-foreground mb-2">
-                          {new Date(result.timestamp || Date.now()).toLocaleString()}
+                          {new Date(result.created_at || Date.now()).toLocaleString()}
                         </div>
                         <div className="text-sm font-medium mb-2 line-clamp-2">
-                          {result.intent}
+                          {result.metadata.intent}
                         </div>
                         <div className="text-xs text-muted-foreground line-clamp-1">
-                          {result.optimized_prompt.substring(0, 100)}...
+                          {result.optimized_prompt?.substring(0, 100)}...
                         </div>
                       </CardContent>
                     </Card>
