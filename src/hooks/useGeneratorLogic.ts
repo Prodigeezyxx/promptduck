@@ -8,6 +8,7 @@ import { useTemplateLoader } from './useTemplateLoader';
 import { useSupabaseSync } from './useSupabaseSync';
 import { useGenerationHandlers } from './useGenerationHandlers';
 import { useTemplateExtractor } from './useTemplateExtractor';
+import { useAuth } from './useAuth';
 import { promptPersistence } from '@/utils/promptPersistence';
 
 export function useGeneratorLogic() {
@@ -17,12 +18,14 @@ export function useGeneratorLogic() {
   const [intent, setIntent] = useState('');
   const [context, setContext] = useState('');
   const [selectedMode, setSelectedMode] = useState<ModeType>(DEFAULT_MODE);
+  const [hasLoadedStoredPrompt, setHasLoadedStoredPrompt] = useState(false);
   
   // Use smart defaults - always intermediate complexity
   const complexity = 'intermediate' as const;
 
   // Use the refactored hooks
   const { user } = useSupabaseSync();
+  const { isLoaded: authLoaded } = useAuth();
   useTemplateLoader(); // Handles template loading side effects
   const { currentPrompt, extractTemplateData } = useTemplateExtractor();
   const {
@@ -42,12 +45,28 @@ export function useGeneratorLogic() {
     setContext(originalContext || '');
   }
 
-  // Check for stored prompt from landing page on mount
+  // Check for stored prompt from landing page - runs on mount and when auth loads
   useEffect(() => {
+    // Don't check if we've already loaded a stored prompt
+    if (hasLoadedStoredPrompt) return;
+    
+    // Wait for auth to be loaded to avoid race conditions
+    if (!authLoaded) return;
+    
     const storedPrompt = promptPersistence.getStoredPrompt();
-    if (storedPrompt && storedPrompt.prompt && !intent && !context) {
+    console.log('Checking for stored prompt:', { 
+      storedPrompt: storedPrompt?.prompt, 
+      currentIntent: intent, 
+      currentContext: context,
+      authLoaded 
+    });
+    
+    if (storedPrompt && storedPrompt.prompt) {
       console.log('Loading stored prompt from landing page:', storedPrompt.prompt);
+      
+      // Always load the stored prompt, even if intent/context exist
       setIntent(storedPrompt.prompt);
+      setHasLoadedStoredPrompt(true);
       
       // Clear the stored prompt after loading
       promptPersistence.clearPrompt();
@@ -58,7 +77,7 @@ export function useGeneratorLogic() {
         description: 'Your prompt from the landing page has been loaded.',
       });
     }
-  }, [intent, context]);
+  }, [authLoaded, hasLoadedStoredPrompt]);
 
   const handleIntentChange = (value: string) => {
     setIntent(value);
