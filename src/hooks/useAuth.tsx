@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { promptPersistence } from '@/utils/promptPersistence';
 
 interface AuthState {
   user: User | null;
@@ -46,6 +47,22 @@ export function useAuth() {
         // Handle OAuth callback success
         if (event === 'SIGNED_IN' && session) {
           console.log('OAuth sign-in successful for:', session.user.email);
+          
+          // Check for post-auth redirect
+          const redirectInfo = promptPersistence.getAndClearRedirectInfo();
+          if (redirectInfo) {
+            console.log('Found redirect info after auth:', redirectInfo);
+            
+            // If there's a prompt, store it for the generator
+            if (redirectInfo.prompt) {
+              promptPersistence.storePrompt(redirectInfo.prompt, false);
+            }
+            
+            // Navigate to the redirect path
+            setTimeout(() => {
+              window.location.href = redirectInfo.path;
+            }, 100);
+          }
         }
         
         // Handle OAuth errors

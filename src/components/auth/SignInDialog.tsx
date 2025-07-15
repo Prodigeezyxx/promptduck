@@ -13,9 +13,10 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 interface SignInDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  redirectAfterAuth?: string;
 }
 
-export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
+export function SignInDialog({ open, onOpenChange, redirectAfterAuth }: SignInDialogProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,13 +25,22 @@ export function SignInDialog({ open, onOpenChange }: SignInDialogProps) {
   const { signInWithEmail, signUpWithEmail, isSignedIn } = useAuthContext();
   const { toast } = useToast();
 
-  // Close dialog when user successfully signs in
+  // Close dialog when user successfully signs in and handle redirect
   useEffect(() => {
     if (isSignedIn && open) {
       console.log('User signed in, closing dialog');
       onOpenChange(false);
+      
+      // Handle post-auth redirect
+      if (redirectAfterAuth) {
+        const navigate = () => {
+          window.location.href = redirectAfterAuth;
+        };
+        // Small delay to ensure dialog closes smoothly
+        setTimeout(navigate, 100);
+      }
     }
-  }, [isSignedIn, open, onOpenChange]);
+  }, [isSignedIn, open, onOpenChange, redirectAfterAuth]);
 
   const handleEmailAuth = async () => {
     if (!email || !password) {

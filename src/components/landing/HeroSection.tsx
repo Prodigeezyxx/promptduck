@@ -2,25 +2,57 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
-import { AnimatedPromptDisplay } from './AnimatedPromptDisplay';
-import { memo, useState } from 'react';
+import { InteractivePromptInput } from './InteractivePromptInput';
+import { useState } from 'react';
 import { SignInDialog } from '@/components/auth/SignInDialog';
 import { useAuthContext } from '@/components/auth/AuthProvider';
-
-const OptimizedAnimatedPromptDisplay = memo(AnimatedPromptDisplay);
+import { promptPersistence } from '@/utils/promptPersistence';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 export function HeroSection() {
   const [showSignInDialog, setShowSignInDialog] = useState(false);
+  const [isProcessingPrompt, setIsProcessingPrompt] = useState(false);
   const { isSignedIn } = useAuthContext();
   const navigate = useNavigate();
+  const { track } = useAnalytics();
 
   const handleBuildPrompt = () => {
     if (isSignedIn) {
-      // Use React Router navigation instead of window.location.href
+      track('hero_build_prompt_click', { user_signed_in: true });
       navigate('/app/generator');
     } else {
-      // If not signed in, show auth dialog
+      track('hero_build_prompt_click', { user_signed_in: false });
       setShowSignInDialog(true);
+    }
+  };
+
+  const handlePromptSubmit = async (prompt: string) => {
+    setIsProcessingPrompt(true);
+    
+    try {
+      // Store the prompt for use in the generator
+      promptPersistence.storePrompt(prompt, !isSignedIn);
+      
+      // Track the prompt submission
+      track('landing_prompt_submitted', { 
+        prompt_length: prompt.length,
+        user_signed_in: isSignedIn 
+      });
+
+      if (isSignedIn) {
+        // User is signed in, navigate directly to generator
+        navigate('/app/generator');
+      } else {
+        // User needs to sign in, store redirect info and show dialog
+        promptPersistence.storeRedirectInfo('/app/generator', prompt);
+        setShowSignInDialog(true);
+      }
+    } catch (error) {
+      console.error('Failed to process prompt:', error);
+      // Fallback: just navigate to generator
+      navigate('/app/generator');
+    } finally {
+      setIsProcessingPrompt(false);
     }
   };
 
@@ -143,14 +175,18 @@ export function HeroSection() {
           </motion.div>
         </motion.div>
 
-        {/* Animated Prompt Display */}
+        {/* Interactive Prompt Input */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
           transition={{ delay: 0.8, duration: 0.6 }} 
           className="mt-6 lg:mt-12"
         >
-          <OptimizedAnimatedPromptDisplay />
+          <InteractivePromptInput 
+            onSubmit={handlePromptSubmit}
+            isLoading={isProcessingPrompt}
+            placeholder="Describe what you want to create..."
+          />
         </motion.div>
 
         {/* Badges */}
@@ -181,7 +217,11 @@ export function HeroSection() {
       </div>
 
       {/* Sign In Dialog */}
-      <SignInDialog open={showSignInDialog} onOpenChange={setShowSignInDialog} />
+      <SignInDialog 
+        open={showSignInDialog} 
+        onOpenChange={setShowSignInDialog}
+        redirectAfterAuth="/app/generator"
+      />
     </section>
   );
 }

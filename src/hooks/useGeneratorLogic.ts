@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGeneratorStore } from '@/store/generatorStore';
 import { useApiKeyStore } from '@/store/apiKeyStore';
 import { ModeType } from '@/types';
@@ -8,6 +8,7 @@ import { useTemplateLoader } from './useTemplateLoader';
 import { useSupabaseSync } from './useSupabaseSync';
 import { useGenerationHandlers } from './useGenerationHandlers';
 import { useTemplateExtractor } from './useTemplateExtractor';
+import { promptPersistence } from '@/utils/promptPersistence';
 
 export function useGeneratorLogic() {
   const { isGenerating, lastResult, history } = useGeneratorStore();
@@ -40,6 +41,24 @@ export function useGeneratorLogic() {
     setIntent(originalIntent || '');
     setContext(originalContext || '');
   }
+
+  // Check for stored prompt from landing page on mount
+  useEffect(() => {
+    const storedPrompt = promptPersistence.getStoredPrompt();
+    if (storedPrompt && storedPrompt.prompt && !intent && !context) {
+      console.log('Loading stored prompt from landing page:', storedPrompt.prompt);
+      setIntent(storedPrompt.prompt);
+      
+      // Clear the stored prompt after loading
+      promptPersistence.clearPrompt();
+      
+      // Show toast to let user know their prompt was loaded
+      toast({
+        title: 'Prompt Loaded',
+        description: 'Your prompt from the landing page has been loaded.',
+      });
+    }
+  }, [intent, context]);
 
   const handleIntentChange = (value: string) => {
     setIntent(value);
