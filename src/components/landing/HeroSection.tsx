@@ -73,7 +73,7 @@ export function HeroSection() {
             <a href="https://fazier.com/launches/promptduck.dev" target="_blank" rel="noopener noreferrer">
               <img 
                 src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&theme=neutral" 
-                width={250} 
+                width={125} 
                 alt="Fazier badge" 
                 className="hover:scale-105 transition-transform duration-200"
               />
@@ -82,8 +82,8 @@ export function HeroSection() {
               <img 
                 src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=992931&theme=light&t=1752598564191" 
                 alt="PromptDuck - Prompt like a pro | Product Hunt" 
-                width={250} 
-                height={54}
+                width={125} 
+                height={27}
                 className="hover:scale-105 transition-transform duration-200"
               />
             </a>
