@@ -37,7 +37,7 @@ const LightbulbIcon = (props: React.SVGProps<SVGSVGElement>) => ( <svg viewBox="
 const MicIcon = (props: React.SVGProps<SVGSVGElement>) => ( <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...props}> <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path> <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path> <line x1="12" y1="19" x2="12" y2="23"></line> </svg> );
 
 
-const toolsList = [ { id: 'createImage', name: 'Create an image', shortName: 'Image', icon: PaintBrushIcon }, { id: 'searchWeb', name: 'Search the web', shortName: 'Search', icon: GlobeIcon }, { id: 'writeCode', name: 'Write or code', shortName: 'Write', icon: PencilIcon }, { id: 'deepResearch', name: 'Run deep research', shortName: 'Deep Search', icon: TelescopeIcon, extra: '5 left' }, { id: 'thinkLonger', name: 'Think for longer', shortName: 'Think', icon: LightbulbIcon }, ];
+const modesList = [ { id: 'general', name: 'General mode', shortName: 'General', icon: GlobeIcon }, { id: 'lovable', name: 'Lovable mode', shortName: 'Lovable', icon: LightbulbIcon }, ];
 
 // --- The Final, Self-Contained PromptBox Component ---
 export const PromptBox = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
@@ -45,7 +45,7 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, React.TextareaHTM
     const internalTextareaRef = React.useRef<HTMLTextAreaElement>(null);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const [imagePreview, setImagePreview] = React.useState<string | null>(null);
-    const [selectedTool, setSelectedTool] = React.useState<string | null>(null);
+    const [selectedMode, setSelectedMode] = React.useState<string | null>(null);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
     const [isImageDialogOpen, setIsImageDialogOpen] = React.useState(false);
     
@@ -89,8 +89,8 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, React.TextareaHTM
     };
     
     const hasValue = String(value).trim().length > 0 || imagePreview;
-    const activeTool = selectedTool ? toolsList.find(t => t.id === selectedTool) : null;
-    const ActiveToolIcon = activeTool?.icon;
+    const activeMode = selectedMode ? modesList.find(m => m.id === selectedMode) : null;
+    const ActiveModeIcon = activeMode?.icon;
 
     return (
       <div className={cn("flex flex-col rounded-[28px] p-2 shadow-sm transition-colors bg-white border dark:bg-[#303030] dark:border-transparent cursor-text", className)}>
@@ -112,20 +112,6 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, React.TextareaHTM
         <div className="mt-0.5 p-1 pt-0">
           <TooltipProvider delayDuration={100}>
             <div className="flex items-center gap-2">
-              <Tooltip> 
-                <TooltipTrigger asChild>
-                  <button 
-                    type="button" 
-                    onClick={handlePlusClick} 
-                    disabled={disabled}
-                    className="flex h-8 w-8 items-center justify-center rounded-full text-foreground dark:text-white transition-colors hover:bg-accent dark:hover:bg-[#515151] focus-visible:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <PlusIcon className="h-6 w-6" />
-                    <span className="sr-only">Attach image</span>
-                  </button>
-                </TooltipTrigger> 
-                <TooltipContent side="top" showArrow={true}><p>Attach image</p></TooltipContent> 
-              </Tooltip>
               
               <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
                 <Tooltip>
@@ -137,7 +123,7 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, React.TextareaHTM
                         className="flex h-8 items-center gap-2 rounded-full p-2 text-sm text-foreground dark:text-white transition-colors hover:bg-accent dark:hover:bg-[#515151] focus-visible:outline-none focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Settings2Icon className="h-4 w-4" />
-                        {!selectedTool && 'Tools'}
+                        {!selectedMode && 'Modes'}
                       </button>
                     </PopoverTrigger>
                   </TooltipTrigger>
@@ -145,17 +131,17 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, React.TextareaHTM
                 </Tooltip>
                 <PopoverContent side="top" align="start">
                   <div className="flex flex-col gap-1">
-                    {toolsList.map(tool => ( <button key={tool.id} onClick={() => { setSelectedTool(tool.id); setIsPopoverOpen(false); }} className="flex w-full items-center gap-2 rounded-md p-2 text-left text-sm hover:bg-accent dark:hover:bg-[#515151]"> <tool.icon className="h-4 w-4" /> <span>{tool.name}</span> {tool.extra && <span className="ml-auto text-xs text-muted-foreground dark:text-gray-400">{tool.extra}</span>} </button> ))}
+                    {modesList.map(mode => ( <button key={mode.id} onClick={() => { setSelectedMode(mode.id); setIsPopoverOpen(false); }} className="flex w-full items-center gap-2 rounded-md p-2 text-left text-sm hover:bg-accent dark:hover:bg-[#515151]"> <mode.icon className="h-4 w-4" /> <span>{mode.name}</span> </button> ))}
                   </div>
                 </PopoverContent>
               </Popover>
 
-              {activeTool && (
+              {activeMode && (
                 <>
                   <div className="h-4 w-px bg-border dark:bg-gray-600" />
-                  <button onClick={() => setSelectedTool(null)} className="flex h-8 items-center gap-2 rounded-full px-2 text-sm dark:hover:bg-[#3b4045] hover:bg-accent cursor-pointer dark:text-[#99ceff] text-[#2294ff] transition-colors flex-row items-center justify-center">
-                    {ActiveToolIcon && <ActiveToolIcon className="h-4 w-4" />}
-                    {activeTool.shortName}
+                  <button onClick={() => setSelectedMode(null)} className="flex h-8 items-center gap-2 rounded-full px-2 text-sm dark:hover:bg-[#3b4045] hover:bg-accent cursor-pointer dark:text-[#99ceff] text-[#2294ff] transition-colors flex-row items-center justify-center">
+                    {ActiveModeIcon && <ActiveModeIcon className="h-4 w-4" />}
+                    {activeMode.shortName}
                     <XIcon className="h-4 w-4" />
                   </button>
                 </>
@@ -163,19 +149,6 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, React.TextareaHTM
 
               {/* MODIFIED: Right-aligned buttons container */}
               <div className="ml-auto flex items-center gap-2">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button 
-                      type="button" 
-                      disabled={disabled}
-                      className="flex h-8 w-8 items-center justify-center rounded-full text-foreground dark:text-white transition-colors hover:bg-accent dark:hover:bg-[#515151] focus-visible:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <MicIcon className="h-5 w-5" />
-                      <span className="sr-only">Record voice</span>
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" showArrow={true}><p>Record voice</p></TooltipContent>
-                </Tooltip>
 
                 <Tooltip>
                   <TooltipTrigger asChild>

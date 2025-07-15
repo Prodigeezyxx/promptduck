@@ -12,7 +12,7 @@ interface InteractivePromptInputProps {
 export function InteractivePromptInput({ 
   onSubmit, 
   isLoading = false, 
-  placeholder = "Describe what you want to create...",
+  placeholder = "Describe your prompt",
   className 
 }: InteractivePromptInputProps) {
   const [prompt, setPrompt] = useState('');
