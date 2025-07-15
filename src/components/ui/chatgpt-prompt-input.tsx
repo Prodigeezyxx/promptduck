@@ -91,6 +91,9 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, React.TextareaHTM
     const hasValue = String(value).trim().length > 0 || imagePreview;
     const activeMode = selectedMode ? modesList.find(m => m.id === selectedMode) : null;
     const ActiveModeIcon = activeMode?.icon;
+    
+    // Debug log to ensure no activeTool references
+    console.log('Debug: activeMode =', activeMode, 'selectedMode =', selectedMode);
 
     return (
       <div className={cn("flex flex-col rounded-[28px] p-2 shadow-sm transition-colors bg-white border dark:bg-[#303030] dark:border-transparent cursor-text", className)}>
@@ -127,7 +130,7 @@ export const PromptBox = React.forwardRef<HTMLTextAreaElement, React.TextareaHTM
                       </button>
                     </PopoverTrigger>
                   </TooltipTrigger>
-                  <TooltipContent side="top" showArrow={true}><p>Explore Tools</p></TooltipContent>
+                  <TooltipContent side="top" showArrow={true}><p>Explore Modes</p></TooltipContent>
                 </Tooltip>
                 <PopoverContent side="top" align="start">
                   <div className="flex flex-col gap-1">
