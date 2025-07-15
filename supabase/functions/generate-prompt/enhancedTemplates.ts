@@ -1,6 +1,7 @@
 
 // Enhanced Lovable templates with AI-enriched context
 import { generateProjectName } from './projectNames.ts';
+import { generateBrandSafeCandidates } from './nameGenerator.ts';
 
 interface ContextEnrichment {
   domainInsights: string[];
@@ -21,9 +22,22 @@ export function generateEnhancedLovableTemplate(
 ): string {
   const { primary, projectType } = analysis;
   
-  // Smart app name extraction
+  // Stage 1: Pre-Parse - Extract app name with enhanced patterns
   const extractedAppName = extractAppNameFromIntent(intent);
-  const projectName = extractedAppName || generateProjectName(intent, projectType || 'general_app');
+  
+  // Stage 4: Fallback Name Generator - Generate brand-safe candidates if no name detected
+  let projectName: string;
+  let isNameLocked = false;
+  
+  if (extractedAppName) {
+    // Stage 3: Name Lock Rule - Mark as immutable if detected
+    projectName = extractedAppName;
+    isNameLocked = true;
+  } else {
+    // Generate 3 brand-safe candidates and pick the best one
+    const fallbackNames = generateBrandSafeCandidates(intent, projectType || 'general_app');
+    projectName = fallbackNames[0]; // Use the first (best) candidate
+  }
 
   const templates = {
     new_project_scaffolding: () => {
@@ -215,23 +229,39 @@ What aspect of your idea excites you most? Let's build something amazing togethe
   return templateFunction ? templateFunction() : templates.new_project_scaffolding();
 }
 
-// Extract app name from user intent using pattern matching
+// Enhanced app name extraction with comprehensive patterns (Stage 1: Pre-Parse)
 function extractAppNameFromIntent(intent: string): string | null {
-  // Extract explicit app names
+  // Stop-words to avoid false positives
+  const stopWords = ['app', 'tool', 'project', 'system', 'platform', 'website', 'site', 'application'];
+  
+  // Enhanced patterns for name extraction with better capture groups
   const explicitPatterns = [
-    /app\s+called\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?/i,
-    /named\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?/i,
-    /(?:make|build|create)\s+["']?([a-zA-Z][a-zA-Z0-9\s]{1,20})["']?\s+app/i
+    /(?:app\s+)?called\s+["']?([A-Z][\w-]+)["']?/i,
+    /(?:app\s+)?named\s+["']?([A-Z][\w-]+)["']?/i,
+    /(?:make|build|create)\s+["']?([A-Z][\w-]+)["']?\s*(?:app)?/i,
+    /(?:app|application)\s+["']?([A-Z][\w-]+)["']?/i,
+    /["']([A-Z][\w-]+)["']\s+(?:app|application)/i,
+    // New patterns for better capture
+    /for\s+["']?([A-Z][\w-]+)["']?/i,
+    /(?:like|similar\s+to)\s+["']?([A-Z][\w-]+)["']?/i
   ];
   
   for (const pattern of explicitPatterns) {
     const match = intent.match(pattern);
     if (match && match[1] && match[1].length > 2) {
-      return match[1].trim();
+      const candidate = match[1].trim();
+      
+      // Filter out stop-words and ensure it's a valid name
+      if (!stopWords.includes(candidate.toLowerCase()) && 
+          /^[A-Z][\w-]*$/.test(candidate) && 
+          candidate.length >= 3 && 
+          candidate.length <= 20) {
+        return candidate;
+      }
     }
   }
   
-  return null; // Let generateProjectName handle it based on project type
+  return null; // Let generateProjectName handle fallback generation
 }
 
 // Instructional template for robust generation
@@ -242,7 +272,11 @@ function generateInstructionalProjectTemplate(
   intent: string, 
   enrichment: ContextEnrichment
 ): string {
-  return `Build me a ${projectType.replace('_', ' ')} application called "${projectName}".
+  // Stage 6: Ensure name consistency throughout the template
+  const appDisplayName = `"${projectName}"`;
+  const dbPrefix = projectName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+  
+  return `Build me a ${projectType.replace('_', ' ')} application called ${appDisplayName}.
 
 **What I want:** ${intent}
 
@@ -256,7 +290,7 @@ function generateInstructionalProjectTemplate(
 1. Set up ${enrichment.technicalConsiderations[0] || 'user authentication and data storage'}
 2. Implement ${enrichment.technicalConsiderations[1] || 'efficient data retrieval and updates'}
 3. Configure Supabase with Row Level Security policies
-4. Design the database schema for ${projectName}
+4. Design the database schema for ${appDisplayName} using "${dbPrefix}_" prefixes for all tables
 
 **🔐 Authentication System**
 1. Implement Supabase Auth with email/password
@@ -291,5 +325,11 @@ function generateInstructionalProjectTemplate(
 
 ${context ? `**Additional context:** ${context}` : ''}
 
-**Goal:** Deliver a fully functional ${projectName} MVP that users can immediately start using, with all features working and a complete database setup.`;
+**Goal:** Deliver a fully functional ${appDisplayName} MVP that users can immediately start using, with all features working and a complete database setup.
+
+**Important:** Use the exact name ${appDisplayName} consistently throughout:
+- All UI titles and headers must show ${appDisplayName}
+- Database table names should use ${dbPrefix}_ prefix
+- README and documentation should reference ${appDisplayName}
+- Error messages and notifications should mention ${appDisplayName}`;
 }

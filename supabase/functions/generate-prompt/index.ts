@@ -7,6 +7,37 @@ import { generateLovableTemplate } from './templates.ts';
 import { enrichContextWithAI } from './contextEnricher.ts';
 import { generateEnhancedLovableTemplate } from './enhancedTemplates.ts';
 
+// Import name extraction function for Stage 1: Pre-Parse
+function extractAppNameFromIntent(intent: string): string | null {
+  const stopWords = ['app', 'tool', 'project', 'system', 'platform', 'website', 'site', 'application'];
+  
+  const explicitPatterns = [
+    /(?:app\s+)?called\s+["']?([A-Z][\w-]+)["']?/i,
+    /(?:app\s+)?named\s+["']?([A-Z][\w-]+)["']?/i,
+    /(?:make|build|create)\s+["']?([A-Z][\w-]+)["']?\s*(?:app)?/i,
+    /(?:app|application)\s+["']?([A-Z][\w-]+)["']?/i,
+    /["']([A-Z][\w-]+)["']\s+(?:app|application)/i,
+    /for\s+["']?([A-Z][\w-]+)["']?/i,
+    /(?:like|similar\s+to)\s+["']?([A-Z][\w-]+)["']?/i
+  ];
+  
+  for (const pattern of explicitPatterns) {
+    const match = intent.match(pattern);
+    if (match && match[1] && match[1].length > 2) {
+      const candidate = match[1].trim();
+      
+      if (!stopWords.includes(candidate.toLowerCase()) && 
+          /^[A-Z][\w-]*$/.test(candidate) && 
+          candidate.length >= 3 && 
+          candidate.length <= 20) {
+        return candidate;
+      }
+    }
+  }
+  
+  return null;
+}
+
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 
 const corsHeaders = {
@@ -39,7 +70,12 @@ serve(async (req) => {
     // Handle Lovable Transformer mode with advanced processing
     if (mode === 'lovable') {
       const analysis = classifyIntent(intent, context);
-      console.log(`Detected intent: ${analysis.primary}, Project type: ${analysis.projectType}`);
+      
+      // Stage 2: Add app_name field to the structured intent object
+      const extractedAppName = extractAppNameFromIntent(intent);
+      analysis.app_name = extractedAppName;
+      
+      console.log(`Detected intent: ${analysis.primary}, Project type: ${analysis.projectType}, App name: ${extractedAppName || 'Auto-generated'}`);
       
       // AI Context Enrichment - Research and enhance the request with domain intelligence
       console.log('Starting AI context enrichment...');
@@ -82,6 +118,12 @@ serve(async (req) => {
             description: `Detected project type: ${analysis.projectType || 'general'}`
           },
           {
+            name: 'app_name',
+            type: 'text',
+            required: false,
+            description: `App name: ${analysis.app_name || 'Generated automatically'}`
+          },
+          {
             name: 'complexity_level',
             type: 'text',
             required: false,
@@ -100,23 +142,28 @@ serve(async (req) => {
             description: `Key domain insights: ${enrichment.domainInsights.slice(0, 2).join('; ')}`
           }
         ],
-        metadata: {
-          complexity_score: analysis.complexity === 'advanced' ? 9 : analysis.complexity === 'intermediate' ? 7 : 5,
-          creativity_score: Math.min(10, 7 + Math.floor(enrichment.confidence / 3)),
-          coherence_score: 10,
-          estimated_tokens: Math.max(400, templatePrompt.length / 4),
-          mode: 'lovable',
-          target_platform: 'Lovable.dev',
-          detected_intent: analysis.primary,
-          project_type: analysis.projectType,
-          template_applied: analysis.primary,
-          confidence_score: analysis.confidence,
-          keywords_detected: analysis.keywords.slice(0, 10),
-          ai_enhanced: true,
-          ai_confidence: enrichment.confidence,
-          domain_research: enrichment.domainInsights.length > 1,
-          market_context_analyzed: enrichment.marketContext.length > 10
-        },
+          metadata: {
+            complexity_score: analysis.complexity === 'advanced' ? 9 : analysis.complexity === 'intermediate' ? 7 : 5,
+            creativity_score: Math.min(10, 7 + Math.floor(enrichment.confidence / 3)),
+            coherence_score: 10,
+            estimated_tokens: Math.max(400, templatePrompt.length / 4),
+            mode: 'lovable',
+            target_platform: 'Lovable.dev',
+            detected_intent: analysis.primary,
+            project_type: analysis.projectType,
+            template_applied: analysis.primary,
+            confidence_score: analysis.confidence,
+            keywords_detected: analysis.keywords.slice(0, 10),
+            ai_enhanced: true,
+            ai_confidence: enrichment.confidence,
+            domain_research: enrichment.domainInsights.length > 1,
+            market_context_analyzed: enrichment.marketContext.length > 10,
+            // Stage 2: Include app_name in metadata
+            app_name: analysis.app_name,
+            name_locked: !!analysis.app_name,
+            // Stage 7: PromptDuck Mode Guidelines compliance
+            name_consistency_enforced: true
+          },
         remix_suggestions: remixSuggestions
       };
     } else {

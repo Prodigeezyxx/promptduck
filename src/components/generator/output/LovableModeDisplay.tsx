@@ -13,6 +13,9 @@ export function LovableModeDisplay({ result }: LovableModeDisplayProps) {
   const templateUsed = (result.metadata?.template_applied as string) || (result.metadata?.detected_intent as string);
   const aiConfidence = (result.metadata?.ai_confidence as number) || 7;
   const domainResearch = result.metadata?.domain_research as boolean;
+  const appName = result.metadata?.app_name as string;
+  const nameLocked = result.metadata?.name_locked as boolean;
+  const nameConsistencyEnforced = result.metadata?.name_consistency_enforced as boolean;
   
   // Extract AI insights with proper type handling
   const domainInsights = Array.isArray(result.metadata?.domain_insights) 
@@ -49,6 +52,12 @@ export function LovableModeDisplay({ result }: LovableModeDisplayProps) {
               {templateUsed.replace('_', ' ')} template
             </Badge>
           )}
+          {appName && (
+            <Badge variant={nameLocked ? "default" : "secondary"} className="bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
+              <Target className="w-3 h-3 mr-1" />
+              {appName} {nameLocked ? "🔒" : "🤖"}
+            </Badge>
+          )}
           <Badge variant="outline" className="border-green-300 text-green-600 dark:border-green-700 dark:text-green-400">
             <Zap className="w-3 h-3 mr-1" />
             {aiConfidence}/10 confidence
@@ -59,11 +68,31 @@ export function LovableModeDisplay({ result }: LovableModeDisplayProps) {
               AI research applied
             </Badge>
           )}
+          {nameConsistencyEnforced && (
+            <Badge variant="outline" className="border-green-300 text-green-600 dark:border-green-700 dark:text-green-400">
+              ✓ Name consistency
+            </Badge>
+          )}
         </div>
 
         {/* Key Insights */}
-        {(domainInsights.length > 0 || targetAudience || technicalConsiderations.length > 0) && (
+        {(appName || domainInsights.length > 0 || targetAudience || technicalConsiderations.length > 0) && (
           <div className="space-y-3">
+            {appName && (
+              <div>
+                <h4 className="text-xs font-semibold text-purple-700 dark:text-purple-300 mb-1 flex items-center gap-1">
+                  <Target className="w-3 h-3" />
+                  App Name {nameLocked ? "(Detected)" : "(Generated)"}
+                </h4>
+                <p className="text-xs text-purple-600 dark:text-purple-400">
+                  {nameLocked 
+                    ? `Extracted "${appName}" from your prompt and locked for consistency` 
+                    : `AI generated "${appName}" based on your project type and description`
+                  }
+                </p>
+              </div>
+            )}
+
             {domainInsights.length > 0 && (
               <div>
                 <h4 className="text-xs font-semibold text-purple-700 dark:text-purple-300 mb-1 flex items-center gap-1">
