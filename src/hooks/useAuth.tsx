@@ -58,9 +58,9 @@ export function useAuth() {
               promptPersistence.storePrompt(redirectInfo.prompt, false);
             }
             
-            // Navigate to the redirect path
+            // Navigate to the generator page instead of the original path
             setTimeout(() => {
-              window.location.href = redirectInfo.path;
+              window.location.href = '/app/generator';
             }, 100);
           }
         }

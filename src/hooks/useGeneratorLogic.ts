@@ -76,8 +76,14 @@ export function useGeneratorLogic() {
         title: 'Prompt Loaded',
         description: 'Your prompt from the landing page has been loaded.',
       });
+      
+      // Auto-generate the prompt after a short delay to ensure state is updated
+      setTimeout(() => {
+        console.log('Auto-generating prompt from landing page');
+        baseHandleGenerate(storedPrompt.prompt, '', selectedMode, true);
+      }, 500);
     }
-  }, [authLoaded, hasLoadedStoredPrompt]);
+  }, [authLoaded, hasLoadedStoredPrompt, selectedMode, baseHandleGenerate]);
 
   const handleIntentChange = (value: string) => {
     setIntent(value);
