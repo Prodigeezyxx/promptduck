@@ -51,6 +51,9 @@ export function useSupabaseGenerations() {
           heuristics: item.heuristics || [],
           ...(item.metadata && typeof item.metadata === 'object' ? item.metadata : {})
         },
+        remix_suggestions: (item.metadata && typeof item.metadata === 'object' && 'remix_suggestions' in item.metadata) 
+          ? (item.metadata.remix_suggestions as string[]) || [] 
+          : [],
         created_at: item.created_at,
         version: 1
       }));
@@ -95,7 +98,10 @@ export function useSupabaseGenerations() {
           context: context,
           complexity: result.metadata?.complexity || 'intermediate',
           heuristics: result.metadata?.heuristics || [],
-          metadata: result.metadata || {}
+          metadata: {
+            ...(result.metadata || {}),
+            remix_suggestions: result.remix_suggestions || []
+          }
         })
         .select()
         .single();
@@ -112,6 +118,9 @@ export function useSupabaseGenerations() {
           heuristics: data.heuristics || [],
           ...(data.metadata && typeof data.metadata === 'object' ? data.metadata : {})
         },
+        remix_suggestions: (data.metadata && typeof data.metadata === 'object' && 'remix_suggestions' in data.metadata) 
+          ? (data.metadata.remix_suggestions as string[]) || [] 
+          : [],
         created_at: data.created_at,
         version: 1
       };
