@@ -158,7 +158,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
           transition={{ delay: 1.0, duration: 0.6 }} 
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 lg:mt-12"
+          className="flex flex-row items-center justify-center gap-4 mt-8 lg:mt-12"
         >
           <a href="https://fazier.com/launches/promptduck.dev" target="_blank" rel="noopener noreferrer">
             <img 
