@@ -69,25 +69,6 @@ export function HeroSection() {
           transition={{ duration: 0.6 }} 
           className="space-y-3 sm:space-y-4 lg:space-y-6"
         >
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6 lg:mb-8">
-            <a href="https://fazier.com/launches/promptduck.dev" target="_blank" rel="noopener noreferrer">
-              <img 
-                src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&theme=neutral" 
-                width={125} 
-                alt="Fazier badge" 
-                className="hover:scale-105 transition-transform duration-200"
-              />
-            </a>
-            <a href="https://www.producthunt.com/products/promptduck?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-promptduck" target="_blank" rel="noopener noreferrer">
-              <img 
-                src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=992931&theme=light&t=1752598564191" 
-                alt="PromptDuck - Prompt like a pro | Product Hunt" 
-                width={125} 
-                height={27}
-                className="hover:scale-105 transition-transform duration-200"
-              />
-            </a>
-          </div>
           
           <div className="px-2 py-4">
             <motion.h1 
@@ -170,6 +151,32 @@ export function HeroSection() {
           className="mt-6 lg:mt-12"
         >
           <OptimizedAnimatedPromptDisplay />
+        </motion.div>
+
+        {/* Badges */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ delay: 1.0, duration: 0.6 }} 
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 lg:mt-12"
+        >
+          <a href="https://fazier.com/launches/promptduck.dev" target="_blank" rel="noopener noreferrer">
+            <img 
+              src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&theme=neutral" 
+              width={125} 
+              alt="Fazier badge" 
+              className="hover:scale-105 transition-transform duration-200"
+            />
+          </a>
+          <a href="https://www.producthunt.com/products/promptduck?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-promptduck" target="_blank" rel="noopener noreferrer">
+            <img 
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=992931&theme=light&t=1752598564191" 
+              alt="PromptDuck - Prompt like a pro | Product Hunt" 
+              width={125} 
+              height={27}
+              className="hover:scale-105 transition-transform duration-200"
+            />
+          </a>
         </motion.div>
       </div>
 
