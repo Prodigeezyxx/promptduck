@@ -61,10 +61,10 @@ export function AIGeneratorOutputPanel({
         </CardHeader>
         
         <CardContent className="space-y-4">
-          {/* Optimized Prompt with Expand Button */}
+          {/* Enhanced Prompt with Expand Button */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-sm font-medium">Optimized Prompt</label>
+              <label className="text-sm font-semibold">Your Enhanced Prompt</label>
               <Button
                 variant="outline"
                 size="sm"
@@ -78,7 +78,8 @@ export function AIGeneratorOutputPanel({
             <Textarea
               value={lastResult.optimized_prompt}
               readOnly
-              className="min-h-[120px] text-sm leading-relaxed resize-none"
+              className="min-h-[120px] text-sm leading-relaxed resize-none bg-muted/30"
+              placeholder="Your enhanced prompt will appear here..."
             />
           </div>
 
@@ -108,7 +109,7 @@ export function AIGeneratorOutputPanel({
         open={isFullscreenOpen}
         onOpenChange={setIsFullscreenOpen}
         content={lastResult.optimized_prompt}
-        title="Optimized Prompt"
+        title="Enhanced Prompt"
       />
     </>
   );

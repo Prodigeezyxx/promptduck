@@ -94,7 +94,7 @@ export function EnhancedAIGeneratorOutputPanel({
             <div>
               <div className="flex items-center justify-between mb-3">
                 <label className="text-sm font-semibold">
-                  {isLovableMode ? 'R-T-C-F-G Structured Prompt' : 'Your Optimized Prompt'}
+                  {isLovableMode ? 'R-T-C-F-G Enhanced Prompt' : 'Your Enhanced Prompt'}
                 </label>
                 <div className="flex items-center space-x-2">
                   <Badge variant="outline" className="text-xs">
@@ -113,16 +113,16 @@ export function EnhancedAIGeneratorOutputPanel({
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>View in fullscreen</p>
+                      <p>View your enhanced prompt in fullscreen</p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
               </div>
-              <div
-                className="min-h-[130px] px-4 py-3 rounded-lg bg-muted text-sm leading-relaxed whitespace-pre-wrap border"
-              >
-                {lastResult.optimized_prompt}
-              </div>
+                <div
+                  className="min-h-[130px] px-4 py-3 rounded-lg bg-muted/30 text-sm leading-relaxed whitespace-pre-wrap border"
+                >
+                  {lastResult.optimized_prompt}
+                </div>
             </div>
 
             {/* Action Buttons - Mode-Specific */}
@@ -197,7 +197,7 @@ export function EnhancedAIGeneratorOutputPanel({
           open={isFullscreenOpen}
           onOpenChange={setIsFullscreenOpen}
           content={lastResult.optimized_prompt}
-          title="Optimized Prompt"
+          title="Enhanced Prompt"
         />
       </motion.div>
     </TooltipProvider>

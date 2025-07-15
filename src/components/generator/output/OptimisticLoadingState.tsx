@@ -28,22 +28,22 @@ export function OptimisticLoadingState({ intent, context = '', mode }: Optimisti
 
   const steps: LoadingStep[] = [
     { 
-      text: "Analyzing intent...", 
+      text: "Understanding your request...", 
       prediction: getIntentPrediction(intent),
       type: 'text'
     },
     { 
-      text: "Selecting cognitive heuristics...", 
+      text: "Selecting enhancement strategies...", 
       prediction: getHeuristicsPrediction(intent),
       type: 'list'
     },
     { 
-      text: "Crafting optimized prompt...", 
+      text: "Building your enhanced prompt...", 
       prediction: getOptimisticPrompt(intent, context, mode),
       type: 'prompt'
     },
     { 
-      text: "Applying final enhancements...", 
+      text: "Polishing and finalizing...", 
       prediction: null,
       type: 'text'
     }
@@ -102,15 +102,15 @@ export function OptimisticLoadingState({ intent, context = '', mode }: Optimisti
 
       {/* Prediction Preview */}
       {showPrediction && currentStepData.prediction && (
-        <div className="bg-muted/30 p-4 rounded-lg border-l-4 border-accent/50 animate-slide-in">
-          <div className="flex items-center justify-between mb-3">
-            <div className="text-sm text-secondaryText">
-              {currentStepData.type === 'prompt' ? 'Optimistic Preview' : 'Preview'}
+          <div className="bg-muted/30 p-4 rounded-lg border-l-4 border-accent/50 animate-slide-in">
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-sm text-secondaryText">
+                {currentStepData.type === 'prompt' ? 'Enhancement Preview' : 'Preview'}
+              </div>
+              <Badge variant="outline" className="text-xs opacity-75">
+                Processing...
+              </Badge>
             </div>
-            <Badge variant="outline" className="text-xs opacity-75">
-              Generating...
-            </Badge>
-          </div>
           
           {currentStepData.type === 'list' && Array.isArray(currentStepData.prediction) ? (
             <div className="space-y-2">
@@ -139,7 +139,7 @@ export function OptimisticLoadingState({ intent, context = '', mode }: Optimisti
       {/* Progress Message */}
       <div className="text-center">
         <p className="text-xs text-secondaryText">
-          This preview is generated instantly while we craft your perfect prompt...
+          This preview shows our enhancement process while crafting your perfect prompt...
         </p>
       </div>
     </div>
