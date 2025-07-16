@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -84,112 +85,116 @@ export function EnhancedAIGeneratorOutputPanel({
             </CardTitle>
           </CardHeader>
           
-          <CardContent className="space-y-6 p-6">
-            {/* Lovable Mode Intelligence Display */}
-            {isLovableMode && (
-              <LovableModeDisplay result={lastResult} />
-            )}
+          <CardContent className="p-0">
+            <ScrollArea className="h-[calc(100vh-200px)] p-6">
+              <div className="space-y-6">
+                {/* Lovable Mode Intelligence Display */}
+                {isLovableMode && (
+                  <LovableModeDisplay result={lastResult} />
+                )}
 
-            {/* Optimized Prompt */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <label className="text-sm font-semibold">
-                  {isLovableMode ? 'R-T-C-F-G Enhanced Prompt' : 'Your Enhanced Prompt'}
-                </label>
-                <div className="flex items-center space-x-2">
-                  <Badge variant="outline" className="text-xs">
-                    {lastResult.optimized_prompt.length} characters
-                  </Badge>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setIsFullscreenOpen(true)}
-                        className="h-8 px-2 text-xs"
-                      >
-                        <Expand className="w-3 h-3 mr-1" />
-                        Expand
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>View your enhanced prompt in fullscreen</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </div>
-                <div
-                  className="min-h-[130px] px-4 py-3 rounded-lg bg-muted/30 text-sm leading-relaxed whitespace-pre-wrap border"
-                >
-                  {lastResult.optimized_prompt}
-                </div>
-            </div>
-
-            {/* Action Buttons - Mode-Specific */}
-            {isLovableMode ? (
-              <LovableActions
-                result={lastResult}
-                originalIntent={originalIntent}
-                originalContext={originalContext}
-                onCopyPrompt={onCopyPrompt}
-                onSavePrompt={onSavePrompt}
-              />
-            ) : (
-              <div className="flex gap-2">
-                <Button onClick={onCopyPrompt} variant="outline" className="flex-1">
-                  Copy Prompt
-                </Button>
-                <Button onClick={onSavePrompt} variant="outline" className="flex-1">
-                  Save to Library
-                </Button>
-              </div>
-            )}
-
-            {/* Additional Actions for non-Lovable modes */}
-            {!isLovableMode && (
-              <OutputActions 
-                result={lastResult}
-                onCopyPrompt={onCopyPrompt}
-                onSavePrompt={onSavePrompt}
-              />
-            )}
-
-            {/* Remix Suggestions */}
-            {lastResult.remix_suggestions && lastResult.remix_suggestions.length > 0 && (
-              <div>
-                <label className="text-sm font-semibold mb-2 block">
-                  {isLovableMode ? 'Enhancement Suggestions' : 'Remix Suggestions'}
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {lastResult.remix_suggestions.slice(0, isLovableMode ? 4 : 6).map((remix, idx) => (
-                    <Button
-                      key={idx}
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onRemixSuggestion(remix)}
-                      className="text-xs"
+                {/* Optimized Prompt */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="text-sm font-semibold">
+                      {isLovableMode ? 'R-T-C-F-G Enhanced Prompt' : 'Your Enhanced Prompt'}
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="outline" className="text-xs">
+                        {lastResult.optimized_prompt.length} characters
+                      </Badge>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setIsFullscreenOpen(true)}
+                            className="h-8 px-2 text-xs"
+                          >
+                            <Expand className="w-3 h-3 mr-1" />
+                            Expand
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>View your enhanced prompt in fullscreen</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </div>
+                    <div
+                      className="min-h-[130px] px-4 py-3 rounded-lg bg-muted/30 text-sm leading-relaxed whitespace-pre-wrap border"
                     >
-                      {remix}
-                    </Button>
-                  ))}
+                      {lastResult.optimized_prompt}
+                    </div>
                 </div>
+
+                {/* Action Buttons - Mode-Specific */}
+                {isLovableMode ? (
+                  <LovableActions
+                    result={lastResult}
+                    originalIntent={originalIntent}
+                    originalContext={originalContext}
+                    onCopyPrompt={onCopyPrompt}
+                    onSavePrompt={onSavePrompt}
+                  />
+                ) : (
+                  <div className="flex gap-2">
+                    <Button onClick={onCopyPrompt} variant="outline" className="flex-1">
+                      Copy Prompt
+                    </Button>
+                    <Button onClick={onSavePrompt} variant="outline" className="flex-1">
+                      Save to Library
+                    </Button>
+                  </div>
+                )}
+
+                {/* Additional Actions for non-Lovable modes */}
+                {!isLovableMode && (
+                  <OutputActions 
+                    result={lastResult}
+                    onCopyPrompt={onCopyPrompt}
+                    onSavePrompt={onSavePrompt}
+                  />
+                )}
+
+                {/* Remix Suggestions */}
+                {lastResult.remix_suggestions && lastResult.remix_suggestions.length > 0 && (
+                  <div>
+                    <label className="text-sm font-semibold mb-3 block">
+                      {isLovableMode ? 'Enhancement Suggestions' : 'Remix Suggestions'}
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {lastResult.remix_suggestions.slice(0, isLovableMode ? 4 : 6).map((remix, idx) => (
+                        <Button
+                          key={idx}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => onRemixSuggestion(remix)}
+                          className="text-xs hover:bg-accent transition-colors"
+                        >
+                          {remix}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Start New Prompt Button */}
+                <div className="pt-4 border-t">
+                  <Button 
+                    onClick={onStartNewPrompt}
+                    className="w-full"
+                    size="lg"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Start New Prompt
+                  </Button>
+                </div>
+
+                {/* Metadata */}
+                <OutputMetadata result={lastResult} />
               </div>
-            )}
-
-            {/* Start New Prompt Button */}
-            <div className="pt-4 border-t">
-              <Button 
-                onClick={onStartNewPrompt}
-                className="w-full"
-                size="lg"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Start New Prompt
-              </Button>
-            </div>
-
-            {/* Metadata */}
-            <OutputMetadata result={lastResult} />
+            </ScrollArea>
           </CardContent>
         </Card>
 
