@@ -102,29 +102,27 @@ export function useGenerationHandlers() {
     // Create a meaningful title from the preview title or intent
     const promptTitle = lastResult.preview_title || intent.slice(0, 60) + (intent.length > 60 ? '...' : '');
     
-    // Enhanced metadata for Lovable mode
-    const isLovableMode = mode === 'lovable';
-    const baseCategory: 'product_thinking' | 'general' = isLovableMode ? 'product_thinking' : 'general';
+    // Enhanced metadata for Builder mode
+    const isBuilderMode = mode === 'builder';
+    const baseCategory: 'product_thinking' | 'general' = isBuilderMode ? 'product_thinking' : 'general';
     
     const promptData = {
       title: promptTitle,
       content: lastResult.optimized_prompt || lastResult.result,
-      description: isLovableMode ? 
-        `Lovable R-T-C-F-G prompt: ${intent}` : 
+      description: isBuilderMode ? 
+        `Builder R-T-C-F-G prompt: ${intent}` : 
         intent,
-      tags: lastResult.tags || (isLovableMode ? ['lovable', 'rtcfg', 'app-development'] : []),
-      persona: isLovableMode ? 'builder' as const : 'strategist' as const,
+      tags: lastResult.tags || (isBuilderMode ? ['builder', 'rtcfg', 'app-development'] : []),
+      persona: isBuilderMode ? 'builder' as const : 'strategist' as const,
       heuristics: lastResult.heuristics || [],
       variables: [
-        // Store the original context as a variable for reference
         ...(context ? [{
           name: 'original_context',
           type: 'text' as const,
           required: false,
           description: context
         }] : []),
-        // Add Lovable-specific metadata
-        ...(isLovableMode && lastResult.metadata?.project_type ? [{
+        ...(isBuilderMode && lastResult.metadata?.project_type ? [{
           name: 'app_type',
           type: 'text' as const,
           required: false,
@@ -133,8 +131,8 @@ export function useGenerationHandlers() {
         ...(lastResult.variables || [])
       ],
       category: baseCategory,
-      difficulty: isLovableMode ? 'advanced' as const : 'intermediate' as const,
-      estimatedTime: isLovableMode ? '30 minutes' : '15 minutes'
+      difficulty: isBuilderMode ? 'advanced' as const : 'intermediate' as const,
+      estimatedTime: isBuilderMode ? '30 minutes' : '15 minutes'
     };
 
     if (user) {
@@ -143,8 +141,8 @@ export function useGenerationHandlers() {
       if (saved) {
         toast({ 
           title: 'Saved!', 
-          description: isLovableMode ? 
-            'Lovable prompt saved with R-T-C-F-G structure and AI insights!' : 
+          description: isBuilderMode ? 
+            'Builder prompt saved with R-T-C-F-G structure and AI insights!' : 
             'Prompt added to your cloud library with original intent preserved.' 
         });
       }
@@ -153,8 +151,8 @@ export function useGenerationHandlers() {
       addPrompt(promptData);
       toast({ 
         title: 'Saved!', 
-        description: isLovableMode ? 
-          'Lovable prompt saved locally with enhanced metadata!' : 
+        description: isBuilderMode ? 
+          'Builder prompt saved locally with enhanced metadata!' : 
           'Prompt added to your local library with original intent preserved.' 
       });
     }

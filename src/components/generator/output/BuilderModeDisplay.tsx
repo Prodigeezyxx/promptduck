@@ -3,12 +3,12 @@ import { Badge } from '@/components/ui/badge';
 import { GenerationResult } from '@/types';
 import { Brain, Target, Zap, Code, Users } from 'lucide-react';
 
-interface LovableModeDisplayProps {
+interface BuilderModeDisplayProps {
   result: GenerationResult;
 }
 
-export function LovableModeDisplay({ result }: LovableModeDisplayProps) {
-  // Extract Lovable-specific metadata with proper type safety
+export function BuilderModeDisplay({ result }: BuilderModeDisplayProps) {
+  // Extract Builder-specific metadata with proper type safety
   const appType = (result.metadata?.project_type as string) || 'application';
   const templateUsed = (result.metadata?.template_applied as string) || (result.metadata?.detected_intent as string);
   const aiConfidence = (result.metadata?.ai_confidence as number) || 7;
@@ -35,7 +35,7 @@ export function LovableModeDisplay({ result }: LovableModeDisplayProps) {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-300">
           <Brain className="w-4 h-4" />
-          Lovable Mode Intelligence
+          Builder Mode Intelligence
         </CardTitle>
       </CardHeader>
       
@@ -86,7 +86,7 @@ export function LovableModeDisplay({ result }: LovableModeDisplayProps) {
                 </h4>
                 <p className="text-xs text-purple-600 dark:text-purple-400">
                   {nameLocked 
-                    ? `Extracted "${appName}" from your prompt and locked for consistency` 
+                    ? `Extracted "${appName}" from your prompt` 
                     : `AI generated "${appName}" based on your project type and description`
                   }
                 </p>

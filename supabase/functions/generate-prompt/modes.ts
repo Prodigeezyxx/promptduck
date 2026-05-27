@@ -16,10 +16,10 @@ export const MODES = {
     ],
     targetPlatform: 'Any AI Platform'
   },
-  lovable: {
-    id: 'lovable',
-    name: 'Lovable Transformer',
-    systemPromptModifier: `You are the Lovable Prompt Transformer with advanced contextual intelligence.`,
-    targetPlatform: 'Lovable.dev'
+  builder: {
+    id: 'builder',
+    name: 'Builder Transformer',
+    systemPromptModifier: `You are the Builder Prompt Transformer with advanced contextual intelligence.`,
+    targetPlatform: 'App Development'
   }
 };

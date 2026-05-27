@@ -5,7 +5,7 @@ import { User, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 
-export function GuestSignInButton() {
+export function GuestSignInButton({ redirectTo }: { redirectTo?: string }) {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ export function GuestSignInButton() {
       });
 
       // Navigate to app
-      navigate('/app/library');
+      navigate(redirectTo || '/app/library');
     } catch (error) {
       console.error('Guest sign-in error:', error);
       toast({

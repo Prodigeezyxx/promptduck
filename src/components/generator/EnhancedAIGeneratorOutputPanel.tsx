@@ -7,8 +7,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { GenerationResult } from '@/types';
 import { OutputActions } from './output/OutputActions';
 import { OutputMetadata } from './output/OutputMetadata';
-import { LovableModeDisplay } from './output/LovableModeDisplay';
-import { LovableActions } from './output/LovableActions';
+import { BuilderModeDisplay } from './output/BuilderModeDisplay';
+import { BuilderActions } from './output/BuilderActions';
 import { FullscreenPromptModal } from '@/components/playground/FullscreenPromptModal';
 import { EmptyState } from './output/EmptyState';
 import { LoadingState } from './output/LoadingState';
@@ -43,7 +43,7 @@ export function EnhancedAIGeneratorOutputPanel({
 }: EnhancedAIGeneratorOutputPanelProps) {
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   
-  const isLovableMode = selectedMode === 'lovable';
+  const isBuilderMode = selectedMode === 'builder';
 
   if (isGenerating) {
     return (
@@ -88,16 +88,16 @@ export function EnhancedAIGeneratorOutputPanel({
           <CardContent className="p-0">
             <ScrollArea className="h-[calc(100vh-200px)] p-6">
               <div className="space-y-6">
-                {/* Lovable Mode Intelligence Display */}
-                {isLovableMode && (
-                  <LovableModeDisplay result={lastResult} />
+                {/* Builder Mode Intelligence Display */}
+                {isBuilderMode && (
+                  <BuilderModeDisplay result={lastResult} />
                 )}
 
                 {/* Optimized Prompt */}
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <label className="text-sm font-semibold">
-                      {isLovableMode ? 'R-T-C-F-G Enhanced Prompt' : 'Your Enhanced Prompt'}
+                      {isBuilderMode ? 'R-T-C-F-G Enhanced Prompt' : 'Your Enhanced Prompt'}
                     </label>
                     <div className="flex items-center space-x-2">
                       <Badge variant="outline" className="text-xs">
@@ -129,8 +129,8 @@ export function EnhancedAIGeneratorOutputPanel({
                 </div>
 
                 {/* Action Buttons - Mode-Specific */}
-                {isLovableMode ? (
-                  <LovableActions
+                {isBuilderMode ? (
+                  <BuilderActions
                     result={lastResult}
                     originalIntent={originalIntent}
                     originalContext={originalContext}
@@ -148,8 +148,8 @@ export function EnhancedAIGeneratorOutputPanel({
                   </div>
                 )}
 
-                {/* Additional Actions for non-Lovable modes */}
-                {!isLovableMode && (
+                {/* Additional Actions for non-Builder modes */}
+                {!isBuilderMode && (
                   <OutputActions 
                     result={lastResult}
                     onCopyPrompt={onCopyPrompt}
@@ -161,10 +161,10 @@ export function EnhancedAIGeneratorOutputPanel({
                 {lastResult.remix_suggestions && lastResult.remix_suggestions.length > 0 && (
                   <div>
                     <label className="text-sm font-semibold mb-3 block">
-                      {isLovableMode ? 'Enhancement Suggestions' : 'Remix Suggestions'}
+                      {isBuilderMode ? 'Enhancement Suggestions' : 'Remix Suggestions'}
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {lastResult.remix_suggestions.slice(0, isLovableMode ? 4 : 6).map((remix, idx) => (
+                      {lastResult.remix_suggestions.slice(0, isBuilderMode ? 4 : 6).map((remix, idx) => (
                         <Button
                           key={idx}
                           variant="outline"

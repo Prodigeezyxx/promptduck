@@ -8,9 +8,9 @@ export class OpenAIPromptBuilder {
     const mode = request.mode && MODES[request.mode] ? MODES[request.mode] : MODES.general;
     const heuristicsDesc = request.heuristics.map(h => HEURISTICS[h]?.description || h).join(', ');
 
-    // Special handling for Lovable Transformer mode
-    if (mode.id === 'lovable') {
-      return this.buildLovableTransformerPrompt(request, mode, heuristicsDesc);
+    // Special handling for Builder Transformer mode
+    if (mode.id === 'builder') {
+      return this.buildBuilderTransformerPrompt(request, mode, heuristicsDesc);
     }
 
     // Standard mode handling
@@ -62,12 +62,12 @@ Required JSON structure optimized for ${mode.name} mode:
     ];
   }
 
-  private static buildLovableTransformerPrompt(request: GenerationRequest, mode: any, heuristicsDesc: string): Array<{role: 'system' | 'user' | 'assistant', content: string}> {
+  private static buildBuilderTransformerPrompt(request: GenerationRequest, mode: any, heuristicsDesc: string): Array<{role: 'system' | 'user' | 'assistant', content: string}> {
     const systemMessage = `${mode.systemPromptModifier}
 
-LOVABLE PROMPT TRANSFORMER ENGINE:
+BUILDER PROMPT TRANSFORMER ENGINE:
 
-Your role is to analyze the user's input and transform it into a highly effective, structured prompt optimized for Lovable.dev development.
+Your role is to analyze the user's input and transform it into a highly effective, structured prompt optimized for app development.
 
 PROCESSING WORKFLOW:
 1. INTENT CLASSIFICATION: Analyze the input to classify primary intent:
@@ -87,7 +87,7 @@ CURRENT REQUEST ANALYSIS:
 - Applied Heuristics: ${heuristicsDesc}
 - Complexity Level: ${request.complexity || 'intermediate'}
 
-LOVABLE-SPECIFIC OPTIMIZATIONS:
+BUILDER-SPECIFIC OPTIMIZATIONS:
 - React + TypeScript + Tailwind CSS focus
 - Component-driven architecture
 - Mobile-first responsive design
@@ -100,15 +100,15 @@ OUTPUT FORMAT: Return ONLY valid JSON with structured prompt templates:
 {
   "optimized_prompt": "Complete, copy-paste-ready prompt with intent-specific template applied",
   "preview_title": "Clear description of the generated prompt's purpose",
-  "tags": ["lovable", "prompt-engineering", "intent-classification"],
+  "tags": ["builder", "prompt-engineering", "intent-classification"],
   "variables": [{"name": "detected_intent", "type": "text", "required": true, "description": "Primary intent classification result"}],
   "metadata": {
     "complexity_score": 9,
     "creativity_score": 8,
     "coherence_score": 10,
     "estimated_tokens": 300,
-    "mode": "lovable",
-    "target_platform": "Lovable.dev",
+    "mode": "builder",
+    "target_platform": "App Development",
     "detected_intent": "classified_intent_type",
     "template_applied": "template_type_used"
   },
@@ -120,7 +120,7 @@ OUTPUT FORMAT: Return ONLY valid JSON with structured prompt templates:
   ]
 }
 
-Generate a sophisticated, template-based prompt that transforms the user's input into actionable Lovable.dev instructions.`;
+Generate a sophisticated, template-based prompt that transforms the user's input into actionable app development instructions.`;
 
     return [
       { role: 'system', content: systemMessage }

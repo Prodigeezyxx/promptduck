@@ -46,10 +46,10 @@ export function getOptimisticPrompt(intent: string, context: string, mode: ModeT
   if (!intent?.trim()) return "Building your prompt...";
   
   const modeConfig = MODES[mode];
-  const isLovableMode = mode === 'lovable';
+  const isBuilderMode = mode === 'builder';
   
-  if (isLovableMode && (intent.toLowerCase().includes('app') || intent.toLowerCase().includes('create'))) {
-    return `Context: You are Lovable's AI Builder, an expert in React, TypeScript, and modern web development.
+  if (isBuilderMode && (intent.toLowerCase().includes('app') || intent.toLowerCase().includes('create'))) {
+    return `Context: You are an expert AI Builder in React, TypeScript, and modern web development.
 
 Task: Create a ${intent.includes('app') ? 'full-stack application' : 'web application'} based on the user's requirements.
 

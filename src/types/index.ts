@@ -38,7 +38,6 @@ export interface GenerationResult {
     template_used?: string;
     intent_detected?: string;
     heuristics_applied?: string[];
-    // Lovable mode specific metadata
     project_type?: string;
     template_applied?: string;
     detected_intent?: string;

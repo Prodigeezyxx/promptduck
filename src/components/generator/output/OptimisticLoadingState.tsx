@@ -79,7 +79,7 @@ export function OptimisticLoadingState({ intent, context = '', mode }: Optimisti
         <Badge variant="outline" className="text-xs">
           Prediction Confidence: {Math.round(confidence * 100)}%
         </Badge>
-        <Badge variant={mode === 'lovable' ? 'default' : 'secondary'} className="text-xs">
+        <Badge variant={mode === 'builder' ? 'default' : 'secondary'} className="text-xs">
           {mode.charAt(0).toUpperCase() + mode.slice(1)} Mode
         </Badge>
       </div>

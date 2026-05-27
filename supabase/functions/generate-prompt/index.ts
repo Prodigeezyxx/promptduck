@@ -5,7 +5,7 @@ import { MODES } from './modes.ts';
 import { classifyIntent } from './intentClassifier.ts';
 import { generateLovableTemplate } from './templates.ts';
 import { enrichContextWithAI } from './contextEnricher.ts';
-import { generateEnhancedLovableTemplate } from './enhancedTemplates.ts';
+import { generateEnhancedBuilderTemplate } from './enhancedTemplates.ts';
 
 // Import name extraction function for Stage 1: Pre-Parse
 function extractAppNameFromIntent(intent: string): string | null {
@@ -67,8 +67,8 @@ serve(async (req) => {
 
     let result;
 
-    // Handle Lovable Transformer mode with advanced processing
-    if (mode === 'lovable') {
+    // Handle Builder Transformer mode with advanced processing
+    if (mode === 'builder') {
       const analysis = classifyIntent(intent, context);
       
       // Stage 2: Add app_name field to the structured intent object
@@ -82,8 +82,8 @@ serve(async (req) => {
       const enrichment = await enrichContextWithAI(intent, context, analysis);
       console.log(`Context enrichment completed with confidence: ${enrichment.confidence}/10`);
       
-      // Generate AI-enhanced, intelligently researched prompt for Lovable mode
-      let templatePrompt = generateEnhancedLovableTemplate(intent, context, analysis, enrichment);
+      // Generate AI-enhanced, intelligently researched prompt for Builder mode
+      let templatePrompt = generateEnhancedBuilderTemplate(intent, context, analysis, enrichment);
       
       // Apply comprehensive text cleaning to ensure pseudo-technical format
       templatePrompt = templatePrompt
@@ -102,8 +102,8 @@ serve(async (req) => {
       
       result = {
         optimized_prompt: templatePrompt,
-        preview_title: `Lovable-Optimized: ${intent.slice(0, 60)}${intent.length > 60 ? '...' : ''}`,
-        tags: ['lovable', 'prompt-engineering', analysis.primary.replace('_', '-'), analysis.projectType?.replace('_', '-') || 'general'].filter(Boolean),
+        preview_title: `Builder-Optimized: ${intent.slice(0, 60)}${intent.length > 60 ? '...' : ''}`,
+        tags: ['builder', 'prompt-engineering', analysis.primary.replace('_', '-'), analysis.projectType?.replace('_', '-') || 'general'].filter(Boolean),
         variables: [
           {
             name: 'detected_intent',
@@ -147,8 +147,8 @@ serve(async (req) => {
             creativity_score: Math.min(10, 7 + Math.floor(enrichment.confidence / 3)),
             coherence_score: 10,
             estimated_tokens: Math.max(400, templatePrompt.length / 4),
-            mode: 'lovable',
-            target_platform: 'Lovable.dev',
+            mode: 'builder',
+            target_platform: 'App Development',
             detected_intent: analysis.primary,
             project_type: analysis.projectType,
             template_applied: analysis.primary,
@@ -161,7 +161,6 @@ serve(async (req) => {
             // Stage 2: Include app_name in metadata
             app_name: analysis.app_name,
             name_locked: !!analysis.app_name,
-            // Stage 7: PromptDuck Mode Guidelines compliance
             name_consistency_enforced: true
           },
         remix_suggestions: remixSuggestions

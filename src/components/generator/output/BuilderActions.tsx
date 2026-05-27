@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Copy, Save, Download, CheckCircle, FileJson, SplitSquareHorizontal } from 'lucide-react';
 import { GenerationResult } from '@/types';
-import { downloadLovableJSON } from '@/utils/lovableExporter';
+import { downloadBuilderJSON } from '@/utils/builderExporter';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
-interface LovableActionsProps {
+interface BuilderActionsProps {
   result: GenerationResult;
   originalIntent: string;
   originalContext?: string;
@@ -14,13 +14,13 @@ interface LovableActionsProps {
   onSavePrompt: () => void;
 }
 
-export function LovableActions({ 
+export function BuilderActions({ 
   result, 
   originalIntent,
   originalContext,
   onCopyPrompt, 
   onSavePrompt 
-}: LovableActionsProps) {
+}: BuilderActionsProps) {
   const [copySuccess, setCopySuccess] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -36,8 +36,8 @@ export function LovableActions({
     setTimeout(() => setSaveSuccess(false), 2000);
   };
 
-  const handleLovableJSONDownload = () => {
-    downloadLovableJSON(result, originalIntent, originalContext);
+  const handleBuilderJSONDownload = () => {
+    downloadBuilderJSON(result, originalIntent, originalContext);
   };
 
   const copySection = (sectionName: string, content: string) => {
@@ -106,9 +106,9 @@ export function LovableActions({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem onClick={handleLovableJSONDownload}>
+            <DropdownMenuItem onClick={handleBuilderJSONDownload}>
               <FileJson className="w-4 h-4 mr-2" />
-              Lovable JSON (Enhanced)
+              Builder JSON (Enhanced)
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => copySection('CONTEXT', extractSection('CONTEXT'))}>

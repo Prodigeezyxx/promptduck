@@ -1,5 +1,5 @@
 
-// Enhanced Lovable templates with AI-enriched context
+// Enhanced Builder templates with AI-enriched context
 import { generateProjectName } from './projectNames.ts';
 import { generateBrandSafeCandidates } from './nameGenerator.ts';
 
@@ -14,7 +14,7 @@ interface ContextEnrichment {
   confidence: number;
 }
 
-export function generateEnhancedLovableTemplate(
+export function generateEnhancedBuilderTemplate(
   intent: string, 
   context: string, 
   analysis: any, 
@@ -185,7 +185,7 @@ ${context ? `**Additional context:** ${context}` : ''}
 
 **Deliverable:** A production-ready feature that integrates perfectly with ${projectName} and delights users with research-backed patterns proven effective in this domain.`,
 
-    vague_ambiguous: () => `Let's turn your idea into an amazing Lovable app! I need to understand your vision better.
+    vague_ambiguous: () => `Let's turn your idea into an amazing app! I need to understand your vision better.
 
 **Your initial idea:** "${intent}"
 

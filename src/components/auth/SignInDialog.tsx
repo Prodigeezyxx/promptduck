@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, Mail, ChevronDown } from 'lucide-react';
 import { GoogleAuthButton } from './GoogleAuthButton';
+import { GuestSignInButton } from './GuestSignInButton';
 import { useAuthContext } from './AuthProvider';
 import { useToast } from '@/hooks/use-toast';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -121,6 +122,20 @@ export function SignInDialog({ open, onOpenChange, redirectAfterAuth }: SignInDi
         </DialogHeader>
         
         <div className="space-y-6">
+          {/* Guest Access - No account needed */}
+          <div className="space-y-3">
+            <GuestSignInButton redirectTo={redirectAfterAuth} />
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+            </div>
+          </div>
+
           {/* Primary Google Auth */}
           <div className="space-y-3">
             <GoogleAuthButton />

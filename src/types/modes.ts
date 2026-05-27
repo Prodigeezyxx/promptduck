@@ -1,5 +1,5 @@
 
-export type ModeType = 'general' | 'lovable' | 'cursor' | 'midjourney';
+export type ModeType = 'general' | 'builder' | 'cursor' | 'midjourney';
 
 export interface Mode {
   id: ModeType;
@@ -20,7 +20,7 @@ export interface Mode {
 
 export interface ModeConfiguration {
   general: Mode;
-  lovable: Mode;
+  builder: Mode;
   cursor: Mode;
   midjourney: Mode;
 }

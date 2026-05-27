@@ -1,13 +1,13 @@
 import { GenerationResult } from '@/types';
 
-export interface LovableExportFormat {
+export interface BuilderExportFormat {
   // Core prompt data
   title: string;
   description: string;
   optimized_prompt: string;
   
-  // Lovable-specific metadata
-  lovable_mode: {
+  // Builder-specific metadata
+  builder_mode: {
     detected_app_name: string | null;
     app_type: string | null;
     template_type: string | null;
@@ -49,11 +49,11 @@ export interface LovableExportFormat {
   };
 }
 
-export function convertToLovableFormat(
+export function convertToBuilderFormat(
   result: GenerationResult,
   originalIntent: string,
   originalContext?: string
-): LovableExportFormat {
+): BuilderExportFormat {
   // Extract R-T-C-F-G structure from the prompt
   const rtcfgStructure = extractRTCFGStructure(result.optimized_prompt || result.result);
   
@@ -61,11 +61,11 @@ export function convertToLovableFormat(
   const detectedAppName = extractAppName(result, originalIntent);
   
   return {
-    title: result.preview_title || `Lovable App: ${detectedAppName || 'Unnamed'}`,
-    description: `AI-generated Lovable prompt for ${detectedAppName || 'web application'} with R-T-C-F-G structure`,
+    title: result.preview_title || `Builder App: ${detectedAppName || 'Unnamed'}`,
+    description: `AI-generated builder prompt for ${detectedAppName || 'web application'} with R-T-C-F-G structure`,
     optimized_prompt: result.optimized_prompt || result.result,
     
-    lovable_mode: {
+    builder_mode: {
       detected_app_name: detectedAppName,
       app_type: (result.metadata?.project_type as string) || null,
       template_type: (result.metadata?.template_applied as string) || (result.metadata?.detected_intent as string) || null,
@@ -106,13 +106,13 @@ export function convertToLovableFormat(
     original_input: {
       intent: originalIntent,
       context: originalContext,
-      mode: 'lovable'
+      mode: 'builder'
     },
     
     metadata: {
       created_at: new Date().toISOString(),
-      generation_mode: 'lovable',
-      tags: result.tags || ['lovable', 'rtcfg', 'ai-enhanced'],
+      generation_mode: 'builder',
+      tags: result.tags || ['builder', 'rtcfg', 'ai-enhanced'],
       estimated_tokens: result.metadata?.estimated_tokens || 0,
       variables: result.variables || []
     }
@@ -134,7 +134,7 @@ function extractRTCFGStructure(prompt: string): { context: string; task: string;
   const constraintsMatch = prompt.match(/CONSTRAINTS:\s*(.*?)(?=\n[A-Z]+:|$)/s);
   const goalMatch = prompt.match(/GOAL:\s*(.*?)(?=\n[A-Z]+:|$)/s);
   
-  sections.context = contextMatch?.[1]?.trim() || 'Lovable AI Builder context';
+  sections.context = contextMatch?.[1]?.trim() || 'AI Builder context';
   sections.task = taskMatch?.[1]?.trim() || 'Build application';
   sections.constraints = constraintsMatch?.[1]?.trim() || 'Tech stack and performance requirements';
   sections.format = 'Structured development plan with components and database schema';
@@ -172,18 +172,18 @@ function extractAppName(result: GenerationResult, originalIntent: string): strin
   return null;
 }
 
-export function downloadLovableJSON(
+export function downloadBuilderJSON(
   result: GenerationResult,
   originalIntent: string,
   originalContext?: string
 ) {
-  const lovableData = convertToLovableFormat(result, originalIntent, originalContext);
-  const jsonContent = JSON.stringify(lovableData, null, 2);
+  const builderData = convertToBuilderFormat(result, originalIntent, originalContext);
+  const jsonContent = JSON.stringify(builderData, null, 2);
   const blob = new Blob([jsonContent], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
 
-  const appName = lovableData.lovable_mode.detected_app_name || 'lovable-app';
-  const filename = `${appName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}_lovable_prompt.json`;
+  const appName = builderData.builder_mode.detected_app_name || 'builder-app';
+  const filename = `${appName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}_builder_prompt.json`;
 
   const link = document.createElement('a');
   link.href = url;

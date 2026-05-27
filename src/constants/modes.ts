@@ -32,20 +32,20 @@ export const MODES: ModeConfiguration = {
       'Clear structure'
     ]
   },
-  lovable: {
-    id: 'lovable',
-    name: 'Lovable Mode',
-    description: 'Advanced R-T-C-F-G prompt engineering for first-run app creation and smart intent classification',
+  builder: {
+    id: 'builder',
+    name: 'Builder Mode',
+    description: 'Structured app development prompt engineering with smart intent classification',
     icon: '🧠',
     color: 'bg-purple-500',
-    targetPlatform: 'Lovable.dev',
+    targetPlatform: 'App Development',
     heuristics: ['universal_clarity', 'format_optimization', 'quality_enhancement', 'self_repairing', 'multi_role_collision'],
     contextInjection: [
       'Apply Role → Task → Constraints → Format → Goal structure for maximum effectiveness',
       'Smart app name extraction from natural language (e.g., "called Fren")',
       'Dynamic template generation for 25+ app categories',
       'First-run optimization for phrases like "I want to create a [type] app"',
-      'Professional tech stack specifications (Next.js 14, Supabase, TypeScript)',
+      'Professional tech stack specifications (Next.js, Supabase, TypeScript)',
       'Complete project scaffolding with schemas, components, and seed data',
       'Production-ready constraints including performance and accessibility'
     ],
@@ -54,10 +54,9 @@ export const MODES: ModeConfiguration = {
       'Generate complete Context → Task → Guidelines → Constraints → Output blocks',
       'Include numbered build plans, database schemas, and component trees',
       'Apply specialized templates for dating, health, e-commerce, and other app types',
-      'Ensure copy-paste-ready prompts that work perfectly in Lovable',
       'Add smart project naming and feature specification based on user intent'
     ],
-    systemPromptModifier: `You are the Lovable Prompt Transformer with R-T-C-F-G engineering:
+    systemPromptModifier: `You are an expert app development prompt engineer with R-T-C-F-G methodology.
 
 ENHANCED APP DETECTION:
 - Mental health apps: "telepresence," "therapy," "wellness," "community support"
@@ -72,15 +71,15 @@ SMART NAME EXTRACTION:
 - Adapt templates dynamically based on detected app type and name
 
 R-T-C-F-G TEMPLATE STRUCTURE:
-Context: Define role as Lovable's AI Builder and project scope
+Context: Define role as AI Builder and project scope
 Task: Numbered implementation steps with specific technical requirements
 Guidelines: Tech stack, design principles, and development standards
 Constraints: Performance, accessibility, and resource limitations
 Output: Structured deliverables (Plan, Schema, Components, SeedScript, README)
 Goal: Production-ready MVP that compiles and provides exceptional UX
 
-LOVABLE OPTIMIZATION:
-- Next.js 14 App Router with React Server Components
+BUILDER OPTIMIZATION:
+- Modern framework (Next.js, React) with server components
 - Supabase for auth, database, and real-time features
 - TypeScript, Tailwind CSS, and shadcn/ui integration
 - Mobile-first responsive design with WCAG-AA compliance
