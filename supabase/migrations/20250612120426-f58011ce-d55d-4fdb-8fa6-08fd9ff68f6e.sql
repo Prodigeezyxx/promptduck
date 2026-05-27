@@ -104,6 +104,10 @@ CREATE POLICY "Users can view own generations" ON public.user_generations
   FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can create own generations" ON public.user_generations
   FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can delete own generations" ON public.user_generations
+  FOR DELETE USING (auth.uid() = user_id);
+CREATE POLICY "Users can update own generations" ON public.user_generations
+  FOR UPDATE USING (auth.uid() = user_id);
 
 -- RLS Policies for user_conversations
 CREATE POLICY "Users can view own conversations" ON public.user_conversations

@@ -39,11 +39,13 @@ export function useGeneratorLogic() {
   } = useGenerationHandlers();
 
   // Set intent and context when template is loaded
-  if (currentPrompt && !intent && !context) {
-    const { originalIntent, originalContext } = extractTemplateData();
-    setIntent(originalIntent || '');
-    setContext(originalContext || '');
-  }
+  useEffect(() => {
+    if (currentPrompt && !intent && !context) {
+      const { originalIntent, originalContext } = extractTemplateData();
+      setIntent(originalIntent || '');
+      setContext(originalContext || '');
+    }
+  }, [currentPrompt]);
 
   // Check for stored prompt from landing page - runs on mount and when auth loads
   useEffect(() => {

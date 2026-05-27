@@ -43,7 +43,7 @@ export function SignInDialog({ open, onOpenChange, redirectAfterAuth }: SignInDi
     }
   }, [isSignedIn, open, onOpenChange, redirectAfterAuth]);
 
-  const handleEmailAuth = async () => {
+  const handleEmailAuth = async (asSignUp?: boolean) => {
     if (!email || !password) {
       toast({
         title: 'Missing Information',
@@ -63,8 +63,9 @@ export function SignInDialog({ open, onOpenChange, redirectAfterAuth }: SignInDi
     }
 
     setLoading(true);
+    const willSignUp = asSignUp ?? isSignUp;
     try {
-      const { error } = isSignUp 
+      const { error } = willSignUp 
         ? await signUpWithEmail(email, password)
         : await signInWithEmail(email, password);
 
@@ -81,12 +82,12 @@ export function SignInDialog({ open, onOpenChange, redirectAfterAuth }: SignInDi
         }
         
         toast({
-          title: isSignUp ? 'Sign Up Failed' : 'Sign In Failed',
+          title: willSignUp ? 'Sign Up Failed' : 'Sign In Failed',
           description: errorMessage,
           variant: 'destructive',
         });
       } else {
-        if (isSignUp) {
+        if (willSignUp) {
           toast({
             title: 'Account Created',
             description: 'Please check your email to confirm your account before signing in.',
@@ -189,12 +190,12 @@ export function SignInDialog({ open, onOpenChange, redirectAfterAuth }: SignInDi
                 
                 <div className="flex gap-2">
                   <Button
-                    onClick={handleEmailAuth}
+                    onClick={() => handleEmailAuth(false)}
                     disabled={loading}
                     className="flex-1"
-                    variant={isSignUp ? "outline" : "default"}
+                    variant="default"
                   >
-                    {loading && !isSignUp ? (
+                    {loading ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                         Signing In...
@@ -208,15 +209,12 @@ export function SignInDialog({ open, onOpenChange, redirectAfterAuth }: SignInDi
                   </Button>
                   
                   <Button
-                    onClick={() => {
-                      setIsSignUp(true);
-                      handleEmailAuth();
-                    }}
+                    onClick={() => handleEmailAuth(true)}
                     disabled={loading}
-                    variant={isSignUp ? "default" : "outline"}
+                    variant="outline"
                     className="flex-1"
                   >
-                    {loading && isSignUp ? (
+                    {loading ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                         Creating...
