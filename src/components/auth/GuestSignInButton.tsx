@@ -1,52 +1,26 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { User, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from './AuthProvider';
 
 export function GuestSignInButton({ redirectTo }: { redirectTo?: string }) {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { signInAsGuest } = useAuthContext();
 
   const handleGuestSignIn = async () => {
     setLoading(true);
     try {
-      // Create a temporary guest session in localStorage
-      const guestUser = {
-        id: 'guest-' + Date.now(),
-        email: 'guest@promptduck.dev',
-        user_metadata: {
-          full_name: 'Guest User',
-          avatar_url: null
-        },
-        created_at: new Date().toISOString(),
-        isGuest: true,
-        isActive: true, // Mark as explicitly active
-        isPersistent: false // Mark as non-persistent (will be cleared on page unload)
-      };
+      signInAsGuest();
 
-      console.log('Creating guest session:', guestUser);
-      localStorage.setItem('promptduck_guest_session', JSON.stringify(guestUser));
-      
-      // Trigger storage event to update AuthProvider
-      window.dispatchEvent(new StorageEvent('storage', {
-        key: 'promptduck_guest_session',
-        newValue: JSON.stringify(guestUser)
-      }));
-      
-      // Force a small delay to ensure localStorage is set and context updates
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
-      console.log('Guest session created, navigating to app...');
-      
       toast({
         title: "Welcome!",
         description: "You're now signed in as a guest. Enjoy exploring PromptDuck!",
       });
 
-      // Navigate to app
       navigate(redirectTo || '/app/library');
     } catch (error) {
       console.error('Guest sign-in error:', error);

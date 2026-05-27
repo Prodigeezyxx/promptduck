@@ -11,6 +11,7 @@ interface AuthContextType {
   signInWithEmail: (email: string, password: string) => Promise<{ error: any }>;
   signUpWithEmail: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<{ error: any }>;
+  signInAsGuest: () => void;
   isSignedIn: boolean;
   isLoaded: boolean;
 }
@@ -102,12 +103,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [guestUser, auth.user, auth.loading, auth.isSignedIn, isInitialized]);
 
+  const signInAsGuest = () => {
+    const newGuest = {
+      id: 'guest-' + Date.now(),
+      email: 'guest@promptduck.dev',
+      user_metadata: { full_name: 'Guest User', avatar_url: null },
+      created_at: new Date().toISOString(),
+      isGuest: true,
+      isActive: true,
+      isPersistent: false
+    };
+    localStorage.setItem('promptduck_guest_session', JSON.stringify(newGuest));
+    setGuestUser(newGuest);
+  };
+
   // Override auth state if guest user exists
   const contextValue = {
     ...auth,
     user: guestUser || auth.user,
     isSignedIn: !!guestUser || auth.isSignedIn,
     isLoaded: isInitialized && auth.isLoaded,
+    signInAsGuest,
     signOut: async () => {
       if (guestUser) {
         console.log('AuthProvider: Signing out guest user');
