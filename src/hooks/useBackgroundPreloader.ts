@@ -14,7 +14,7 @@ export function useBackgroundPreloader() {
     if (!isLoaded) return;
 
     // For authenticated users, start background loading immediately
-    if (user) {
+    if (user && !(user as any).isGuest) {
       console.log('Starting background preload for authenticated user');
       initializePrompts();
       initializeGenerations();

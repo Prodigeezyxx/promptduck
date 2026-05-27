@@ -132,7 +132,7 @@ export function useGeneratorLogic() {
     selectedMode,
     isGenerating,
     lastResult,
-    history: user ? [] : history, // Simplified since generations is handled in useSupabaseSync
+    history: user && !(user as any).isGuest ? [] : history, // Simplified since generations is handled in useSupabaseSync
     apiKey,
     // Handlers
     handleIntentChange,

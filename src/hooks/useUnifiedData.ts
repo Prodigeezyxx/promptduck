@@ -23,12 +23,14 @@ export function useUnifiedData() {
   
   const [error, setError] = useState<string | null>(null);
 
+  const isRealUser = user && !(user as any).isGuest;
+
   // Show data immediately - prompts are preloaded in background
-  const allPrompts = user ? cloudPrompts : localPrompts;
-  const allGenerations = user ? cloudGenerations : localHistory;
+  const allPrompts = isRealUser ? cloudPrompts : localPrompts;
+  const allGenerations = isRealUser ? cloudGenerations : localHistory;
 
   // For loading states, only show loading if user is authenticated but data isn't initialized yet
-  const isLoading = user && !promptsInitialized;
+  const isLoading = isRealUser && !promptsInitialized;
 
   // Process prompts for better descriptions without changing functionality
   const processedPrompts = allPrompts.map(prompt => {
@@ -51,18 +53,15 @@ export function useUnifiedData() {
 
   const savePrompt = async (prompt: Omit<Prompt, 'id' | 'created_at' | 'updated_at' | 'version' | 'usage_count'>) => {
     try {
-      if (user) {
-        // Save to cloud - the saveCloudPrompt function now handles duplicates gracefully
+      if (isRealUser) {
         return await saveCloudPrompt(prompt);
       } else {
-        // Save locally - the local store already has duplicate checking
         addLocalPrompt(prompt);
         return null;
       }
     } catch (error) {
       console.error('Failed to save prompt:', error);
-      // Only fallback to local storage if user is signed in but cloud save failed
-      if (user) {
+      if (isRealUser) {
         addLocalPrompt(prompt);
       }
       throw error;
@@ -71,14 +70,14 @@ export function useUnifiedData() {
 
   const saveGeneration = async (result: GenerationResult, intent: string, context?: string) => {
     try {
-      if (user) {
+      if (isRealUser) {
         await saveCloudGeneration(result, intent, context);
       } else {
         addLocalGeneration(result);
       }
     } catch (error) {
       console.error('Failed to save generation:', error);
-      if (user) {
+      if (isRealUser) {
         addLocalGeneration(result);
       }
       throw error;

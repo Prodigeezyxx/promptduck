@@ -13,7 +13,7 @@ export function useSupabasePrompts() {
 
   // Load prompts from Supabase
   const loadPrompts = useCallback(async (force = false) => {
-    if (!user) return;
+    if (!user || (user as any).isGuest) return;
     
     // Skip if recently loaded and not forced
     const now = Date.now();
@@ -67,9 +67,9 @@ export function useSupabasePrompts() {
 
   // Initialize prompts when user is authenticated
   useEffect(() => {
-    if (user && !isInitialized) {
+    if (user && !(user as any).isGuest && !isInitialized) {
       loadPrompts();
-    } else if (!user) {
+    } else if (!user || (user as any).isGuest) {
       // Clear prompts when user signs out
       setPrompts([]);
       setIsInitialized(false);
@@ -78,7 +78,7 @@ export function useSupabasePrompts() {
   }, [user, isInitialized, loadPrompts]);
 
   const savePrompt = async (prompt: Omit<Prompt, 'id' | 'created_at' | 'updated_at' | 'version' | 'usage_count'>) => {
-    if (!user) return null;
+    if (!user || (user as any).isGuest) return null;
 
     try {
       const { data, error } = await supabase
@@ -148,7 +148,7 @@ export function useSupabasePrompts() {
   };
 
   const updatePrompt = async (id: string, updates: Partial<Prompt>) => {
-    if (!user) return;
+    if (!user || (user as any).isGuest) return;
 
     try {
       const { error } = await supabase
@@ -181,7 +181,7 @@ export function useSupabasePrompts() {
   };
 
   const deletePrompt = async (id: string) => {
-    if (!user) return;
+    if (!user || (user as any).isGuest) return;
 
     try {
       const { error } = await supabase
@@ -214,7 +214,7 @@ export function useSupabasePrompts() {
 
   // External initialization function for preloading
   const initializePrompts = useCallback(() => {
-    if (user && !isInitialized && !loading) {
+    if (user && !(user as any).isGuest && !isInitialized && !loading) {
       loadPrompts();
     }
   }, [user, isInitialized, loading, loadPrompts]);

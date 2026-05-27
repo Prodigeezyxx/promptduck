@@ -11,7 +11,7 @@ export function useRealtimeSync() {
   const { refreshGenerations } = useSupabaseGenerations();
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || (user as any).isGuest) return;
 
     console.log('Setting up real-time sync for user:', user.id);
 

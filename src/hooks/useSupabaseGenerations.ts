@@ -22,7 +22,7 @@ export function useSupabaseGenerations() {
 
   // Load generations from Supabase
   const loadGenerations = useCallback(async (force = false) => {
-    if (!user) return;
+    if (!user || (user as any).isGuest) return;
     
     // Skip if recently loaded and not forced
     const now = Date.now();
@@ -75,9 +75,9 @@ export function useSupabaseGenerations() {
 
   // Initialize generations when user is authenticated
   useEffect(() => {
-    if (user && !isInitialized) {
+    if (user && !(user as any).isGuest && !isInitialized) {
       loadGenerations();
-    } else if (!user) {
+    } else if (!user || (user as any).isGuest) {
       // Clear generations when user signs out
       setGenerations([]);
       setIsInitialized(false);
@@ -86,7 +86,7 @@ export function useSupabaseGenerations() {
   }, [user, isInitialized, loadGenerations]);
 
   const saveGeneration = async (result: GenerationResult, intent: string, context?: string) => {
-    if (!user) return;
+    if (!user || (user as any).isGuest) return;
 
     try {
       const { data, error } = await supabase

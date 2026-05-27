@@ -12,6 +12,7 @@ import { toast } from '@/hooks/use-toast';
 
 export function useGenerationHandlers() {
   const { user } = useAuthContext();
+  const isRealUser = user && !(user as any).isGuest;
   const { useCredit, canUseCredit, getRemainingCredits } = useCreditStore();
   const { addPrompt, setCurrentPrompt } = usePromptStore();
   const { setGenerating, setLastResult, lastResult } = useGeneratorStore();
@@ -75,7 +76,7 @@ export function useGenerationHandlers() {
       setLastResult(result);
       
       // Save to Supabase if user is authenticated
-      if (user) {
+      if (isRealUser) {
         await saveGeneration(result, intent.trim(), contextValue);
       }
       
@@ -135,8 +136,7 @@ export function useGenerationHandlers() {
       estimatedTime: isBuilderMode ? '30 minutes' : '15 minutes'
     };
 
-    if (user) {
-      // Save to Supabase for authenticated users
+    if (isRealUser) {
       const saved = await saveToSupabase(promptData);
       if (saved) {
         toast({ 
@@ -147,7 +147,6 @@ export function useGenerationHandlers() {
         });
       }
     } else {
-      // Save to localStorage for unauthenticated users
       addPrompt(promptData);
       toast({ 
         title: 'Saved!', 

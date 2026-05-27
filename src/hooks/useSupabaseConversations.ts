@@ -17,13 +17,13 @@ export function useSupabaseConversations() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (user) {
+    if (user && !(user as any).isGuest) {
       loadConversations();
     }
   }, [user]);
 
   const loadConversations = async () => {
-    if (!user) return;
+    if (!user || (user as any).isGuest) return;
     
     setLoading(true);
     try {
@@ -53,7 +53,7 @@ export function useSupabaseConversations() {
   };
 
   const saveConversation = async (conversationId: string, messages: any[], title?: string) => {
-    if (!user || messages.length === 0) return;
+    if (!user || (user as any).isGuest || messages.length === 0) return;
 
     try {
       const conversationTitle = title || messages[0]?.content?.slice(0, 50) + '...' || 'Untitled Conversation';
@@ -93,7 +93,7 @@ export function useSupabaseConversations() {
   };
 
   const deleteConversation = async (conversationId: string) => {
-    if (!user) return;
+    if (!user || (user as any).isGuest) return;
 
     try {
       const { error } = await supabase

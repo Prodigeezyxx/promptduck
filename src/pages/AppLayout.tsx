@@ -24,7 +24,7 @@ export default function AppLayout() {
   useBackgroundPreloader();
   
   // Only setup realtime sync for authenticated users after migration
-  if (user) {
+  if (user && !(user as any).isGuest) {
     useRealtimeSync();
   }
 
